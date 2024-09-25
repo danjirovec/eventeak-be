@@ -9,11 +9,12 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
   app.enableCors({
-    origin: ['http://localhost:5173, https://applausio-fe.onrender.com'],
+    origin: [process.env.LOCAL_CLIENT_URL, process.env.CLIENT_URL],
     methods: ['GET', 'POST', 'DELETE'],
     credentials: true,
   });
   app.use(cookieParser());
-  await app.listen(3000);
+  const port = process.env.PORT || 3000;
+  await app.listen(port);
 }
 bootstrap();
