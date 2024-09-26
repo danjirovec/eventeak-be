@@ -46,7 +46,6 @@ import { MailModule } from './mail/mail.module';
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       sortSchema: true,
-      // playground: false,
     }),
     UserModule,
     EventModule,
