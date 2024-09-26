@@ -1,8 +1,8 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { UseGuards } from '@nestjs/common';
+import { BadRequestException, UseGuards } from '@nestjs/common';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { UserDto } from './user.dto/user.dto';
-import { UpdateUserPasswordDto } from './user.dto/user.update.password.dto';
+import { UpdatePasswordDto } from './user.dto/user.update.password.dto';
 import { supabaseAdmin } from 'src/utils/supabaseAdmin';
 import { UserQuery } from './types';
 import { UserProfileDto } from './user.dto/user.profile.dto';
@@ -12,26 +12,15 @@ import { UserBenefit } from 'src/user.benefit/user.benefit.entity/user.benefit.e
 import { UserBenefitDto } from 'src/user.benefit/user.benefit.dto/user.benefit.dto';
 import { Membership } from 'src/membership/membership.entity/membership.entity';
 import { MembershipDto } from 'src/membership/membership.dto/membership.dto';
-import { filter } from 'rxjs';
 import { Ticket } from 'src/ticket/ticket.entity/ticket.entity';
 import { TicketDto } from 'src/ticket/ticket.dto/ticket.dto';
-import { TicketAggDto } from 'src/ticket/ticket.dto/ticket.user.dto';
-
-const groupBy = (arr: TicketDto[]): TicketAggDto[] => {
-  const grouped = arr.reduce((result: TicketAggDto, currentItem: TicketDto) => {
-    const { eventId } = currentItem;
-    if (!result[eventId]) {
-      result[eventId] = [];
-    }
-    result[eventId].push(currentItem);
-    return result;
-  }, {} as TicketAggDto);
-
-  return Object.entries(grouped).map(([eventId, tickets]) => ({
-    id: eventId,
-    ticketSet: tickets,
-  }));
-};
+import { AnonymizeUserDto } from './user.dto/user.anonymize.dto';
+import { OrderDto } from 'src/order/order.dto/order.dto';
+import { Order } from 'src/order/order.entity/order.entity';
+import { BusinessUser } from 'src/business.user/business.user.entity/business.user.entity';
+import { BusinessUserDto } from 'src/business.user/business.user.dto/business.user.dto';
+import { anonymize } from 'src/utils/anonymize';
+import { groupBy } from 'src/utils/groupBy';
 
 @Resolver(() => UserDto)
 export class UserResolver {
@@ -40,15 +29,19 @@ export class UserResolver {
     readonly userService: QueryService<UserDto>,
     @InjectQueryService(UserBenefit)
     readonly userBenefitService: QueryService<UserBenefitDto>,
+    @InjectQueryService(BusinessUser)
+    readonly businessUserService: QueryService<BusinessUserDto>,
     @InjectQueryService(Membership)
     readonly membershipService: QueryService<MembershipDto>,
     @InjectQueryService(Ticket)
     readonly ticketService: QueryService<TicketDto>,
+    @InjectQueryService(Order)
+    readonly orderService: QueryService<OrderDto>,
   ) {}
 
   @Mutation(() => String)
   @UseGuards(AuthGuard)
-  async updateUserPassword(@Args('input') input: UpdateUserPasswordDto) {
+  async updatePassword(@Args('input') input: UpdatePasswordDto) {
     let userId = null;
     try {
       const { data, error } = await supabaseAdmin.auth.admin.updateUserById(
@@ -59,17 +52,42 @@ export class UserResolver {
       );
       userId = data.user.id;
       if (error) {
-        throw error;
+        throw new BadRequestException(error);
       }
     } catch (error) {
-      throw error;
+      throw new BadRequestException(error);
     }
     return userId;
   }
 
+  @Mutation(() => String)
+  @UseGuards(AuthGuard)
+  async anonymizeUser(@Args('input') input: AnonymizeUserDto) {
+    try {
+      const { error } = await supabaseAdmin.auth.admin.deleteUser(input.userId);
+      if (error) {
+        throw new BadRequestException(error);
+      }
+      await this.userService.updateOne(input.userId, anonymize());
+      const filter = {
+        and: [
+          { userId: { eq: input.userId } },
+          { businessId: { eq: input.businessId } },
+        ],
+      };
+      await this.membershipService.deleteMany(filter);
+      await this.userBenefitService.deleteMany(filter);
+      await this.businessUserService.deleteMany(filter);
+    } catch (error) {
+      console.log(error);
+      throw new BadRequestException(error);
+    }
+    return input.userId;
+  }
+
   @Query(() => UserProfileDto)
   @UseGuards(AuthGuard)
-  async profile(
+  async profileInfo(
     @Args() query: UserQuery,
     @Args('meta') meta: string,
   ): Promise<UserProfileDto> {

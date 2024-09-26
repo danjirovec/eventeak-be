@@ -1,5 +1,12 @@
 import { Field, ID, InputType } from '@nestjs/graphql';
-import { IsNotEmpty, IsString, IsOptional } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsString,
+  IsOptional,
+  IsEnum,
+  IsDefined,
+} from 'class-validator';
+import { Currency } from 'src/enum/enum';
 
 @InputType('CreateBusiness')
 export class CreateBusinessDto {
@@ -12,6 +19,11 @@ export class CreateBusinessDto {
   @IsString()
   @Field({ nullable: true })
   logoUrl?: string;
+
+  @IsDefined()
+  @IsEnum(Currency, { each: true })
+  @Field(() => Currency)
+  currency!: Currency;
 
   @IsNotEmpty()
   @IsString()

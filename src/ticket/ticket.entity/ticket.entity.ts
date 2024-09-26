@@ -24,8 +24,8 @@ export class Ticket {
   @Column()
   price!: number;
 
-  @Column()
-  validated!: boolean;
+  @Column({ nullable: true })
+  validated?: Date;
 
   @Column({ name: 'event_id' })
   eventId!: string;

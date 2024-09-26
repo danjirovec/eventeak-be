@@ -14,6 +14,8 @@ import { UserResolver } from './user.resolver';
 import { MembershipModule } from 'src/membership/membership.module';
 import { UserBenefitModule } from 'src/user.benefit/user.benefit.module';
 import { TicketModule } from 'src/ticket/ticket.module';
+import { OrderModule } from 'src/order/order.module';
+import { BusinessUserModule } from 'src/business.user/business.user.module';
 
 @Module({
   providers: [UserResolver],
@@ -25,6 +27,8 @@ import { TicketModule } from 'src/ticket/ticket.module';
         MembershipModule,
         UserBenefitModule,
         TicketModule,
+        OrderModule,
+        BusinessUserModule,
       ],
       resolvers: [
         {

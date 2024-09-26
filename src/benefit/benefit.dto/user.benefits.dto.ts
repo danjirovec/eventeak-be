@@ -3,8 +3,8 @@ import { FilterableField } from '@ptc-org/nestjs-query-graphql';
 import { IsNotEmpty, IsNumber } from 'class-validator';
 import { BenefitDto } from './benefit.dto';
 
-@ObjectType('BenefitsAndMembership')
-export class BenefitsAndMembershipDto {
+@ObjectType('UserBenefits')
+export class UserBenefitsDto {
   @IsNotEmpty()
   @FilterableField(() => [BenefitDto])
   available: BenefitDto[];

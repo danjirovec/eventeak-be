@@ -1,8 +1,8 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { IsArray, IsNotEmpty, IsString } from 'class-validator';
 
-@ObjectType('CountsBusiness')
-export class CountsBusinessDto {
+@ObjectType('BusinessMetrics')
+export class BusinessMetricsDto {
   @IsNotEmpty()
   @IsString()
   @Field(() => [Number])

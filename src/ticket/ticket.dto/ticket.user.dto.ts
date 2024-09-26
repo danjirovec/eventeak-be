@@ -3,8 +3,8 @@ import { IDField } from '@ptc-org/nestjs-query-graphql';
 import { IsNotEmpty, IsUUID } from 'class-validator';
 import { TicketDto } from './ticket.dto';
 
-@ObjectType('TicketAgg')
-export class TicketAggDto {
+@ObjectType('UserTickets')
+export class UserTicketsDto {
   @IsNotEmpty()
   @IsUUID()
   @IDField(() => ID)
@@ -18,10 +18,10 @@ export class TicketAggDto {
 @ObjectType('TicketSet')
 export class TicketSetDto {
   @IsNotEmpty()
-  @Field(() => [TicketAggDto])
-  valid!: TicketAggDto[];
+  @Field(() => [UserTicketsDto])
+  valid!: UserTicketsDto[];
 
   @IsNotEmpty()
-  @Field(() => [TicketAggDto])
-  invalid!: TicketAggDto[];
+  @Field(() => [UserTicketsDto])
+  invalid!: UserTicketsDto[];
 }

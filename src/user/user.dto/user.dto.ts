@@ -52,6 +52,15 @@ export class UserDto {
   @FilterableField()
   birthDate!: Date;
 
+  @IsString()
+  @FilterableField({ filterOnly: true })
+  defaultBusinessId?: string;
+
+  @IsOptional()
+  @IsDateString()
+  @FilterableField({ nullable: true })
+  deleted?: Date;
+
   @IsNotEmpty()
   @IsDate()
   @FilterableField(() => GraphQLISODateTime)

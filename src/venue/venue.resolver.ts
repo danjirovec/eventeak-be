@@ -1,7 +1,7 @@
 import { InjectQueryService, QueryService } from '@ptc-org/nestjs-query-core';
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
-import { UseGuards } from '@nestjs/common';
+import { BadRequestException, UseGuards } from '@nestjs/common';
 import { VenueDto } from './venue.dto/venue.dto';
 import { Venue } from './venue.entity/venue.entity';
 import { Seat } from 'src/seat/seat.entity/seat.entity';
@@ -25,7 +25,7 @@ export class VenueResolver {
 
   @Mutation(() => VenueDto)
   @UseGuards(AuthGuard)
-  async createVenueWithSeats(@Args('input') input: CreateVenueDto) {
+  async createVenue(@Args('input') input: CreateVenueDto) {
     let venue;
     const sections = [];
     const seats = [];
@@ -52,7 +52,7 @@ export class VenueResolver {
             });
           }
         }
-        const newSeats = await this.seatsService.createMany(seats);
+        await this.seatsService.createMany(seats);
       } else {
         venue = await this.venuesService.createOne({ ...input });
         if (!input.sections || !input.sections.length) {
@@ -70,12 +70,13 @@ export class VenueResolver {
             });
           }
         }
-        const newSections = await this.sectionsService.createMany(sections);
+        await this.sectionsService.createMany(sections);
       }
 
       await queryRunner.commitTransaction();
     } catch (err) {
       await queryRunner.rollbackTransaction();
+      throw new BadRequestException(err);
     } finally {
       await queryRunner.release();
     }

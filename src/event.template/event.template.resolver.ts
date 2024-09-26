@@ -23,9 +23,7 @@ export class EventTemplateResolver {
 
   @Mutation(() => EventTemplateDto)
   @UseGuards(AuthGuard)
-  async createEventTemplateAndEventPriceCategory(
-    @Args('input') input: CreateEventTemplateDto,
-  ) {
+  async createEventTemplate(@Args('input') input: CreateEventTemplateDto) {
     let newTemplate = null;
     const queryRunner = this.dataSource.createQueryRunner();
 
@@ -53,6 +51,7 @@ export class EventTemplateResolver {
       await queryRunner.commitTransaction();
     } catch (err) {
       await queryRunner.rollbackTransaction();
+      throw new BadRequestException(err);
     } finally {
       await queryRunner.release();
     }
@@ -61,9 +60,7 @@ export class EventTemplateResolver {
 
   @Mutation(() => EventTemplateDto)
   @UseGuards(AuthGuard)
-  async updateEventTemplateAndEventPriceCategory(
-    @Args('input') input: UpdateEventTemplateDto,
-  ) {
+  async updateEventTemplate(@Args('input') input: UpdateEventTemplateDto) {
     const { eventPriceCategory, id, ...rest } = input;
     let updatedTemplate = null;
     const queryRunner = this.dataSource.createQueryRunner();
@@ -94,7 +91,7 @@ export class EventTemplateResolver {
       }
 
       if (eventPriceCategory) {
-        const yo = await queryRunner.manager.upsert(
+        await queryRunner.manager.upsert(
           EventPriceCategory,
           eventPriceCategory,
           ['id'],

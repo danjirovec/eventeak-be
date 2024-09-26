@@ -2,6 +2,11 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+input AnonymizeUser {
+  businessId: ID!
+  userId: ID!
+}
+
 type Benefit {
   business: Business!
   created: DateTime!
@@ -62,6 +67,7 @@ input BenefitFilter {
 input BenefitFilterBusinessFilter {
   and: [BenefitFilterBusinessFilter!]
   created: DateFieldComparison
+  currency: CurrencyFilterComparison
   id: IDFilterComparison
   name: StringFieldComparison
   or: [BenefitFilterBusinessFilter!]
@@ -108,13 +114,6 @@ input BenefitUpdateFilter {
   updated: DateFieldComparison
 }
 
-type BenefitsAndMembership {
-  available: [Benefit!]!
-  membershipPoints: Float!
-  unavailable: [Benefit!]!
-  used: [Benefit!]!
-}
-
 input BooleanFieldComparison {
   is: Boolean
   isNot: Boolean
@@ -123,6 +122,7 @@ input BooleanFieldComparison {
 type Business {
   apiKey: String!
   created: DateTime!
+  currency: Currency!
   id: ID!
   logoUrl: String
   name: String!
@@ -143,6 +143,7 @@ type BusinessConnection {
 input BusinessDeleteFilter {
   and: [BusinessDeleteFilter!]
   created: DateFieldComparison
+  currency: CurrencyFilterComparison
   id: IDFilterComparison
   name: StringFieldComparison
   or: [BusinessDeleteFilter!]
@@ -152,6 +153,7 @@ input BusinessDeleteFilter {
 type BusinessDeleteResponse {
   apiKey: String
   created: DateTime
+  currency: Currency
   id: ID
   logoUrl: String
   name: String
@@ -161,10 +163,17 @@ type BusinessDeleteResponse {
 input BusinessFilter {
   and: [BusinessFilter!]
   created: DateFieldComparison
+  currency: CurrencyFilterComparison
   id: IDFilterComparison
   name: StringFieldComparison
   or: [BusinessFilter!]
   updated: DateFieldComparison
+}
+
+type BusinessMetrics {
+  customers: [Float!]!
+  events: [Float!]!
+  memberships: [Float!]!
 }
 
 input BusinessSort {
@@ -175,6 +184,7 @@ input BusinessSort {
 
 enum BusinessSortFields {
   created
+  currency
   id
   name
   updated
@@ -183,6 +193,7 @@ enum BusinessSortFields {
 input BusinessSubscriptionFilter {
   and: [BusinessSubscriptionFilter!]
   created: DateFieldComparison
+  currency: CurrencyFilterComparison
   id: IDFilterComparison
   name: StringFieldComparison
   or: [BusinessSubscriptionFilter!]
@@ -192,6 +203,7 @@ input BusinessSubscriptionFilter {
 input BusinessUpdateFilter {
   and: [BusinessUpdateFilter!]
   created: DateFieldComparison
+  currency: CurrencyFilterComparison
   id: IDFilterComparison
   name: StringFieldComparison
   or: [BusinessUpdateFilter!]
@@ -248,6 +260,7 @@ input BusinessUserFilter {
 input BusinessUserFilterBusinessFilter {
   and: [BusinessUserFilterBusinessFilter!]
   created: DateFieldComparison
+  currency: CurrencyFilterComparison
   id: IDFilterComparison
   name: StringFieldComparison
   or: [BusinessUserFilterBusinessFilter!]
@@ -259,6 +272,8 @@ input BusinessUserFilterUserFilter {
   avatarUrl: StringFieldComparison
   birthDate: DateFieldComparison
   created: DateFieldComparison
+  defaultBusinessId: StringFieldComparison
+  deleted: DateFieldComparison
   email: StringFieldComparison
   firstName: StringFieldComparison
   id: IDFilterComparison
@@ -332,12 +347,6 @@ input CategoryFilterComparison {
   notLike: Category
 }
 
-type CountsBusiness {
-  customers: [Float!]!
-  events: [Float!]!
-  memberships: [Float!]!
-}
-
 input CreateBenefit {
   businessId: ID!
   description: String!
@@ -352,6 +361,7 @@ input CreateBenefitSubscriptionFilterInput {
 }
 
 input CreateBusiness {
+  currency: Currency!
   logoUrl: String
   name: String!
   userId: ID!
@@ -660,7 +670,7 @@ input CreateTicket {
   seatId: ID
   sectionId: ID!
   userId: ID
-  validated: Boolean!
+  validated: DateTime
 }
 
 input CreateTicketSubscriptionFilterInput {
@@ -707,6 +717,29 @@ input CreateVenue {
 input CreateVenueSubscriptionFilterInput {
   """Specify to filter the records returned."""
   filter: VenueSubscriptionFilter!
+}
+
+enum Currency {
+  CZK
+  EUR
+  USD
+}
+
+input CurrencyFilterComparison {
+  eq: Currency
+  gt: Currency
+  gte: Currency
+  iLike: Currency
+  in: [Currency!]
+  is: Boolean
+  isNot: Boolean
+  like: Currency
+  lt: Currency
+  lte: Currency
+  neq: Currency
+  notILike: Currency
+  notIn: [Currency!]
+  notLike: Currency
 }
 
 input DateFieldComparison {
@@ -1031,6 +1064,7 @@ input DiscountFilter {
 input DiscountFilterBusinessFilter {
   and: [DiscountFilterBusinessFilter!]
   created: DateFieldComparison
+  currency: CurrencyFilterComparison
   id: IDFilterComparison
   name: StringFieldComparison
   or: [DiscountFilterBusinessFilter!]
@@ -1151,6 +1185,7 @@ input EventFilter {
 input EventFilterBusinessFilter {
   and: [EventFilterBusinessFilter!]
   created: DateFieldComparison
+  currency: CurrencyFilterComparison
   id: IDFilterComparison
   name: StringFieldComparison
   or: [EventFilterBusinessFilter!]
@@ -1176,6 +1211,7 @@ input EventFilterEventTemplateFilter {
 input EventFilterEventTemplateFilterBusinessFilter {
   and: [EventFilterEventTemplateFilterBusinessFilter!]
   created: DateFieldComparison
+  currency: CurrencyFilterComparison
   id: IDFilterComparison
   name: StringFieldComparison
   or: [EventFilterEventTemplateFilterBusinessFilter!]
@@ -1214,6 +1250,7 @@ input EventFilterVenueFilter {
 input EventFilterVenueFilterBusinessFilter {
   and: [EventFilterVenueFilterBusinessFilter!]
   created: DateFieldComparison
+  currency: CurrencyFilterComparison
   id: IDFilterComparison
   name: StringFieldComparison
   or: [EventFilterVenueFilterBusinessFilter!]
@@ -1467,6 +1504,7 @@ input EventTemplateFilter {
 input EventTemplateFilterBusinessFilter {
   and: [EventTemplateFilterBusinessFilter!]
   created: DateFieldComparison
+  currency: CurrencyFilterComparison
   id: IDFilterComparison
   name: StringFieldComparison
   or: [EventTemplateFilterBusinessFilter!]
@@ -1669,6 +1707,7 @@ input MembershipFilter {
 input MembershipFilterBusinessFilter {
   and: [MembershipFilterBusinessFilter!]
   created: DateFieldComparison
+  currency: CurrencyFilterComparison
   id: IDFilterComparison
   name: StringFieldComparison
   or: [MembershipFilterBusinessFilter!]
@@ -1689,6 +1728,8 @@ input MembershipFilterUserFilter {
   avatarUrl: StringFieldComparison
   birthDate: DateFieldComparison
   created: DateFieldComparison
+  defaultBusinessId: StringFieldComparison
+  deleted: DateFieldComparison
   email: StringFieldComparison
   firstName: StringFieldComparison
   id: IDFilterComparison
@@ -1774,6 +1815,7 @@ input MembershipTypeFilter {
 input MembershipTypeFilterBusinessFilter {
   and: [MembershipTypeFilterBusinessFilter!]
   created: DateFieldComparison
+  currency: CurrencyFilterComparison
   id: IDFilterComparison
   name: StringFieldComparison
   or: [MembershipTypeFilterBusinessFilter!]
@@ -1824,9 +1866,10 @@ input MembershipUpdateFilter {
 }
 
 type Mutation {
-  createBusinessAndBusinessUserAdmin(input: CreateBusiness!): Business!
+  anonymizeUser(input: AnonymizeUser!): String!
+  createBusiness(input: CreateBusiness!): Business!
   createEvent(input: CreateEvent!): Event!
-  createEventTemplateAndEventPriceCategory(input: CreateEventTemplate!): EventTemplate!
+  createEventTemplate(input: CreateEventTemplate!): EventTemplate!
   createManyBenefits(input: CreateManyBenefitsInput!): [Benefit!]!
   createManyBusinessUsers(input: CreateManyBusinessUsersInput!): [BusinessUser!]!
   createManyBusinesses(input: CreateManyBusinessesInput!): [Business!]!
@@ -1859,8 +1902,8 @@ type Mutation {
   createOneUser(input: CreateOneUserInput!): User!
   createOneUserBenefitDto(input: CreateOneUserBenefitDtoInput!): UserBenefitDto!
   createOneVenue(input: CreateOneVenueInput!): Venue!
-  createTicketsAndOrder(order: CreateOrder!, tickets: [CreateTicket!]!): [Ticket!]!
-  createVenueWithSeats(input: CreateVenue!): Venue!
+  createTickets(order: CreateOrder!, tickets: [CreateTicket!]!): [Ticket!]!
+  createVenue(input: CreateVenue!): Venue!
   deleteManyBenefits(input: DeleteManyBenefitsInput!): DeleteManyResponse!
   deleteManyBusinessUsers(input: DeleteManyBusinessUsersInput!): DeleteManyResponse!
   deleteManyBusinesses(input: DeleteManyBusinessesInput!): DeleteManyResponse!
@@ -1894,7 +1937,7 @@ type Mutation {
   deleteOneUserBenefitDto(input: DeleteOneUserBenefitDtoInput!): UserBenefitDtoDeleteResponse!
   deleteOneVenue(input: DeleteOneVenueInput!): VenueDeleteResponse!
   updateEvent(input: UpdateEvent!): Event!
-  updateEventTemplateAndEventPriceCategory(input: UpdateEventTemplate!): EventTemplate!
+  updateEventTemplate(input: UpdateEventTemplate!): EventTemplate!
   updateManyBenefits(input: UpdateManyBenefitsInput!): UpdateManyResponse!
   updateManyBusinessUsers(input: UpdateManyBusinessUsersInput!): UpdateManyResponse!
   updateManyBusinesses(input: UpdateManyBusinessesInput!): UpdateManyResponse!
@@ -1927,7 +1970,7 @@ type Mutation {
   updateOneUser(input: UpdateOneUserInput!): User!
   updateOneUserBenefitDto(input: UpdateOneUserBenefitDtoInput!): UserBenefitDto!
   updateOneVenue(input: UpdateOneVenueInput!): Venue!
-  updateUserPassword(input: UpdateUserPassword!): String!
+  updatePassword(input: UpdatePassword!): String!
 }
 
 input NumberFieldComparison {
@@ -2020,6 +2063,7 @@ input OrderFilter {
 input OrderFilterBusinessFilter {
   and: [OrderFilterBusinessFilter!]
   created: DateFieldComparison
+  currency: CurrencyFilterComparison
   id: IDFilterComparison
   name: StringFieldComparison
   or: [OrderFilterBusinessFilter!]
@@ -2031,6 +2075,8 @@ input OrderFilterUserFilter {
   avatarUrl: StringFieldComparison
   birthDate: DateFieldComparison
   created: DateFieldComparison
+  defaultBusinessId: StringFieldComparison
+  deleted: DateFieldComparison
   email: StringFieldComparison
   firstName: StringFieldComparison
   id: IDFilterComparison
@@ -2092,22 +2138,10 @@ type Query {
     """Specify to sort results."""
     sorting: [BenefitSort!]! = []
   ): BenefitConnection!
-  benefitsAndMembership(
-    """Specify to filter the records returned."""
-    filter: BenefitFilter! = {}
-    meta: String!
-
-    """Limit or page results."""
-    paging: OffsetPaging! = {limit: 10}
-
-    """Specify to sort results."""
-    sorting: [BenefitSort!]! = []
-  ): BenefitsAndMembership!
   business(
     """The id of the record to find."""
     id: ID!
   ): Business!
-  businessCounts(meta: String): CountsBusiness!
   businessUser(
     """The id of the record to find."""
     id: ID!
@@ -2188,6 +2222,50 @@ type Query {
     """Specify to sort results."""
     sorting: [EventSort!]! = []
   ): EventConnection!
+  getBusinessMetrics(meta: String!): BusinessMetrics!
+  getEventPrices(
+    """Specify to filter the records returned."""
+    filter: EventPriceCategoryFilter! = {}
+    meta: String!
+
+    """Limit or page results."""
+    paging: OffsetPaging! = {limit: 10}
+
+    """Specify to sort results."""
+    sorting: [EventPriceCategorySort!]! = []
+  ): EventPriceCategoryAvailable!
+  getUserBenefits(
+    """Specify to filter the records returned."""
+    filter: BenefitFilter! = {}
+    meta: String!
+
+    """Limit or page results."""
+    paging: OffsetPaging! = {limit: 10}
+
+    """Specify to sort results."""
+    sorting: [BenefitSort!]! = []
+  ): UserBenefits!
+  getUserBusinesses(
+    """Specify to filter the records returned."""
+    filter: BusinessFilter! = {}
+    meta: String!
+
+    """Limit or page results."""
+    paging: OffsetPaging! = {limit: 10}
+
+    """Specify to sort results."""
+    sorting: [BusinessSort!]! = []
+  ): BusinessConnection!
+  getUserTickets(
+    """Specify to filter the records returned."""
+    filter: TicketFilter! = {}
+
+    """Limit or page results."""
+    paging: OffsetPaging! = {limit: 10}
+
+    """Specify to sort results."""
+    sorting: [TicketSort!]! = []
+  ): TicketSet!
   membership(
     """The id of the record to find."""
     id: ID!
@@ -2230,18 +2308,7 @@ type Query {
     """Specify to sort results."""
     sorting: [OrderSort!]! = []
   ): OrderConnection!
-  prices(
-    """Specify to filter the records returned."""
-    filter: EventPriceCategoryFilter! = {}
-    meta: String
-
-    """Limit or page results."""
-    paging: OffsetPaging! = {limit: 10}
-
-    """Specify to sort results."""
-    sorting: [EventPriceCategorySort!]! = []
-  ): EventPriceCategoryAvailable!
-  profile(
+  profileInfo(
     """Specify to filter the records returned."""
     filter: UserFilter! = {}
     meta: String!
@@ -2316,27 +2383,6 @@ type Query {
     """Specify to sort results."""
     sorting: [UserBenefitDtoSort!]! = []
   ): UserBenefitDtoConnection!
-  userBusinesses(
-    """Specify to filter the records returned."""
-    filter: BusinessFilter! = {}
-    meta: String!
-
-    """Limit or page results."""
-    paging: OffsetPaging! = {limit: 10}
-
-    """Specify to sort results."""
-    sorting: [BusinessSort!]! = []
-  ): BusinessConnection!
-  userTickets(
-    """Specify to filter the records returned."""
-    filter: TicketFilter! = {}
-
-    """Limit or page results."""
-    paging: OffsetPaging! = {limit: 10}
-
-    """Specify to sort results."""
-    sorting: [TicketSort!]! = []
-  ): TicketSet!
   users(
     """Specify to filter the records returned."""
     filter: UserFilter! = {}
@@ -2732,12 +2778,7 @@ type Ticket {
   section: Section!
   updated: DateTime!
   user: User
-  validated: Boolean!
-}
-
-type TicketAgg {
-  id: ID!
-  ticketSet: [Ticket!]!
+  validated: DateTime
 }
 
 input TicketAggregateFilter {
@@ -2758,12 +2799,13 @@ input TicketAggregateFilter {
   updated: DateFieldComparison
   user: TicketAggregateFilterUserAggregateFilter
   userId: StringFieldComparison
-  validated: BooleanFieldComparison
+  validated: DateFieldComparison
 }
 
 input TicketAggregateFilterBusinessAggregateFilter {
   and: [TicketAggregateFilterBusinessAggregateFilter!]
   created: DateFieldComparison
+  currency: CurrencyFilterComparison
   id: IDFilterComparison
   name: StringFieldComparison
   or: [TicketAggregateFilterBusinessAggregateFilter!]
@@ -2833,6 +2875,8 @@ input TicketAggregateFilterUserAggregateFilter {
   avatarUrl: StringFieldComparison
   birthDate: DateFieldComparison
   created: DateFieldComparison
+  defaultBusinessId: StringFieldComparison
+  deleted: DateFieldComparison
   email: StringFieldComparison
   firstName: StringFieldComparison
   id: IDFilterComparison
@@ -2851,7 +2895,7 @@ type TicketAggregateGroupBy {
   sectionId: String
   updated(by: GroupBy! = DAY): DateTime
   userId: String
-  validated: Boolean
+  validated(by: GroupBy! = DAY): DateTime
 }
 
 type TicketAggregateResponse {
@@ -2901,7 +2945,7 @@ input TicketDeleteFilter {
   sectionId: StringFieldComparison
   updated: DateFieldComparison
   userId: StringFieldComparison
-  validated: BooleanFieldComparison
+  validated: DateFieldComparison
 }
 
 type TicketDeleteResponse {
@@ -2909,7 +2953,7 @@ type TicketDeleteResponse {
   id: ID
   price: Float
   updated: DateTime
-  validated: Boolean
+  validated: DateTime
 }
 
 input TicketFilter {
@@ -2930,12 +2974,13 @@ input TicketFilter {
   updated: DateFieldComparison
   user: TicketFilterUserFilter
   userId: StringFieldComparison
-  validated: BooleanFieldComparison
+  validated: DateFieldComparison
 }
 
 input TicketFilterBusinessFilter {
   and: [TicketFilterBusinessFilter!]
   created: DateFieldComparison
+  currency: CurrencyFilterComparison
   id: IDFilterComparison
   name: StringFieldComparison
   or: [TicketFilterBusinessFilter!]
@@ -3005,6 +3050,8 @@ input TicketFilterUserFilter {
   avatarUrl: StringFieldComparison
   birthDate: DateFieldComparison
   created: DateFieldComparison
+  defaultBusinessId: StringFieldComparison
+  deleted: DateFieldComparison
   email: StringFieldComparison
   firstName: StringFieldComparison
   id: IDFilterComparison
@@ -3023,6 +3070,7 @@ type TicketMaxAggregate {
   sectionId: String
   updated: DateTime
   userId: String
+  validated: DateTime
 }
 
 type TicketMinAggregate {
@@ -3034,11 +3082,12 @@ type TicketMinAggregate {
   sectionId: String
   updated: DateTime
   userId: String
+  validated: DateTime
 }
 
 type TicketSet {
-  invalid: [TicketAgg!]!
-  valid: [TicketAgg!]!
+  invalid: [UserTickets!]!
+  valid: [UserTickets!]!
 }
 
 input TicketSort {
@@ -3070,7 +3119,7 @@ input TicketSubscriptionFilter {
   sectionId: StringFieldComparison
   updated: DateFieldComparison
   userId: StringFieldComparison
-  validated: BooleanFieldComparison
+  validated: DateFieldComparison
 }
 
 type TicketSumAggregate {
@@ -3088,7 +3137,7 @@ input TicketUpdateFilter {
   sectionId: StringFieldComparison
   updated: DateFieldComparison
   userId: StringFieldComparison
-  validated: BooleanFieldComparison
+  validated: DateFieldComparison
 }
 
 input UpdateBenefit {
@@ -3101,6 +3150,7 @@ input UpdateBenefit {
 input UpdateBusiness {
   apiKey: String
   created: DateTime
+  currency: Currency
   id: ID
   logoUrl: String
   name: String
@@ -3293,7 +3343,7 @@ input UpdateManyVenuesInput {
 
 input UpdateMembership {
   created: DateTime
-  expiryDate: DateTime = "2025-09-23T17:32:53.046Z"
+  expiryDate: DateTime = "2025-09-26T11:01:22.841Z"
   id: ID
   points: Float = 0
   updated: DateTime
@@ -3521,6 +3571,11 @@ input UpdateOrder {
   updated: DateTime
 }
 
+input UpdatePassword {
+  password: String!
+  userId: ID!
+}
+
 input UpdateSeat {
   created: DateTime
   id: ID
@@ -3538,16 +3593,19 @@ input UpdateSection {
 }
 
 input UpdateTicket {
-  created: DateTime
-  id: ID
+  discountId: ID
+  eventId: ID
   price: Float
-  updated: DateTime
-  validated: Boolean
+  seatId: ID
+  sectionId: ID
+  userId: ID
+  validated: DateTime
 }
 
 input UpdateUser {
   avatarUrl: String
   defaultBusinessId: ID
+  deleted: DateTime
   email: String
   firstName: String
   lastName: String
@@ -3556,11 +3614,6 @@ input UpdateUser {
 
 input UpdateUserBenefitDto {
   created: DateTime
-}
-
-input UpdateUserPassword {
-  password: String!
-  userId: ID!
 }
 
 input UpdateVenue {
@@ -3581,6 +3634,7 @@ type User {
   birthDate: DateTime!
   created: DateTime!
   defaultBusiness: Business
+  deleted: DateTime
   email: String!
   firstName: String!
   id: ID!
@@ -3647,6 +3701,7 @@ input UserBenefitDtoFilterBenefitFilter {
 input UserBenefitDtoFilterBusinessFilter {
   and: [UserBenefitDtoFilterBusinessFilter!]
   created: DateFieldComparison
+  currency: CurrencyFilterComparison
   id: IDFilterComparison
   name: StringFieldComparison
   or: [UserBenefitDtoFilterBusinessFilter!]
@@ -3658,6 +3713,8 @@ input UserBenefitDtoFilterUserFilter {
   avatarUrl: StringFieldComparison
   birthDate: DateFieldComparison
   created: DateFieldComparison
+  defaultBusinessId: StringFieldComparison
+  deleted: DateFieldComparison
   email: StringFieldComparison
   firstName: StringFieldComparison
   id: IDFilterComparison
@@ -3698,6 +3755,13 @@ input UserBenefitDtoUpdateFilter {
   userId: StringFieldComparison
 }
 
+type UserBenefits {
+  available: [Benefit!]!
+  membershipPoints: Float!
+  unavailable: [Benefit!]!
+  used: [Benefit!]!
+}
+
 type UserConnection {
   """Array of nodes."""
   nodes: [User!]!
@@ -3714,6 +3778,8 @@ input UserDeleteFilter {
   avatarUrl: StringFieldComparison
   birthDate: DateFieldComparison
   created: DateFieldComparison
+  defaultBusinessId: StringFieldComparison
+  deleted: DateFieldComparison
   email: StringFieldComparison
   firstName: StringFieldComparison
   id: IDFilterComparison
@@ -3727,6 +3793,7 @@ type UserDeleteResponse {
   avatarUrl: String
   birthDate: DateTime
   created: DateTime
+  deleted: DateTime
   email: String
   firstName: String
   id: ID
@@ -3741,6 +3808,8 @@ input UserFilter {
   birthDate: DateFieldComparison
   created: DateFieldComparison
   defaultBusiness: UserFilterBusinessFilter
+  defaultBusinessId: StringFieldComparison
+  deleted: DateFieldComparison
   email: StringFieldComparison
   firstName: StringFieldComparison
   id: IDFilterComparison
@@ -3753,6 +3822,7 @@ input UserFilter {
 input UserFilterBusinessFilter {
   and: [UserFilterBusinessFilter!]
   created: DateFieldComparison
+  currency: CurrencyFilterComparison
   id: IDFilterComparison
   name: StringFieldComparison
   or: [UserFilterBusinessFilter!]
@@ -3783,6 +3853,8 @@ enum UserSortFields {
   avatarUrl
   birthDate
   created
+  defaultBusinessId
+  deleted
   email
   firstName
   id
@@ -3796,6 +3868,8 @@ input UserSubscriptionFilter {
   avatarUrl: StringFieldComparison
   birthDate: DateFieldComparison
   created: DateFieldComparison
+  defaultBusinessId: StringFieldComparison
+  deleted: DateFieldComparison
   email: StringFieldComparison
   firstName: StringFieldComparison
   id: IDFilterComparison
@@ -3805,11 +3879,18 @@ input UserSubscriptionFilter {
   updated: DateFieldComparison
 }
 
+type UserTickets {
+  id: ID!
+  ticketSet: [Ticket!]!
+}
+
 input UserUpdateFilter {
   and: [UserUpdateFilter!]
   avatarUrl: StringFieldComparison
   birthDate: DateFieldComparison
   created: DateFieldComparison
+  defaultBusinessId: StringFieldComparison
+  deleted: DateFieldComparison
   email: StringFieldComparison
   firstName: StringFieldComparison
   id: IDFilterComparison
@@ -3889,6 +3970,7 @@ input VenueFilter {
 input VenueFilterBusinessFilter {
   and: [VenueFilterBusinessFilter!]
   created: DateFieldComparison
+  currency: CurrencyFilterComparison
   id: IDFilterComparison
   name: StringFieldComparison
   or: [VenueFilterBusinessFilter!]

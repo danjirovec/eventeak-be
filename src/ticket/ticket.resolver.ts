@@ -9,25 +9,9 @@ import { CreateTicketDto } from './ticket.dto/ticket.create.dto';
 import { Order } from 'src/order/order.entity/order.entity';
 import { OrderDto } from 'src/order/order.dto/order.dto';
 import { CreateOrderDto } from 'src/order/order.dto/order.create.dto';
-import { TicketAggDto, TicketSetDto } from './ticket.dto/ticket.user.dto';
+import { TicketSetDto } from './ticket.dto/ticket.user.dto';
 import { TicketQuery } from './types';
-import { update } from 'tar';
-
-const groupBy = (arr: TicketDto[]): TicketAggDto[] => {
-  const grouped = arr.reduce((result: TicketAggDto, currentItem: TicketDto) => {
-    const { eventId } = currentItem;
-    if (!result[eventId]) {
-      result[eventId] = [];
-    }
-    result[eventId].push(currentItem);
-    return result;
-  }, {} as TicketAggDto);
-
-  return Object.entries(grouped).map(([eventId, tickets]) => ({
-    id: eventId,
-    ticketSet: tickets,
-  }));
-};
+import { groupBy } from 'src/utils/groupBy';
 
 @Resolver(() => TicketDto)
 export class TicketResolver {
@@ -41,7 +25,7 @@ export class TicketResolver {
 
   @Mutation(() => [TicketDto])
   @UseGuards(AuthGuard)
-  async createTicketsAndOrder(
+  async createTickets(
     @Args('order') orderInput: CreateOrderDto,
     @Args({ name: 'tickets', type: () => [CreateTicketDto] })
     ticketsInput: CreateTicketDto[],
@@ -78,7 +62,7 @@ export class TicketResolver {
 
   @Query(() => TicketSetDto)
   @UseGuards(AuthGuard)
-  async userTickets(@Args() query: TicketQuery): Promise<TicketSetDto> {
+  async getUserTickets(@Args() query: TicketQuery): Promise<TicketSetDto> {
     const date = new Date();
     date.setMonth(date.getMonth() - 1);
 

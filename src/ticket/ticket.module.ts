@@ -11,6 +11,7 @@ import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { JwtModule } from '@nestjs/jwt';
 import { TicketResolver } from './ticket.resolver';
 import { OrderModule } from 'src/order/order.module';
+import { UpdateTicketDto } from './ticket.dto/ticket.update.dto';
 
 @Module({
   providers: [TicketResolver],
@@ -27,6 +28,7 @@ import { OrderModule } from 'src/order/order.module';
           EntityClass: Ticket,
           DTOClass: TicketDto,
           CreateDTOClass: CreateTicketDto,
+          UpdateDTOClass: UpdateTicketDto,
           enableSubscriptions: true,
           guards: [AuthGuard],
           pagingStrategy: PagingStrategies.OFFSET,

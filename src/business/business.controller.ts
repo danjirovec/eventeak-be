@@ -10,14 +10,18 @@ import {
 import { BusinessService } from './business.service';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { Response } from 'express';
+import { ConfigService } from '@nestjs/config';
 
 @Controller('invite')
 export class BusinessController {
-  constructor(private businessService: BusinessService) {}
+  constructor(
+    private businessService: BusinessService,
+    readonly configService: ConfigService,
+  ) {}
 
   @Post()
   @UseGuards(AuthGuard)
-  async inviteUser(@Body() body: { email: string; business: string }) {
+  async sendInvite(@Body() body: { email: string; business: string }) {
     await this.businessService.sendInvite(body.email, body.business);
     return { status: 'OK' };
   }
@@ -28,6 +32,11 @@ export class BusinessController {
     @Res() res: Response,
   ) {
     await this.businessService.createBusinessUser(token);
-    return res.redirect('http://localhost:5173/login');
+    const env = this.configService.get<string>('ENVIRONMENT');
+    const redirectUrl =
+      env == 'dev'
+        ? this.configService.get<string>('LOCAL_CLIENT_URL')
+        : this.configService.get<string>('CLIENT_URL');
+    return res.redirect(`${redirectUrl}/login`);
   }
 }

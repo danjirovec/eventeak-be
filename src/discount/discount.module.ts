@@ -9,9 +9,12 @@ import { DiscountDto } from './discount.dto/discount.dto';
 import { CreateDiscountDto } from './discount.dto/discount.create.dto';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { JwtModule } from '@nestjs/jwt';
+import { DiscountResolver } from './discount.resolver';
 
 @Module({
+  providers: [DiscountResolver],
   imports: [
+    NestjsQueryTypeOrmModule.forFeature([Discount]),
     NestjsQueryGraphQLModule.forFeature({
       imports: [NestjsQueryTypeOrmModule.forFeature([Discount]), JwtModule],
       resolvers: [
@@ -27,5 +30,6 @@ import { JwtModule } from '@nestjs/jwt';
       ],
     }),
   ],
+  exports: [NestjsQueryTypeOrmModule.forFeature([Discount])],
 })
 export class DiscountModule {}

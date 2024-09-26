@@ -52,3 +52,13 @@ export enum Role {
 registerEnumType(Role, {
   name: 'Role',
 });
+
+export enum Currency {
+  EUR = 'EUR',
+  USD = 'USD',
+  CZK = 'CZK',
+}
+
+registerEnumType(Currency, {
+  name: 'Currency',
+});

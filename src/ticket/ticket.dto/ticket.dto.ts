@@ -5,10 +5,10 @@ import {
   IDField,
 } from '@ptc-org/nestjs-query-graphql';
 import {
-  IsBoolean,
   IsDate,
   IsNotEmpty,
   IsNumber,
+  IsOptional,
   IsString,
   IsUUID,
 } from 'class-validator';
@@ -39,10 +39,10 @@ export class TicketDto {
   @FilterableField()
   price!: number;
 
-  @IsNotEmpty()
-  @IsBoolean()
-  @FilterableField()
-  validated!: boolean;
+  @IsOptional()
+  @IsDate()
+  @FilterableField({ nullable: true })
+  validated?: Date;
 
   @IsString()
   @FilterableField({ filterOnly: true })

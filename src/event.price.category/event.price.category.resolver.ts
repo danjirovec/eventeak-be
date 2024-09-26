@@ -24,9 +24,9 @@ export class EventPriceCategoryResolver {
 
   @Query(() => EventPriceCategoryAvailableDto)
   @UseGuards(AuthGuard)
-  async prices(
+  async getEventPrices(
     @Args() query: EventPriceCategoryQuery,
-    @Args('meta', { nullable: true }) meta?: string,
+    @Args('meta') meta: string,
   ): Promise<EventPriceCategoryAvailableDto> {
     const prices = await this.eventPriceCategoryService.query({
       filter: query.filter,

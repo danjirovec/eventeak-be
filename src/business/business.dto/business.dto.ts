@@ -1,6 +1,15 @@
 import { Field, GraphQLISODateTime, ID, ObjectType } from '@nestjs/graphql';
 import { FilterableField, IDField } from '@ptc-org/nestjs-query-graphql';
-import { IsDate, IsNotEmpty, IsString, IsUUID } from 'class-validator';
+import {
+  IsDate,
+  IsDefined,
+  IsEnum,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsUUID,
+} from 'class-validator';
+import { Currency } from 'src/enum/enum';
 
 @ObjectType('Business')
 export class BusinessDto {
@@ -23,6 +32,11 @@ export class BusinessDto {
   @IsString()
   @Field({ nullable: true })
   logoUrl?: string;
+
+  @IsDefined()
+  @IsEnum(Currency, { each: true })
+  @FilterableField(() => Currency)
+  currency!: Currency;
 
   @IsNotEmpty()
   @IsDate()

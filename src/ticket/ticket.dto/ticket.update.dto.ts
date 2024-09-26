@@ -7,12 +7,12 @@ import {
   IsDate,
 } from 'class-validator';
 
-@InputType('CreateTicket')
-export class CreateTicketDto {
-  @IsNotEmpty()
+@InputType('UpdateTicket')
+export class UpdateTicketDto {
+  @IsOptional()
   @IsNumber()
-  @Field()
-  price!: number;
+  @Field({ nullable: true })
+  price?: number;
 
   @IsOptional()
   @IsDate()
@@ -36,16 +36,11 @@ export class CreateTicketDto {
 
   @IsNotEmpty()
   @IsString()
-  @Field(() => ID)
+  @Field(() => ID, { nullable: true })
   eventId!: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
-  @Field(() => ID)
+  @Field(() => ID, { nullable: true })
   sectionId!: string;
-
-  @IsNotEmpty()
-  @IsString()
-  @Field(() => ID)
-  businessId!: string;
 }

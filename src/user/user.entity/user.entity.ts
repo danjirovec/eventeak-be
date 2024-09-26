@@ -39,6 +39,9 @@ export class User {
   @Column()
   birthDate!: Date;
 
+  @Column({ nullable: true })
+  deleted?: Date;
+
   @CreateDateColumn()
   created!: Date;
 

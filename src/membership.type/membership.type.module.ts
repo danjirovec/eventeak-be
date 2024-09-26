@@ -9,9 +9,12 @@ import { MembershipTypeDto } from './membership.type.dto/membership.type.dto';
 import { MembershipType } from './membership.type.entity/membership.type.entity';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { JwtModule } from '@nestjs/jwt';
+import { MembershipTypeResolver } from './membership.type.resolver';
 
 @Module({
+  providers: [MembershipTypeResolver],
   imports: [
+    NestjsQueryTypeOrmModule.forFeature([MembershipType]),
     NestjsQueryGraphQLModule.forFeature({
       imports: [
         NestjsQueryTypeOrmModule.forFeature([MembershipType]),
@@ -30,5 +33,6 @@ import { JwtModule } from '@nestjs/jwt';
       ],
     }),
   ],
+  exports: [NestjsQueryTypeOrmModule.forFeature([MembershipType])],
 })
 export class MembershipTypeModule {}

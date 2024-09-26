@@ -1,8 +1,8 @@
 import { IsOptional, IsString, IsStrongPassword } from 'class-validator';
 import { InputType, Field, ID } from '@nestjs/graphql';
 
-@InputType('UpdateUserPassword')
-export class UpdateUserPasswordDto {
+@InputType('UpdatePassword')
+export class UpdatePasswordDto {
   @IsOptional()
   @IsString()
   @Field(() => ID)

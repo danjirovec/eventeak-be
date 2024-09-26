@@ -1,5 +1,5 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { UseGuards } from '@nestjs/common';
+import { BadRequestException, UseGuards } from '@nestjs/common';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { DataSource, Filter } from 'typeorm';
 import { BusinessDto } from './business.dto/business.dto';
@@ -12,7 +12,7 @@ import { InjectQueryService, QueryService } from '@ptc-org/nestjs-query-core';
 import { BusinessConnection, BusinessQuery } from './types';
 import { ConnectionType } from '@ptc-org/nestjs-query-graphql';
 import { BusinessUserDto } from 'src/business.user/business.user.dto/business.user.dto';
-import { CountsBusinessDto } from './business.dto/business.counts.dto';
+import { BusinessMetricsDto } from './business.dto/business.metrics.dto';
 import { Membership } from 'src/membership/membership.entity/membership.entity';
 import { User } from 'src/user/user.entity/user.entity';
 import { UserDto } from 'src/user/user.dto/user.dto';
@@ -37,9 +37,7 @@ export class BusinessResolver {
 
   @Mutation(() => BusinessDto)
   @UseGuards(AuthGuard)
-  async createBusinessAndBusinessUserAdmin(
-    @Args('input') input: CreateBusinessDto,
-  ) {
+  async createBusiness(@Args('input') input: CreateBusinessDto) {
     let newBusiness = null;
     const queryRunner = this.dataSource.createQueryRunner();
 
@@ -61,6 +59,7 @@ export class BusinessResolver {
       await queryRunner.commitTransaction();
     } catch (err) {
       await queryRunner.rollbackTransaction();
+      throw new BadRequestException(err);
     } finally {
       await queryRunner.release();
     }
@@ -69,7 +68,7 @@ export class BusinessResolver {
 
   @Query(() => BusinessConnection)
   @UseGuards(AuthGuard)
-  async userBusinesses(
+  async getUserBusinesses(
     @Args() query: BusinessQuery,
     @Args('meta') meta: string,
   ): Promise<ConnectionType<BusinessDto>> {
@@ -99,11 +98,11 @@ export class BusinessResolver {
     );
   }
 
-  @Query(() => CountsBusinessDto)
+  @Query(() => BusinessMetricsDto)
   @UseGuards(AuthGuard)
-  async businessCounts(
-    @Args('meta', { nullable: true }) meta?: string,
-  ): Promise<CountsBusinessDto> {
+  async getBusinessMetrics(
+    @Args('meta') meta: string,
+  ): Promise<BusinessMetricsDto> {
     const metaParsed = JSON.parse(meta);
     const counts = { events: [], memberships: [], customers: [] };
     const businessId = metaParsed.businessId;

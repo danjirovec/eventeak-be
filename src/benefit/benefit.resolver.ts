@@ -1,4 +1,4 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Query, Resolver } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { InjectQueryService, QueryService } from '@ptc-org/nestjs-query-core';
@@ -8,7 +8,7 @@ import { BenefitDto } from './benefit.dto/benefit.dto';
 import { Benefit } from './benefit.entity/benefit.entity';
 import { UserBenefit } from 'src/user.benefit/user.benefit.entity/user.benefit.entity';
 import { UserBenefitDto } from 'src/user.benefit/user.benefit.dto/user.benefit.dto';
-import { BenefitsAndMembershipDto } from './benefit.dto/benefitsAndMemebership.dto';
+import { UserBenefitsDto } from './benefit.dto/user.benefits.dto';
 import { BenefitQuery } from './types';
 
 @Resolver(() => BenefitDto)
@@ -22,12 +22,12 @@ export class BenefitResolver {
     readonly membershipService: QueryService<MembershipDto>,
   ) {}
 
-  @Query(() => BenefitsAndMembershipDto)
+  @Query(() => UserBenefitsDto)
   @UseGuards(AuthGuard)
-  async benefitsAndMembership(
+  async getUserBenefits(
     @Args() query: BenefitQuery,
     @Args('meta') meta: string,
-  ): Promise<BenefitsAndMembershipDto> {
+  ): Promise<UserBenefitsDto> {
     const membership = await this.membershipService.query({
       filter: {
         and: [query.filter, { userId: { eq: meta } }],

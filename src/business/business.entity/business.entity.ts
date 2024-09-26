@@ -1,3 +1,4 @@
+import { Currency } from 'src/enum/enum';
 import {
   Column,
   CreateDateColumn,
@@ -19,6 +20,9 @@ export class Business {
 
   @Column({ nullable: true })
   logoUrl?: string;
+
+  @Column({ type: 'enum', enum: Currency })
+  currency!: Currency;
 
   @CreateDateColumn()
   created!: Date;
