@@ -6,7 +6,6 @@ import {
   IsOptional,
   IsEnum,
   IsDefined,
-  IsDateString,
   IsDate,
 } from 'class-validator';
 import { Category, Language } from 'src/enum/enum';

@@ -54,6 +54,10 @@ export class TicketDto {
 
   @IsString()
   @FilterableField({ filterOnly: true })
+  seatId?: string;
+
+  @IsString()
+  @FilterableField({ filterOnly: true })
   businessId?: string;
 
   @IsString()

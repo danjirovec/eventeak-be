@@ -29,7 +29,7 @@ export class SectionDto {
 
   @IsOptional()
   @IsNumber()
-  @FilterableField()
+  @FilterableField({ nullable: true })
   capacity?: number;
 
   @IsString()

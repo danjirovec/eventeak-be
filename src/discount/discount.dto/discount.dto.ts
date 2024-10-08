@@ -32,6 +32,10 @@ export class DiscountDto {
   @FilterableField()
   percentage!: number;
 
+  @IsString()
+  @FilterableField({ filterOnly: true })
+  businessId?: string;
+
   @IsNotEmpty()
   @IsDate()
   @FilterableField(() => GraphQLISODateTime)

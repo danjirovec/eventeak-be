@@ -16,7 +16,7 @@ import { BusinessDto } from 'src/business/business.dto/business.dto';
 import { UserDto } from 'src/user/user.dto/user.dto';
 
 @ObjectType('Order')
-@FilterableRelation('user', () => UserDto)
+@FilterableRelation('user', () => UserDto, { nullable: true })
 @FilterableRelation('business', () => BusinessDto)
 export class OrderDto {
   @IsNotEmpty()

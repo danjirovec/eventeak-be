@@ -58,7 +58,7 @@ export class Ticket {
   @Column({ name: 'seat_id', nullable: true })
   seatId!: string;
 
-  @OneToOne((type) => Seat, { nullable: true })
+  @ManyToOne((type) => Seat, { nullable: true })
   @JoinColumn({ name: 'seat_id' })
   seat!: Seat;
 

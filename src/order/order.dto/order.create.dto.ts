@@ -10,8 +10,8 @@ export class CreateOrderDto {
 
   @IsNotEmpty()
   @IsString()
-  @Field(() => ID)
-  userId!: string;
+  @Field(() => ID, { nullable: true })
+  userId?: string;
 
   @IsNotEmpty()
   @IsString()

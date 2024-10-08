@@ -12,6 +12,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { SeatModule } from 'src/seat/seat.module';
 import { VenueResolver } from './venue.resolver';
 import { SectionModule } from 'src/section/section.module';
+import { EventPriceCategoryModule } from 'src/event.price.category/event.price.category.module';
 
 @Module({
   providers: [VenueResolver],

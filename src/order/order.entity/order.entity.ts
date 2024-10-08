@@ -18,10 +18,10 @@ export class Order {
   @Column()
   total!: number;
 
-  @Column({ name: 'user_id' })
+  @Column({ name: 'user_id', nullable: true })
   userId!: string;
 
-  @ManyToOne((type) => User)
+  @ManyToOne((type) => User, { nullable: true })
   @JoinColumn({ name: 'user_id' })
   user!: User;
 

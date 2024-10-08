@@ -10,12 +10,12 @@ import { Ticket } from 'src/ticket/ticket.entity/ticket.entity';
 import { Section } from 'src/section/section.entity/section.entity';
 import { SectionDto } from 'src/section/section.dto/section.dto';
 import { EventPriceCategoryAvailableDto } from './event.price.category.dto/event.price.category.available';
+import { EventPriceCategoryService } from './event.price.category.service';
 
 @Resolver(() => EventPriceCategoryDto)
 export class EventPriceCategoryResolver {
   constructor(
-    @InjectQueryService(EventPriceCategory)
-    readonly eventPriceCategoryService: QueryService<EventPriceCategoryDto>,
+    readonly eventPriceCategoryService: EventPriceCategoryService,
     @InjectQueryService(Ticket)
     readonly ticketsService: QueryService<TicketDto>,
     @InjectQueryService(Section)
@@ -28,30 +28,12 @@ export class EventPriceCategoryResolver {
     @Args() query: EventPriceCategoryQuery,
     @Args('meta') meta: string,
   ): Promise<EventPriceCategoryAvailableDto> {
-    const prices = await this.eventPriceCategoryService.query({
-      filter: query.filter,
-      paging: query.paging,
-      sorting: query.sorting,
-    });
-
-    const result = [];
-    const counts = [];
-
-    for (const price of prices) {
-      const count = await this.ticketsService.count({
-        and: [
-          { eventId: { eq: meta } },
-          { sectionId: { eq: price.sectionId } },
-        ],
-      });
-      const section = await this.sectionsService.getById(price.sectionId);
-
-      if (count < section.capacity) {
-        result.push(price);
-        counts.push(section.capacity - count);
-      }
-    }
-
-    return { nodes: result, counts: counts };
+    const epcs = await this.eventPriceCategoryService.getEventPrices(
+      meta,
+      query.filter,
+      query.paging,
+      query.sorting,
+    );
+    return epcs;
   }
 }

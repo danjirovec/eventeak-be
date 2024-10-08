@@ -3,7 +3,7 @@ import {
   PagingStrategies,
 } from '@ptc-org/nestjs-query-graphql';
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { CreateEventDto } from './event.dto/event.create.dto';
 import { EventDto } from './event.dto/event.dto';
 import { Event } from './event.entity/event.entity';
@@ -17,9 +17,14 @@ import { VenueModule } from 'src/venue/venue.module';
 import { TicketModule } from 'src/ticket/ticket.module';
 import { SeatModule } from 'src/seat/seat.module';
 import { SectionModule } from 'src/section/section.module';
+import { UserModule } from 'src/user/user.module';
+import { BusinessUserModule } from 'src/business.user/business.user.module';
+import { DiscountModule } from 'src/discount/discount.module';
+import { EventPriceCategoryService } from 'src/event.price.category/event.price.category.service';
+import { OrderModule } from 'src/order/order.module';
 
 @Module({
-  providers: [EventResolver],
+  providers: [EventResolver, EventPriceCategoryService],
   imports: [
     NestjsQueryTypeOrmModule.forFeature([Event]),
     NestjsQueryGraphQLModule.forFeature({
@@ -32,6 +37,10 @@ import { SectionModule } from 'src/section/section.module';
         TicketModule,
         SeatModule,
         SectionModule,
+        UserModule,
+        BusinessUserModule,
+        DiscountModule,
+        OrderModule,
       ],
       resolvers: [
         {

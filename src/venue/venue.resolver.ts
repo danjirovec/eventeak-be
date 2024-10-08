@@ -10,6 +10,9 @@ import { CreateVenueDto } from './venue.dto/venue.create.dto';
 import { DataSource } from 'typeorm';
 import { SectionDto } from 'src/section/section.dto/section.dto';
 import { Section } from 'src/section/section.entity/section.entity';
+import { transformVenueData } from 'src/utils/transformVenueData';
+import { EventPriceCategory } from 'src/event.price.category/event.price.category.entity/event.price.category.entity';
+import { EventPriceCategoryDto } from 'src/event.price.category/event.price.category.dto/event.price.category.dto';
 
 @Resolver(() => VenueDto)
 export class VenueResolver {
@@ -35,29 +38,46 @@ export class VenueResolver {
     await queryRunner.startTransaction();
     try {
       if (input.hasSeats) {
-        venue = await this.venuesService.createOne({ ...input });
-        for (const section of input.data.categories) {
+        const venueData = transformVenueData(input.data);
+        venue = await this.venuesService.createOne({
+          ...input,
+          data: venueData,
+        });
+
+        for (const section of venueData.categories) {
           sections.push({ name: section[0], venueId: venue.id });
         }
         const newSections = await this.sectionsService.createMany(sections);
-        for (const group in input.data.groups) {
+
+        for (const row in venueData.rows) {
           const section = newSections.find(
-            (item) => item.name == String(input.data.groups[group].category),
+            (item) => item.name == (venueData.rows[row].category as string),
           );
-          for (const seat of input.data.groups[group].seats) {
+          venueData.rows[row].seats.map((seat, index) => {
+            venueData.rows[row].seats[index].sectionId = section.id;
             seats.push({
-              row: input.data.groups[group].label,
+              row: venueData.rows[row].label,
               seat: seat.number,
               sectionId: section.id,
             });
-          }
+          });
         }
-        await this.seatsService.createMany(seats);
+        const newSeats = await this.seatsService.createMany(seats);
+        for (const row in venueData.rows) {
+          venueData.rows[row].seats.map((seat, index) => {
+            venueData.rows[row].seats[index].seatId = newSeats[index].id;
+          });
+        }
+        const { id, ...rest } = venue;
+        await this.venuesService.updateOne(id, {
+          ...rest,
+          data: venueData,
+        });
       } else {
         venue = await this.venuesService.createOne({ ...input });
         if (!input.sections || !input.sections.length) {
           sections.push({
-            name: 'No section',
+            name: 'None',
             capacity: venue.capacity,
             venueId: venue.id,
           });

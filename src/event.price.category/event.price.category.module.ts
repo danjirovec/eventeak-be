@@ -13,9 +13,11 @@ import { UpdateEventPriceCategoryDto } from './event.price.category.dto/event.pr
 import { EventPriceCategoryResolver } from './event.price.category.resolver';
 import { TicketModule } from 'src/ticket/ticket.module';
 import { SectionModule } from 'src/section/section.module';
+import { EventPriceCategoryService } from './event.price.category.service';
+import { EventModule } from 'src/event/event.module';
 
 @Module({
-  providers: [EventPriceCategoryResolver],
+  providers: [EventPriceCategoryResolver, EventPriceCategoryService],
   imports: [
     NestjsQueryTypeOrmModule.forFeature([EventPriceCategory]),
     NestjsQueryGraphQLModule.forFeature({
@@ -25,12 +27,14 @@ import { SectionModule } from 'src/section/section.module';
         TicketModule,
         SectionModule,
       ],
+      services: [EventPriceCategoryService],
       resolvers: [
         {
           EntityClass: EventPriceCategory,
           DTOClass: EventPriceCategoryDto,
           CreateDTOClass: CreateEventPriceCategoryDto,
           UpdateDTOClass: UpdateEventPriceCategoryDto,
+          ServiceClass: EventPriceCategoryService,
           enableSubscriptions: true,
           guards: [AuthGuard],
           pagingStrategy: PagingStrategies.OFFSET,
@@ -39,6 +43,9 @@ import { SectionModule } from 'src/section/section.module';
       ],
     }),
   ],
-  exports: [NestjsQueryTypeOrmModule.forFeature([EventPriceCategory])],
+  exports: [
+    NestjsQueryTypeOrmModule.forFeature([EventPriceCategory]),
+    EventPriceCategoryService,
+  ],
 })
 export class EventPriceCategoryModule {}

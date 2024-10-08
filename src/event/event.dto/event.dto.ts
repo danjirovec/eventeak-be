@@ -7,7 +7,6 @@ import {
 } from '@ptc-org/nestjs-query-graphql';
 import {
   IsDate,
-  IsDateString,
   IsDefined,
   IsEnum,
   IsNotEmpty,
@@ -29,7 +28,6 @@ import JSON from 'graphql-type-json';
 @FilterableRelation('eventTemplate', () => EventTemplateDto)
 export class EventDto {
   @IsNotEmpty()
-  @IsUUID()
   @IDField(() => ID)
   id!: string;
 
@@ -76,6 +74,10 @@ export class EventDto {
   @IsString()
   @FilterableField({ filterOnly: true })
   businessId?: string;
+
+  @IsString()
+  @FilterableField({ filterOnly: true })
+  eventTemplateId?: string;
 
   @IsOptional()
   @Field(() => JSON, { nullable: true })

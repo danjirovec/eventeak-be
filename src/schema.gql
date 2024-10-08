@@ -632,7 +632,7 @@ input CreateOneVenueInput {
 input CreateOrder {
   businessId: ID!
   total: Float!
-  userId: ID!
+  userId: ID
 }
 
 input CreateOrderSubscriptionFilterInput {
@@ -671,6 +671,11 @@ input CreateTicket {
   sectionId: ID!
   userId: ID
   validated: DateTime
+}
+
+input CreateTicketOrder {
+  order: CreateOrder!
+  tickets: [CreateTicket!]!
 }
 
 input CreateTicketSubscriptionFilterInput {
@@ -1034,6 +1039,7 @@ type DiscountConnection {
 
 input DiscountDeleteFilter {
   and: [DiscountDeleteFilter!]
+  businessId: StringFieldComparison
   created: DateFieldComparison
   id: IDFilterComparison
   name: StringFieldComparison
@@ -1053,6 +1059,7 @@ type DiscountDeleteResponse {
 input DiscountFilter {
   and: [DiscountFilter!]
   business: DiscountFilterBusinessFilter
+  businessId: StringFieldComparison
   created: DateFieldComparison
   id: IDFilterComparison
   name: StringFieldComparison
@@ -1078,6 +1085,7 @@ input DiscountSort {
 }
 
 enum DiscountSortFields {
+  businessId
   created
   id
   name
@@ -1087,6 +1095,7 @@ enum DiscountSortFields {
 
 input DiscountSubscriptionFilter {
   and: [DiscountSubscriptionFilter!]
+  businessId: StringFieldComparison
   created: DateFieldComparison
   id: IDFilterComparison
   name: StringFieldComparison
@@ -1097,6 +1106,7 @@ input DiscountSubscriptionFilter {
 
 input DiscountUpdateFilter {
   and: [DiscountUpdateFilter!]
+  businessId: StringFieldComparison
   created: DateFieldComparison
   id: IDFilterComparison
   name: StringFieldComparison
@@ -1123,6 +1133,14 @@ type Event {
   venueData: JSON
 }
 
+type EventCheckoutDto {
+  discounts: [Discount!]!
+  eventPriceCategories: EventPriceCategoryAvailable
+  events: [Event!]!
+  tickets: [Ticket!]
+  users: [User!]!
+}
+
 type EventConnection {
   """Array of nodes."""
   nodes: [Event!]!
@@ -1140,6 +1158,7 @@ input EventDeleteFilter {
   category: CategoryFilterComparison
   created: DateFieldComparison
   date: DateFieldComparison
+  eventTemplateId: StringFieldComparison
   id: IDFilterComparison
   language: LanguageFilterComparison
   length: NumberFieldComparison
@@ -1172,6 +1191,7 @@ input EventFilter {
   created: DateFieldComparison
   date: DateFieldComparison
   eventTemplate: EventFilterEventTemplateFilter
+  eventTemplateId: StringFieldComparison
   id: IDFilterComparison
   language: LanguageFilterComparison
   length: NumberFieldComparison
@@ -1407,6 +1427,7 @@ enum EventSortFields {
   category
   created
   date
+  eventTemplateId
   id
   language
   length
@@ -1421,6 +1442,7 @@ input EventSubscriptionFilter {
   category: CategoryFilterComparison
   created: DateFieldComparison
   date: DateFieldComparison
+  eventTemplateId: StringFieldComparison
   id: IDFilterComparison
   language: LanguageFilterComparison
   length: NumberFieldComparison
@@ -1577,6 +1599,7 @@ input EventUpdateFilter {
   category: CategoryFilterComparison
   created: DateFieldComparison
   date: DateFieldComparison
+  eventTemplateId: StringFieldComparison
   id: IDFilterComparison
   language: LanguageFilterComparison
   length: NumberFieldComparison
@@ -1902,7 +1925,7 @@ type Mutation {
   createOneUser(input: CreateOneUserInput!): User!
   createOneUserBenefitDto(input: CreateOneUserBenefitDtoInput!): UserBenefitDto!
   createOneVenue(input: CreateOneVenueInput!): Venue!
-  createTickets(order: CreateOrder!, tickets: [CreateTicket!]!): [Ticket!]!
+  createTickets(input: CreateTicketOrder!): Event!
   createVenue(input: CreateVenue!): Venue!
   deleteManyBenefits(input: DeleteManyBenefitsInput!): DeleteManyResponse!
   deleteManyBusinessUsers(input: DeleteManyBusinessUsersInput!): DeleteManyResponse!
@@ -2015,7 +2038,7 @@ type Order {
   id: ID!
   total: Float!
   updated: DateTime!
-  user: User!
+  user: User
 }
 
 type OrderConnection {
@@ -2223,6 +2246,7 @@ type Query {
     sorting: [EventSort!]! = []
   ): EventConnection!
   getBusinessMetrics(meta: String!): BusinessMetrics!
+  getEventCheckout(meta: String!): EventCheckoutDto!
   getEventPrices(
     """Specify to filter the records returned."""
     filter: EventPriceCategoryFilter! = {}
@@ -2531,7 +2555,7 @@ input SeatUpdateFilter {
 }
 
 type Section {
-  capacity: Float!
+  capacity: Float
   created: DateTime!
   id: ID!
   name: String!
@@ -2794,6 +2818,7 @@ input TicketAggregateFilter {
   order: TicketAggregateFilterOrderAggregateFilter
   price: NumberFieldComparison
   seat: TicketAggregateFilterSeatAggregateFilter
+  seatId: StringFieldComparison
   section: TicketAggregateFilterSectionAggregateFilter
   sectionId: StringFieldComparison
   updated: DateFieldComparison
@@ -2814,6 +2839,7 @@ input TicketAggregateFilterBusinessAggregateFilter {
 
 input TicketAggregateFilterDiscountAggregateFilter {
   and: [TicketAggregateFilterDiscountAggregateFilter!]
+  businessId: StringFieldComparison
   created: DateFieldComparison
   id: IDFilterComparison
   name: StringFieldComparison
@@ -2828,6 +2854,7 @@ input TicketAggregateFilterEventAggregateFilter {
   category: CategoryFilterComparison
   created: DateFieldComparison
   date: DateFieldComparison
+  eventTemplateId: StringFieldComparison
   id: IDFilterComparison
   language: LanguageFilterComparison
   length: NumberFieldComparison
@@ -2892,6 +2919,7 @@ type TicketAggregateGroupBy {
   eventId: String
   id: ID
   price: Float
+  seatId: String
   sectionId: String
   updated(by: GroupBy! = DAY): DateTime
   userId: String
@@ -2928,6 +2956,7 @@ type TicketCountAggregate {
   eventId: Int
   id: Int
   price: Int
+  seatId: Int
   sectionId: Int
   updated: Int
   userId: Int
@@ -2942,6 +2971,7 @@ input TicketDeleteFilter {
   id: IDFilterComparison
   or: [TicketDeleteFilter!]
   price: NumberFieldComparison
+  seatId: StringFieldComparison
   sectionId: StringFieldComparison
   updated: DateFieldComparison
   userId: StringFieldComparison
@@ -2969,6 +2999,7 @@ input TicketFilter {
   order: TicketFilterOrderFilter
   price: NumberFieldComparison
   seat: TicketFilterSeatFilter
+  seatId: StringFieldComparison
   section: TicketFilterSectionFilter
   sectionId: StringFieldComparison
   updated: DateFieldComparison
@@ -2989,6 +3020,7 @@ input TicketFilterBusinessFilter {
 
 input TicketFilterDiscountFilter {
   and: [TicketFilterDiscountFilter!]
+  businessId: StringFieldComparison
   created: DateFieldComparison
   id: IDFilterComparison
   name: StringFieldComparison
@@ -3003,6 +3035,7 @@ input TicketFilterEventFilter {
   category: CategoryFilterComparison
   created: DateFieldComparison
   date: DateFieldComparison
+  eventTemplateId: StringFieldComparison
   id: IDFilterComparison
   language: LanguageFilterComparison
   length: NumberFieldComparison
@@ -3067,6 +3100,7 @@ type TicketMaxAggregate {
   eventId: String
   id: ID
   price: Float
+  seatId: String
   sectionId: String
   updated: DateTime
   userId: String
@@ -3079,6 +3113,7 @@ type TicketMinAggregate {
   eventId: String
   id: ID
   price: Float
+  seatId: String
   sectionId: String
   updated: DateTime
   userId: String
@@ -3102,6 +3137,7 @@ enum TicketSortFields {
   eventId
   id
   price
+  seatId
   sectionId
   updated
   userId
@@ -3116,6 +3152,7 @@ input TicketSubscriptionFilter {
   id: IDFilterComparison
   or: [TicketSubscriptionFilter!]
   price: NumberFieldComparison
+  seatId: StringFieldComparison
   sectionId: StringFieldComparison
   updated: DateFieldComparison
   userId: StringFieldComparison
@@ -3134,6 +3171,7 @@ input TicketUpdateFilter {
   id: IDFilterComparison
   or: [TicketUpdateFilter!]
   price: NumberFieldComparison
+  seatId: StringFieldComparison
   sectionId: StringFieldComparison
   updated: DateFieldComparison
   userId: StringFieldComparison
@@ -3343,7 +3381,7 @@ input UpdateManyVenuesInput {
 
 input UpdateMembership {
   created: DateTime
-  expiryDate: DateTime = "2025-09-26T11:01:22.841Z"
+  expiryDate: DateTime = "2025-10-08T19:31:37.293Z"
   id: ID
   points: Float = 0
   updated: DateTime
