@@ -4,6 +4,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -21,6 +22,7 @@ export class Discount {
   @Column()
   percentage!: number;
 
+  @Index()
   @Column({ name: 'business_id' })
   businessId!: string;
 

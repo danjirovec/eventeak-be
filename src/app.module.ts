@@ -17,10 +17,13 @@ import { TicketModule } from './ticket/ticket.module';
 import { OrderModule } from './order/order.module';
 import { MembershipTypeModule } from './membership.type/membership.type.module';
 import { SectionModule } from './section/section.module';
-import { EventPriceCategoryModule } from './event.price.category/event.price.category.module';
 import { BusinessUserModule } from './business.user/business.user.module';
 import { DiscountModule } from './discount/discount.module';
 import { MailModule } from './mail/mail.module';
+import { EventDiscountModule } from './event.discount/event.discount.module';
+import { RowModule } from './row/row.module';
+import { PriceCategoryModule } from './price.category/price.category.module';
+import { EventPrice } from './event.price/event.price.entity/event.price.category.entity';
 
 @Module({
   imports: [
@@ -54,15 +57,18 @@ import { MailModule } from './mail/mail.module';
     MembershipModule,
     BenefitModule,
     SeatModule,
+    RowModule,
     UserBenefitModule,
     TicketModule,
     OrderModule,
     MembershipTypeModule,
     SectionModule,
-    EventPriceCategoryModule,
+    PriceCategoryModule,
     BusinessModule,
     BusinessUserModule,
     DiscountModule,
+    EventDiscountModule,
+    EventPrice,
     MailModule,
   ],
 })

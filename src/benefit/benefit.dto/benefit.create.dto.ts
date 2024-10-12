@@ -33,4 +33,9 @@ export class CreateBenefitDto {
   @IsString()
   @Field(() => ID)
   businessId!: string;
+
+  @IsOptional()
+  @IsString()
+  @Field(() => ID, { nullable: true })
+  membershipTypeId?: string;
 }

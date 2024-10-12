@@ -5,6 +5,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryColumn,
@@ -12,22 +13,25 @@ import {
 } from 'typeorm';
 
 @Entity()
+@Index(['businessId', 'created'])
+@Index(['businessId', 'userId'])
 export class BusinessUser {
-  @PrimaryColumn('uuid', { name: 'business_id' })
-  businessId!: string;
-
   @PrimaryColumn('uuid', { name: 'user_id' })
   userId!: string;
-
-  @ManyToOne((type) => Business, (business: Business) => business.id)
-  @JoinColumn({ name: 'business_id' })
-  business!: Business;
 
   @ManyToOne((type) => User, (user: User) => user.id)
   @JoinColumn({ name: 'user_id' })
   user!: User;
 
-  @Column({ type: 'enum', enum: Role, default: Role.User })
+  @Index()
+  @PrimaryColumn('uuid', { name: 'business_id' })
+  businessId!: string;
+
+  @ManyToOne((type) => Business, (business: Business) => business.id)
+  @JoinColumn({ name: 'business_id' })
+  business!: Business;
+
+  @Column({ type: 'enum', enum: Role, default: Role.Customer })
   role!: Role;
 
   @CreateDateColumn()

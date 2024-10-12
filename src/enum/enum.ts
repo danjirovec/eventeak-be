@@ -46,7 +46,7 @@ registerEnumType(Language, {
 
 export enum Role {
   Admin,
-  User,
+  Customer,
 }
 
 registerEnumType(Role, {

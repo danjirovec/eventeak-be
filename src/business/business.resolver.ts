@@ -104,7 +104,7 @@ export class BusinessResolver {
     @Args('meta') meta: string,
   ): Promise<BusinessMetricsDto> {
     const metaParsed = JSON.parse(meta);
-    const counts = { events: [], memberships: [], customers: [] };
+    const counts = { events: [], memberships: [], customers: [], tickets: [] };
     const businessId = metaParsed.businessId;
 
     const getDateDaysAgo = (daysAgo: number = 0) => {

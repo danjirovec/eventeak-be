@@ -20,7 +20,7 @@ import { UserDto } from 'src/user/user.dto/user.dto';
 export class BusinessUserDto {
   @IsDefined()
   @IsEnum(Role, { each: true })
-  @FilterableField(() => Role, { defaultValue: Role.User })
+  @FilterableField(() => Role, { defaultValue: Role.Customer })
   role!: Role;
 
   @IsString()

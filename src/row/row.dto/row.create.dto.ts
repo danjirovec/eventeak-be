@@ -1,8 +1,8 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsNotEmpty, IsString } from 'class-validator';
 
-@InputType('CreateSeat')
-export class CreateSeatDto {
+@InputType('CreateRow')
+export class CreateRowDto {
   @IsNotEmpty()
   @IsString()
   @Field()

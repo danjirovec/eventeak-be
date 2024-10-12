@@ -22,4 +22,9 @@ export class UpdateBenefitDto {
   @IsDate()
   @Field({ nullable: true })
   expiryDate?: Date;
+
+  @IsOptional()
+  @IsString()
+  @Field(() => ID, { nullable: true })
+  membershipTypeId?: string;
 }

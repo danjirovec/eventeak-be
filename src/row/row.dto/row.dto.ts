@@ -13,9 +13,9 @@ import {
 } from 'class-validator';
 import { SectionDto } from 'src/section/section.dto/section.dto';
 
-@ObjectType('Seat')
+@ObjectType('Row')
 @FilterableRelation('section', () => SectionDto)
-export class SeatDto {
+export class RowDto {
   @IsNotEmpty()
   @IsUUID()
   @IDField(() => ID)

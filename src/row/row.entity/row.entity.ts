@@ -10,7 +10,7 @@ import {
 } from 'typeorm';
 
 @Entity()
-export class Seat {
+export class Row {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 

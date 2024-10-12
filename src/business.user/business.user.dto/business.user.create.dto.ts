@@ -14,6 +14,6 @@ export class CreateBusinessUserDto {
 
   @IsDefined()
   @IsEnum(Role, { each: true })
-  @Field(() => Role, { defaultValue: Role.User })
+  @Field(() => Role, { defaultValue: Role.Customer })
   role!: Role;
 }

@@ -11,18 +11,18 @@ import { DataSource } from 'typeorm';
 import { SectionDto } from 'src/section/section.dto/section.dto';
 import { Section } from 'src/section/section.entity/section.entity';
 import { transformVenueData } from 'src/utils/transformVenueData';
-import { EventPriceCategory } from 'src/event.price.category/event.price.category.entity/event.price.category.entity';
-import { EventPriceCategoryDto } from 'src/event.price.category/event.price.category.dto/event.price.category.dto';
+import { PriceCategory } from 'src/price.category/price.category.entity/price.category.entity';
+import { PriceCategoryDto } from 'src/price.category/price.category.dto/price.category.dto';
 
 @Resolver(() => VenueDto)
 export class VenueResolver {
   constructor(
     @InjectQueryService(Venue)
-    readonly venuesService: QueryService<VenueDto>,
+    readonly venueService: QueryService<VenueDto>,
     @InjectQueryService(Seat)
-    readonly seatsService: QueryService<SeatDto>,
+    readonly seatService: QueryService<SeatDto>,
     @InjectQueryService(Section)
-    readonly sectionsService: QueryService<SectionDto>,
+    readonly sectionService: QueryService<SectionDto>,
     private dataSource: DataSource,
   ) {}
 
@@ -39,7 +39,7 @@ export class VenueResolver {
     try {
       if (input.hasSeats) {
         const venueData = transformVenueData(input.data);
-        venue = await this.venuesService.createOne({
+        venue = await this.venueService.createOne({
           ...input,
           data: venueData,
         });
@@ -47,7 +47,7 @@ export class VenueResolver {
         for (const section of venueData.categories) {
           sections.push({ name: section[0], venueId: venue.id });
         }
-        const newSections = await this.sectionsService.createMany(sections);
+        const newSections = await this.sectionService.createMany(sections);
 
         for (const row in venueData.rows) {
           const section = newSections.find(
@@ -62,19 +62,19 @@ export class VenueResolver {
             });
           });
         }
-        const newSeats = await this.seatsService.createMany(seats);
+        const newSeats = await this.seatService.createMany(seats);
         for (const row in venueData.rows) {
           venueData.rows[row].seats.map((seat, index) => {
             venueData.rows[row].seats[index].seatId = newSeats[index].id;
           });
         }
         const { id, ...rest } = venue;
-        await this.venuesService.updateOne(id, {
+        await this.venueService.updateOne(id, {
           ...rest,
           data: venueData,
         });
       } else {
-        venue = await this.venuesService.createOne({ ...input });
+        venue = await this.venueService.createOne({ ...input });
         if (!input.sections || !input.sections.length) {
           sections.push({
             name: 'None',
@@ -90,7 +90,7 @@ export class VenueResolver {
             });
           }
         }
-        await this.sectionsService.createMany(sections);
+        await this.sectionService.createMany(sections);
       }
 
       await queryRunner.commitTransaction();

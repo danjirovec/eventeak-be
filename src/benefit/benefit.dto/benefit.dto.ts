@@ -13,9 +13,13 @@ import {
   IsUUID,
 } from 'class-validator';
 import { BusinessDto } from 'src/business/business.dto/business.dto';
+import { MembershipTypeDto } from 'src/membership.type/membership.type.dto/membership.type.dto';
 
 @ObjectType('Benefit')
 @FilterableRelation('business', () => BusinessDto)
+@FilterableRelation('membershipType', () => MembershipTypeDto, {
+  nullable: true,
+})
 export class BenefitDto {
   @IsNotEmpty()
   @IsUUID()
@@ -41,6 +45,10 @@ export class BenefitDto {
   @IsDate()
   @FilterableField({ nullable: true })
   expiryDate?: Date;
+
+  @IsString()
+  @FilterableField({ filterOnly: true, nullable: true })
+  membershipTypeId?: string;
 
   @IsString()
   @FilterableField({ filterOnly: true })

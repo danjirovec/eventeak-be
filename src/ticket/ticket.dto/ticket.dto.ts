@@ -16,6 +16,7 @@ import { BusinessDto } from 'src/business/business.dto/business.dto';
 import { DiscountDto } from 'src/discount/discount.dto/discount.dto';
 import { EventDto } from 'src/event/event.dto/event.dto';
 import { OrderDto } from 'src/order/order.dto/order.dto';
+import { RowDto } from 'src/row/row.dto/row.dto';
 import { SeatDto } from 'src/seat/seat.dto/seat.dto';
 import { SectionDto } from 'src/section/section.dto/section.dto';
 import { UserDto } from 'src/user/user.dto/user.dto';
@@ -25,6 +26,7 @@ import { UserDto } from 'src/user/user.dto/user.dto';
 @FilterableRelation('section', () => SectionDto)
 @FilterableRelation('user', () => UserDto, { nullable: true })
 @FilterableRelation('seat', () => SeatDto, { nullable: true })
+@FilterableRelation('row', () => RowDto, { nullable: true })
 @FilterableRelation('discount', () => DiscountDto, { nullable: true })
 @FilterableRelation('order', () => OrderDto, { nullable: true })
 @FilterableRelation('business', () => BusinessDto)
@@ -55,6 +57,10 @@ export class TicketDto {
   @IsString()
   @FilterableField({ filterOnly: true })
   seatId?: string;
+
+  @IsString()
+  @FilterableField({ filterOnly: true })
+  rowId?: string;
 
   @IsString()
   @FilterableField({ filterOnly: true })

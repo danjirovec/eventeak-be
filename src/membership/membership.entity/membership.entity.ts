@@ -6,6 +6,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   OneToOne,
@@ -14,6 +15,8 @@ import {
 } from 'typeorm';
 
 @Entity()
+@Index(['businessId', 'created'])
+@Index(['businessId', 'userId'])
 export class Membership {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
@@ -38,6 +41,7 @@ export class Membership {
   @JoinColumn({ name: 'membership_type_id' })
   membershipType!: MembershipType;
 
+  @Index()
   @Column({ name: 'business_id' })
   businessId!: string;
 

@@ -34,6 +34,11 @@ export class UpdateTicketDto {
   @Field(() => ID, { nullable: true })
   seatId?: string;
 
+  @IsOptional()
+  @IsString()
+  @Field(() => ID, { nullable: true })
+  rowId?: string;
+
   @IsNotEmpty()
   @IsString()
   @Field(() => ID, { nullable: true })

@@ -9,12 +9,12 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { Section } from 'src/section/section.entity/section.entity';
 import { Business } from 'src/business/business.entity/business.entity';
+import { Row } from 'src/row/row.entity/row.entity';
 
 @Entity()
 export class Ticket {
@@ -61,6 +61,13 @@ export class Ticket {
   @ManyToOne((type) => Seat, { nullable: true })
   @JoinColumn({ name: 'seat_id' })
   seat!: Seat;
+
+  @Column({ name: 'row_id', nullable: true })
+  rowId!: string;
+
+  @ManyToOne((type) => Row, { nullable: true })
+  @JoinColumn({ name: 'row_id' })
+  row!: Row;
 
   @Column({ name: 'order_id', nullable: true })
   orderId!: string;

@@ -41,6 +41,7 @@
     "graphql-type-json": "^0.3.2",
     "graphql-ws": "^5.14.3",
     "handlebars": "^4.7.8",
+    "nestjs-resend": "^1.0.0",
     "nodemailer": "^6.9.14",
     "pg": "^8.11.3",
     "reflect-metadata": "^0.1.13",
