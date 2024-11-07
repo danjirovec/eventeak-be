@@ -9,11 +9,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
   app.enableCors({
-    origin: [
-      process.env.CLIENT_URL,
-      'https://staging.eventeak.com',
-      'http://staging.eventeak.com',
-    ],
+    origin: '*',
     methods: ['GET', 'POST', 'DELETE', 'OPTIONS', 'PUT', 'PATCH'],
     credentials: true,
   });
