@@ -17,15 +17,6 @@ registerEnumType(Category, {
   name: 'Category',
 });
 
-export enum TemplateType {
-  Parent = 'Parent',
-  Child = 'Child',
-}
-
-registerEnumType(TemplateType, {
-  name: 'TemplateType',
-});
-
 export enum Language {
   Czech = 'Czech',
   English = 'English',
@@ -51,6 +42,15 @@ export enum Role {
 
 registerEnumType(Role, {
   name: 'Role',
+});
+
+export enum Type {
+  Root = 'Root',
+  Leaf = 'Leaf',
+}
+
+registerEnumType(Type, {
+  name: 'Type',
 });
 
 export enum Currency {

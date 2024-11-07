@@ -11,8 +11,10 @@ import { DataSource } from 'typeorm';
 import { SectionDto } from 'src/section/section.dto/section.dto';
 import { Section } from 'src/section/section.entity/section.entity';
 import { transformVenueData } from 'src/utils/transformVenueData';
-import { PriceCategory } from 'src/price.category/price.category.entity/price.category.entity';
-import { PriceCategoryDto } from 'src/price.category/price.category.dto/price.category.dto';
+import { Row } from 'src/row/row.entity/row.entity';
+import { RowDto } from 'src/row/row.dto/row.dto';
+import { UpdateVenueDto } from './venue.dto/venue.update.dto';
+import { randomUUID } from 'crypto';
 
 @Resolver(() => VenueDto)
 export class VenueResolver {
@@ -23,6 +25,8 @@ export class VenueResolver {
     readonly seatService: QueryService<SeatDto>,
     @InjectQueryService(Section)
     readonly sectionService: QueryService<SectionDto>,
+    @InjectQueryService(Row)
+    readonly rowService: QueryService<RowDto>,
     private dataSource: DataSource,
   ) {}
 
@@ -32,46 +36,53 @@ export class VenueResolver {
     let venue;
     const sections = [];
     const seats = [];
+    const rows = [];
     const queryRunner = this.dataSource.createQueryRunner();
-
     await queryRunner.connect();
     await queryRunner.startTransaction();
     try {
       if (input.hasSeats) {
-        const venueData = transformVenueData(input.data);
+        const venueData = transformVenueData(input.seatMap);
         venue = await this.venueService.createOne({
           ...input,
-          data: venueData,
+          seatMap: venueData,
         });
 
-        for (const section of venueData.categories) {
+        for (const section of venueData.sections) {
           sections.push({ name: section[0], venueId: venue.id });
         }
         const newSections = await this.sectionService.createMany(sections);
 
         for (const row in venueData.rows) {
           const section = newSections.find(
-            (item) => item.name == (venueData.rows[row].category as string),
+            (item) => item.name == (venueData.rows[row].sectionName as string),
           );
+          rows.push({
+            name: venueData.rows[row].rowName,
+            sectionId: section.id,
+          });
           venueData.rows[row].seats.map((seat, index) => {
             venueData.rows[row].seats[index].sectionId = section.id;
             seats.push({
-              row: venueData.rows[row].label,
-              seat: seat.number,
+              name: seat.seatNumber,
               sectionId: section.id,
             });
           });
         }
+        const newRows = await this.rowService.createMany(rows);
         const newSeats = await this.seatService.createMany(seats);
+        let rowIndex = 0;
         for (const row in venueData.rows) {
           venueData.rows[row].seats.map((seat, index) => {
+            venueData.rows[row].seats[index].rowId = newRows[rowIndex].id;
             venueData.rows[row].seats[index].seatId = newSeats[index].id;
           });
+          rowIndex += 1;
         }
         const { id, ...rest } = venue;
         await this.venueService.updateOne(id, {
           ...rest,
-          data: venueData,
+          seatMap: venueData,
         });
       } else {
         venue = await this.venueService.createOne({ ...input });
@@ -95,11 +106,58 @@ export class VenueResolver {
 
       await queryRunner.commitTransaction();
     } catch (err) {
+      console.log(err);
       await queryRunner.rollbackTransaction();
       throw new BadRequestException(err);
     } finally {
       await queryRunner.release();
     }
     return venue;
+  }
+
+  @Mutation(() => VenueDto)
+  @UseGuards(AuthGuard)
+  async updateVenue(@Args('input') input: UpdateVenueDto) {
+    let updatedVenue;
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+    try {
+      const { sections, id, ...rest } = input;
+      updatedVenue = await this.venueService.updateOne(id, {
+        ...rest,
+      });
+
+      if (sections) {
+        const originalSections = await this.sectionService.query({
+          filter: { venueId: { eq: id } },
+        });
+
+        const sectionsToDelete = originalSections
+          .filter((pc) => !sections.some((_pc) => _pc.id === pc.id))
+          .map((pc) => pc.id);
+
+        if (sectionsToDelete.length > 0) {
+          await this.sectionService.deleteMany({
+            id: { in: sectionsToDelete },
+          });
+        }
+
+        sections.forEach((pc) => {
+          if (!pc.id) pc.id = randomUUID();
+        });
+
+        await queryRunner.manager.upsert(Section, sections, ['id']);
+      }
+
+      await queryRunner.commitTransaction();
+    } catch (err) {
+      console.log(err);
+      await queryRunner.rollbackTransaction();
+      throw new BadRequestException(err);
+    } finally {
+      await queryRunner.release();
+    }
+    return updatedVenue;
   }
 }

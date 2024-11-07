@@ -16,11 +16,18 @@ import { BusinessUser } from 'src/business.user/business.user.entity/business.us
 import { BusinessUserDto } from 'src/business.user/business.user.dto/business.user.dto';
 import { Discount } from 'src/discount/discount.entity/discount.entity';
 import { DiscountDto } from 'src/discount/discount.dto/discount.dto';
-import { EventPriceCategoryService } from 'src/event.price.category/event.price.category.service';
 import { CreateTicketOrderDto } from 'src/ticket/ticket.dto/ticket.order.create';
 import { DataSource } from 'typeorm';
 import { Order } from 'src/order/order.entity/order.entity';
 import { OrderDto } from 'src/order/order.dto/order.dto';
+import { PriceCategoryService } from 'src/price.category/price.category.service';
+import { Template } from 'src/template/template.entity/template.entity';
+import { TemplateDto } from 'src/template/template.dto/template.dto';
+import { TemplateDiscount } from 'src/template.discount/template.discount.entity/template.discount.entity';
+import { TemplateDiscountDto } from 'src/template.discount/template.discount.dto/template.discount.dto';
+import { MailService } from 'src/mail/mail.service';
+import { Business } from 'src/business/business.entity/business.entity';
+import { BusinessDto } from 'src/business/business.dto/business.dto';
 
 @Resolver(() => EventDto)
 export class EventResolver {
@@ -29,17 +36,24 @@ export class EventResolver {
     readonly eventService: QueryService<EventDto>,
     @InjectQueryService(Venue)
     readonly venueService: QueryService<VenueDto>,
-    readonly epcService: EventPriceCategoryService,
+    readonly pcService: PriceCategoryService,
     @InjectQueryService(Ticket)
     readonly ticketService: QueryService<TicketDto>,
     @InjectQueryService(User)
     readonly userService: QueryService<UserDto>,
+    @InjectQueryService(Business)
+    readonly businessService: QueryService<BusinessDto>,
     @InjectQueryService(BusinessUser)
     readonly businessUserService: QueryService<BusinessUserDto>,
     @InjectQueryService(Discount)
     readonly discountService: QueryService<DiscountDto>,
+    @InjectQueryService(Template)
+    readonly templateService: QueryService<TemplateDto>,
+    @InjectQueryService(TemplateDiscount)
+    readonly templateDiscountService: QueryService<TemplateDiscountDto>,
     @InjectQueryService(Order)
     readonly orderService: QueryService<OrderDto>,
+    readonly mailService: MailService,
     private dataSource: DataSource,
   ) {}
 
@@ -47,23 +61,22 @@ export class EventResolver {
   @UseGuards(AuthGuard)
   async createEvent(@Args('input') input: CreateEventDto) {
     let newEvent;
-    const epcs = await this.epcService.query({
-      filter: { eventTemplateId: { eq: input.eventTemplateId } },
-    });
     try {
-      const venue = await this.venueService.getById(input.venueId);
+      const pcs = await this.pcService.query({
+        filter: { templateId: { eq: input.templateId } },
+      });
+      const template = await this.templateService.getById(input.templateId);
+      const venue = await this.venueService.getById(template.venueId);
       if (venue.hasSeats) {
-        const venueData = venue.data;
-        Object.keys(venueData.rows).forEach((rowKey) => {
-          venueData.rows[rowKey].seats = venueData.rows[rowKey].seats.map(
+        const seatMap = venue.seatMap;
+        Object.keys(seatMap.rows).forEach((rowKey) => {
+          seatMap.rows[rowKey].seats = seatMap.rows[rowKey].seats.map(
             (seat) => {
-              const epcMatch = epcs.find(
-                (epc) => epc.sectionId === seat.sectionId,
-              );
+              const pcMatch = pcs.find((pc) => pc.sectionId === seat.sectionId);
               return {
                 ...seat,
-                epcId: epcMatch ? epcMatch.id : null,
-                epcPrice: epcMatch ? epcMatch.price : null,
+                pcId: pcMatch ? pcMatch.id : null,
+                pcPrice: pcMatch ? pcMatch.price : null,
               };
             },
           );
@@ -71,7 +84,7 @@ export class EventResolver {
 
         newEvent = await this.eventService.createOne({
           ...input,
-          venueData: venueData,
+          seatMap: seatMap,
         });
       } else {
         newEvent = await this.eventService.createOne({
@@ -115,31 +128,32 @@ export class EventResolver {
       filter: { id: { in: userIds } },
     });
 
-    const discounts = await this.discountService.query({
-      filter: { businessId: { eq: input.businessId } },
-    });
-
     const events = await this.eventService.query({
       filter: { businessId: { eq: input.businessId } },
     });
 
     if (input.eventId) {
       const event = events.find((item) => item.id == input.eventId);
-      // const epcs = await this.epcService.query({
-      //   filter: { eventTemplateId: { eq: event.eventTemplateId } },
-      // });
-
-      const epcs = await this.epcService.getEventPrices(input.eventId, {
-        eventTemplateId: { eq: event.eventTemplateId },
+      const pcs = await this.pcService.getEventPrices(input.eventId, {
+        templateId: { eq: event.templateId },
       });
-
+      const templateDiscounts = await this.templateDiscountService.query({
+        filter: { templateId: { eq: event.templateId } },
+      });
+      const discountIds = templateDiscounts.map((item) => item.discountId);
+      let discounts = [];
+      if (discountIds.length > 0) {
+        discounts = await this.discountService.query({
+          filter: { id: { in: discountIds } },
+        });
+      }
       const tickets = await this.ticketService.query({
         filter: { eventId: { eq: event.id } },
       });
       return {
         events: events,
         users: users,
-        eventPriceCategories: epcs,
+        priceCategories: pcs,
         tickets: tickets,
         discounts: discounts,
       };
@@ -148,7 +162,6 @@ export class EventResolver {
     return {
       events: events,
       users: users,
-      discounts: discounts,
     };
   }
 
@@ -159,7 +172,6 @@ export class EventResolver {
   ): Promise<EventDto> {
     let event;
     const queryRunner = this.dataSource.createQueryRunner();
-
     await queryRunner.connect();
     await queryRunner.startTransaction();
     try {
@@ -168,30 +180,49 @@ export class EventResolver {
         total: input.order.total,
         businessId: input.order.businessId,
       });
-      const ticketsToCreate = input.tickets.map((ticket) => ({
-        ...ticket,
-        orderId: order.id,
-      }));
+      const ticketsToCreate = input.tickets.map((ticket) => {
+        const { seat, row, discount, section, ...rest } = ticket;
+        return {
+          ...rest,
+          orderId: order.id,
+        };
+      });
       const tickets = await this.ticketService.createMany(ticketsToCreate);
       event = await this.eventService.getById(tickets[0].eventId);
-      if (event.venueData) {
-        for (const row in event.venueData.rows) {
-          event.venueData.rows[row].seats.map((seat, index) => {
+      if (event.seatMap) {
+        for (const row in event.seatMap.rows) {
+          event.seatMap.rows[row].seats.map((seat, index) => {
             const ticket = tickets.find(
               (item) =>
-                item.sectionId == seat.sectionId && item.seatId == seat.seatId,
+                item.sectionId == seat.sectionId &&
+                item.seatId == seat.seatId &&
+                item.rowId == seat.rowId,
             );
             if (ticket) {
-              event.venueData.rows[row].seats[index].ticketId = ticket.id;
-              event.venueData.rows[row].seats[index].reserved = true;
+              event.seatMap.rows[row].seats[index].ticketId = ticket.id;
+              event.seatMap.rows[row].seats[index].reserved = true;
             }
           });
         }
-        event = this.eventService.updateOne(event.id, {
-          venueData: event.venueData,
+        event = await this.eventService.updateOne(event.id, {
+          seatMap: event.seatMap,
         });
       }
-
+      if (input.order.userId) {
+        const user = await this.userService.getById(input.order.userId);
+        const business = await this.businessService.getById(
+          input.order.businessId,
+        );
+        const emailTickets = input.tickets.map((item, index) => ({
+          id: tickets[index].id.slice(0, 8),
+          price: item.price,
+          section: item.section,
+          discount: item.discount ? item.discount : null,
+          seat: item.seat ? item.seat : null,
+          row: item.row ? item.row : null,
+        }));
+        await this.mailService.sendTickets(emailTickets, user, business, event);
+      }
       await queryRunner.commitTransaction();
     } catch (err) {
       console.log(err);

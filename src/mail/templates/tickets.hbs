@@ -1,0 +1,33 @@
+<p>Hello <strong>{{name}}</strong>,</p>
+<p>You've purchased
+  <strong>{{business.name}}</strong>
+  ticket/s for
+   <strong>{{event.name}}</strong>.</p>
+
+{{#each tickets}}
+  <div
+    style='border: 1px solid #ddd; padding: 8px; margin-bottom: 16px; border-radius: 5px;'
+  >
+    <p><strong>ID:</strong> {{this.id}}</p>
+    <p><strong>Event:</strong> {{../event.name}}</p>
+    <p><strong>Date & Time:</strong> {{../event.date}}</p>
+
+    <p><strong>Price:</strong> {{this.price}} {{../business.currency}}</p>
+
+    {{#if this.discount}}
+      <p><strong>Discount:</strong> {{this.discount}}</p>
+    {{/if}}
+
+    <p><strong>Section:</strong> {{this.section}}</p>
+
+    {{#if this.row}}
+      <p><strong>Row:</strong> {{this.row}}</p>
+    {{/if}}
+
+    {{#if this.seat}}
+      <p><strong>Seat:</strong> {{this.seat}}</p>
+    {{/if}}
+  </div>
+{{/each}}
+
+<p>We hope you enjoy the event!</p>

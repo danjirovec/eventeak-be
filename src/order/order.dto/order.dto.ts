@@ -1,11 +1,10 @@
-import { Field, GraphQLISODateTime, ID, ObjectType } from '@nestjs/graphql';
+import { GraphQLISODateTime, ID, ObjectType } from '@nestjs/graphql';
 import {
   FilterableField,
   FilterableRelation,
   IDField,
 } from '@ptc-org/nestjs-query-graphql';
 import {
-  IsBoolean,
   IsDate,
   IsNotEmpty,
   IsNumber,

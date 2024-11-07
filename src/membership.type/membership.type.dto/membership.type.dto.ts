@@ -4,7 +4,13 @@ import {
   FilterableRelation,
   IDField,
 } from '@ptc-org/nestjs-query-graphql';
-import { IsDate, IsNotEmpty, IsString, IsUUID } from 'class-validator';
+import {
+  IsDate,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsUUID,
+} from 'class-validator';
 import { BusinessDto } from 'src/business/business.dto/business.dto';
 
 @ObjectType('MembershipType')
@@ -19,6 +25,11 @@ export class MembershipTypeDto {
   @IsString()
   @FilterableField()
   name!: string;
+
+  @IsOptional()
+  @IsString()
+  @FilterableField({ nullable: true })
+  description?: string;
 
   @IsNotEmpty()
   @IsDate()

@@ -21,6 +21,9 @@ import { BusinessUser } from 'src/business.user/business.user.entity/business.us
 import { BusinessUserDto } from 'src/business.user/business.user.dto/business.user.dto';
 import { anonymize } from 'src/utils/anonymize';
 import { groupBy } from 'src/utils/groupBy';
+import { BatchUserEmailDto } from './user.dto/user.batch.email.dto';
+import { UserEmailDto } from './user.dto/user.email.dto';
+import { MailService } from 'src/mail/mail.service';
 
 @Resolver(() => UserDto)
 export class UserResolver {
@@ -37,6 +40,7 @@ export class UserResolver {
     readonly ticketService: QueryService<TicketDto>,
     @InjectQueryService(Order)
     readonly orderService: QueryService<OrderDto>,
+    readonly mailService: MailService,
   ) {}
 
   @Mutation(() => String)
@@ -124,5 +128,20 @@ export class UserResolver {
       benefitsUsed: benefitsUsed,
       eventsVisited: eventsAttendedCount,
     };
+  }
+
+  @Mutation(() => Boolean)
+  @UseGuards(AuthGuard)
+  async sendEmail(@Args('input') input: BatchUserEmailDto) {
+    try {
+      await this.mailService.sendBatchUserEmail(
+        input.subject,
+        input.emails,
+        input.message,
+      );
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
+    return true;
   }
 }

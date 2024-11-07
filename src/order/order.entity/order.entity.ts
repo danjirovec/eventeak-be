@@ -4,6 +4,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -18,6 +19,7 @@ export class Order {
   @Column()
   total!: number;
 
+  @Index()
   @Column({ name: 'user_id', nullable: true })
   userId!: string;
 
@@ -25,6 +27,7 @@ export class Order {
   @JoinColumn({ name: 'user_id' })
   user!: User;
 
+  @Index()
   @Column({ name: 'business_id' })
   businessId!: string;
 

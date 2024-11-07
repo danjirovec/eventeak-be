@@ -11,8 +11,8 @@ import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { JwtModule } from '@nestjs/jwt';
 import { UpdateEventDto } from './event.dto/event.update.dto';
 import { EventResolver } from './event.resolver';
-import { EventPriceCategoryModule } from 'src/event.price.category/event.price.category.module';
-import { EventTemplateModule } from 'src/event.template/event.template.module';
+import { PriceCategoryModule } from 'src/price.category/price.category.module';
+import { TemplateModule } from 'src/template/template.module';
 import { VenueModule } from 'src/venue/venue.module';
 import { TicketModule } from 'src/ticket/ticket.module';
 import { SeatModule } from 'src/seat/seat.module';
@@ -20,19 +20,22 @@ import { SectionModule } from 'src/section/section.module';
 import { UserModule } from 'src/user/user.module';
 import { BusinessUserModule } from 'src/business.user/business.user.module';
 import { DiscountModule } from 'src/discount/discount.module';
-import { EventPriceCategoryService } from 'src/event.price.category/event.price.category.service';
 import { OrderModule } from 'src/order/order.module';
+import { PriceCategoryService } from 'src/price.category/price.category.service';
+import { TemplateDiscountModule } from 'src/template.discount/template.discount.module';
+import { MailModule } from 'src/mail/mail.module';
+import { BusinessModule } from 'src/business/business.module';
 
 @Module({
-  providers: [EventResolver, EventPriceCategoryService],
+  providers: [EventResolver, PriceCategoryService],
   imports: [
     NestjsQueryTypeOrmModule.forFeature([Event]),
     NestjsQueryGraphQLModule.forFeature({
       imports: [
         NestjsQueryTypeOrmModule.forFeature([Event]),
         JwtModule,
-        EventPriceCategoryModule,
-        EventTemplateModule,
+        PriceCategoryModule,
+        TemplateModule,
         VenueModule,
         TicketModule,
         SeatModule,
@@ -40,7 +43,10 @@ import { OrderModule } from 'src/order/order.module';
         UserModule,
         BusinessUserModule,
         DiscountModule,
+        TemplateDiscountModule,
         OrderModule,
+        MailModule,
+        forwardRef(() => BusinessModule),
       ],
       resolvers: [
         {

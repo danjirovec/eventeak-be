@@ -3,6 +3,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryColumn,
@@ -23,6 +24,7 @@ export class User {
   @Column()
   lastName!: string;
 
+  @Index()
   @Column({ name: 'default_business_id', nullable: true })
   defaultBusinessId?: string;
 

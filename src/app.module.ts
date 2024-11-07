@@ -6,7 +6,7 @@ import { UserModule } from './user/user.module';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join } from 'path';
 import { EventModule } from './event/event.module';
-import { EventTemplateModule } from './event.template/event.template.module';
+import { TemplateModule } from './template/template.module';
 import { VenueModule } from './venue/venue.module';
 import { MembershipModule } from './membership/membership.module';
 import { BenefitModule } from './benefit/benefit.module';
@@ -20,10 +20,9 @@ import { SectionModule } from './section/section.module';
 import { BusinessUserModule } from './business.user/business.user.module';
 import { DiscountModule } from './discount/discount.module';
 import { MailModule } from './mail/mail.module';
-import { EventDiscountModule } from './event.discount/event.discount.module';
+import { TemplateDiscountModule } from './template.discount/template.discount.module';
 import { RowModule } from './row/row.module';
 import { PriceCategoryModule } from './price.category/price.category.module';
-import { EventPrice } from './event.price/event.price.entity/event.price.category.entity';
 
 @Module({
   imports: [
@@ -52,7 +51,7 @@ import { EventPrice } from './event.price/event.price.entity/event.price.categor
     }),
     UserModule,
     EventModule,
-    EventTemplateModule,
+    TemplateModule,
     VenueModule,
     MembershipModule,
     BenefitModule,
@@ -67,8 +66,7 @@ import { EventPrice } from './event.price/event.price.entity/event.price.categor
     BusinessModule,
     BusinessUserModule,
     DiscountModule,
-    EventDiscountModule,
-    EventPrice,
+    TemplateDiscountModule,
     MailModule,
   ],
 })

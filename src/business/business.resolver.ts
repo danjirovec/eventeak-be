@@ -18,6 +18,8 @@ import { User } from 'src/user/user.entity/user.entity';
 import { UserDto } from 'src/user/user.dto/user.dto';
 import { MembershipDto } from 'src/membership/membership.dto/membership.dto';
 import { EventDto } from 'src/event/event.dto/event.dto';
+import { Ticket } from 'src/ticket/ticket.entity/ticket.entity';
+import { TicketDto } from 'src/ticket/ticket.dto/ticket.dto';
 
 @Resolver(() => BusinessDto)
 export class BusinessResolver {
@@ -28,6 +30,8 @@ export class BusinessResolver {
     readonly eventService: QueryService<EventDto>,
     @InjectQueryService(Membership)
     readonly membershipService: QueryService<MembershipDto>,
+    @InjectQueryService(Ticket)
+    readonly ticketService: QueryService<TicketDto>,
     @InjectQueryService(User)
     readonly userService: QueryService<UserDto>,
     @InjectQueryService(BusinessUser)
@@ -129,6 +133,10 @@ export class BusinessResolver {
         and: [{ created: { lte: date } }, { businessId: { eq: businessId } }],
       });
       counts.customers.push(custCount);
+      const ticketCount = await this.ticketService.count({
+        and: [{ created: { lte: date } }, { businessId: { eq: businessId } }],
+      });
+      counts.tickets.push(ticketCount);
     }
     return counts;
   }

@@ -12,6 +12,8 @@ import { JwtModule } from '@nestjs/jwt';
 import { SeatModule } from 'src/seat/seat.module';
 import { VenueResolver } from './venue.resolver';
 import { SectionModule } from 'src/section/section.module';
+import { RowModule } from 'src/row/row.module';
+import { UpdateVenueDto } from './venue.dto/venue.update.dto';
 
 @Module({
   providers: [VenueResolver],
@@ -23,12 +25,14 @@ import { SectionModule } from 'src/section/section.module';
         JwtModule,
         SeatModule,
         SectionModule,
+        RowModule,
       ],
       resolvers: [
         {
           EntityClass: Venue,
           DTOClass: VenueDto,
           CreateDTOClass: CreateVenueDto,
+          UpdateDTOClass: UpdateVenueDto,
           enableSubscriptions: true,
           guards: [AuthGuard],
           pagingStrategy: PagingStrategies.OFFSET,

@@ -48,7 +48,7 @@ export class UserDto {
   avatarUrl?: string;
 
   @IsNotEmpty()
-  @IsDateString()
+  @IsDate()
   @FilterableField()
   birthDate!: Date;
 

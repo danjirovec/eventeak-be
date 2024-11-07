@@ -39,13 +39,13 @@ export class UpdateTicketDto {
   @Field(() => ID, { nullable: true })
   rowId?: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @Field(() => ID, { nullable: true })
-  eventId!: string;
+  eventId?: string;
 
   @IsOptional()
   @IsString()
   @Field(() => ID, { nullable: true })
-  sectionId!: string;
+  sectionId?: string;
 }

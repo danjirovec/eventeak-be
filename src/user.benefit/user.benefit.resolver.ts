@@ -7,6 +7,6 @@ import { UserBenefit } from './user.benefit.entity/user.benefit.entity';
 export class UserBenefitResolver {
   constructor(
     @InjectQueryService(UserBenefit)
-    readonly membershipService: QueryService<UserBenefitDto>,
+    readonly userBenefitService: QueryService<UserBenefitDto>,
   ) {}
 }

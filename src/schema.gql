@@ -7,6 +7,12 @@ input AnonymizeUser {
   userId: ID!
 }
 
+input BatchUserEmail {
+  emails: [String!]!
+  message: String!
+  subject: String!
+}
+
 type Benefit {
   business: Business!
   created: DateTime!
@@ -81,6 +87,7 @@ input BenefitFilterBusinessFilter {
 input BenefitFilterMembershipTypeFilter {
   and: [BenefitFilterMembershipTypeFilter!]
   created: DateFieldComparison
+  description: StringFieldComparison
   id: IDFilterComparison
   name: StringFieldComparison
   or: [BenefitFilterMembershipTypeFilter!]
@@ -190,6 +197,7 @@ type BusinessMetrics {
   customers: [Float!]!
   events: [Float!]!
   memberships: [Float!]!
+  tickets: [Float!]!
 }
 
 input BusinessSort {
@@ -413,59 +421,14 @@ input CreateDiscountSubscriptionFilterInput {
 
 input CreateEvent {
   businessId: ID!
-  category: Category!
   date: DateTime!
-  description: String!
-  language: Language!
-  length: Float!
   name: String!
-  posterUrl: String
-  seatMap: JSON
-  subtitles: Language
-  template: Boolean!
-  venueId: ID!
-}
-
-input CreateEventDiscount {
-  discountId: ID!
-  eventId: ID!
-}
-
-input CreateEventDiscountDtoSubscriptionFilterInput {
-  """Specify to filter the records returned."""
-  filter: EventDiscountDtoSubscriptionFilter!
-}
-
-input CreateEventPrice {
-  endDate: DateTime
-  name: String!
-  price: Float!
-  sectionId: ID!
-  startDate: DateTime
+  templateId: ID!
 }
 
 input CreateEventSubscriptionFilterInput {
   """Specify to filter the records returned."""
   filter: EventSubscriptionFilter!
-}
-
-input CreateEventTemplate {
-  businessId: ID!
-  category: Category!
-  description: String
-  eventPriceCategory: [CreateEventPrice!]
-  language: Language
-  length: Float
-  name: String!
-  posterUrl: String
-  subtitles: Language
-  type: TemplateType!
-  venueId: ID!
-}
-
-input CreateEventTemplateSubscriptionFilterInput {
-  """Specify to filter the records returned."""
-  filter: EventTemplateSubscriptionFilter!
 }
 
 input CreateManyBenefitsInput {
@@ -486,16 +449,6 @@ input CreateManyBusinessesInput {
 input CreateManyDiscountsInput {
   """Array of records to create"""
   discounts: [CreateDiscount!]!
-}
-
-input CreateManyEventDiscountDtosInput {
-  """Array of records to create"""
-  eventDiscountDtos: [CreateEventDiscount!]!
-}
-
-input CreateManyEventTemplatesInput {
-  """Array of records to create"""
-  eventTemplates: [CreateEventTemplate!]!
 }
 
 input CreateManyEventsInput {
@@ -538,14 +491,24 @@ input CreateManySectionsInput {
   sections: [CreateSection!]!
 }
 
+input CreateManyTemplateDiscountsInput {
+  """Array of records to create"""
+  templateDiscounts: [CreateTemplateDiscount!]!
+}
+
+input CreateManyTemplatesInput {
+  """Array of records to create"""
+  templates: [CreateTemplate!]!
+}
+
 input CreateManyTicketsInput {
   """Array of records to create"""
   tickets: [CreateTicket!]!
 }
 
-input CreateManyUserBenefitDtosInput {
+input CreateManyUserBenefitsInput {
   """Array of records to create"""
-  userBenefitDtos: [CreateUserBenefit!]!
+  userBenefits: [CreateUserBenefit!]!
 }
 
 input CreateManyUsersInput {
@@ -573,6 +536,7 @@ input CreateMembershipSubscriptionFilterInput {
 
 input CreateMembershipType {
   businessId: ID!
+  description: String
   name: String!
 }
 
@@ -601,19 +565,9 @@ input CreateOneDiscountInput {
   discount: CreateDiscount!
 }
 
-input CreateOneEventDiscountDtoInput {
-  """The record to create"""
-  eventDiscountDto: CreateEventDiscount!
-}
-
 input CreateOneEventInput {
   """The record to create"""
   event: CreateEvent!
-}
-
-input CreateOneEventTemplateInput {
-  """The record to create"""
-  eventTemplate: CreateEventTemplate!
 }
 
 input CreateOneMembershipInput {
@@ -651,14 +605,24 @@ input CreateOneSectionInput {
   section: CreateSection!
 }
 
+input CreateOneTemplateDiscountInput {
+  """The record to create"""
+  templateDiscount: CreateTemplateDiscount!
+}
+
+input CreateOneTemplateInput {
+  """The record to create"""
+  template: CreateTemplate!
+}
+
 input CreateOneTicketInput {
   """The record to create"""
   ticket: CreateTicket!
 }
 
-input CreateOneUserBenefitDtoInput {
+input CreateOneUserBenefitInput {
   """The record to create"""
-  userBenefitDto: CreateUserBenefit!
+  userBenefit: CreateUserBenefit!
 }
 
 input CreateOneUserInput {
@@ -683,6 +647,15 @@ input CreateOrderSubscriptionFilterInput {
 }
 
 input CreatePriceCategory {
+  endDate: DateTime
+  name: String!
+  price: Float!
+  sectionId: ID!
+  startDate: DateTime
+  templateId: ID!
+}
+
+input CreatePriceCategoryInput {
   endDate: DateTime
   name: String!
   price: Float!
@@ -726,6 +699,36 @@ input CreateSectionSubscriptionFilterInput {
   filter: SectionSubscriptionFilter!
 }
 
+input CreateTemplate {
+  businessId: ID!
+  category: Category!
+  description: String
+  discount: [String!]
+  language: Language
+  length: Float
+  name: String!
+  posterUrl: String
+  priceCategory: [CreatePriceCategoryInput!]!
+  subtitles: Language
+  type: Type!
+  venueId: ID!
+}
+
+input CreateTemplateDiscount {
+  discountId: ID!
+  templateId: ID!
+}
+
+input CreateTemplateDiscountSubscriptionFilterInput {
+  """Specify to filter the records returned."""
+  filter: TemplateDiscountSubscriptionFilter!
+}
+
+input CreateTemplateSubscriptionFilterInput {
+  """Specify to filter the records returned."""
+  filter: TemplateSubscriptionFilter!
+}
+
 input CreateTicket {
   businessId: ID!
   discountId: ID
@@ -738,9 +741,25 @@ input CreateTicket {
   validated: DateTime
 }
 
+input CreateTicketExtra {
+  businessId: ID!
+  discount: String
+  discountId: ID
+  eventId: ID!
+  price: Float!
+  row: String
+  rowId: ID
+  seat: Float
+  seatId: ID
+  section: String!
+  sectionId: ID!
+  userId: ID
+  validated: DateTime
+}
+
 input CreateTicketOrder {
   order: CreateOrder!
-  tickets: [CreateTicket!]!
+  tickets: [CreateTicketExtra!]!
 }
 
 input CreateTicketSubscriptionFilterInput {
@@ -762,9 +781,9 @@ input CreateUserBenefit {
   userId: ID!
 }
 
-input CreateUserBenefitDtoSubscriptionFilterInput {
+input CreateUserBenefitSubscriptionFilterInput {
   """Specify to filter the records returned."""
-  filter: UserBenefitDtoSubscriptionFilter!
+  filter: UserBenefitSubscriptionFilter!
 }
 
 input CreateUserSubscriptionFilterInput {
@@ -777,9 +796,9 @@ input CreateVenue {
   businessId: ID!
   capacity: Float!
   city: String!
-  data: JSON
   hasSeats: Boolean!
   name: String!
+  seatMap: JSON
   sections: [VenueSection!]
   street: String!
 }
@@ -857,16 +876,6 @@ input DeleteManyDiscountsInput {
   filter: DiscountDeleteFilter!
 }
 
-input DeleteManyEventDiscountDtosInput {
-  """Filter to find records to delete"""
-  filter: EventDiscountDtoDeleteFilter!
-}
-
-input DeleteManyEventTemplatesInput {
-  """Filter to find records to delete"""
-  filter: EventTemplateDeleteFilter!
-}
-
 input DeleteManyEventsInput {
   """Filter to find records to delete"""
   filter: EventDeleteFilter!
@@ -912,14 +921,24 @@ input DeleteManySectionsInput {
   filter: SectionDeleteFilter!
 }
 
+input DeleteManyTemplateDiscountsInput {
+  """Filter to find records to delete"""
+  filter: TemplateDiscountDeleteFilter!
+}
+
+input DeleteManyTemplatesInput {
+  """Filter to find records to delete"""
+  filter: TemplateDeleteFilter!
+}
+
 input DeleteManyTicketsInput {
   """Filter to find records to delete"""
   filter: TicketDeleteFilter!
 }
 
-input DeleteManyUserBenefitDtosInput {
+input DeleteManyUserBenefitsInput {
   """Filter to find records to delete"""
-  filter: UserBenefitDtoDeleteFilter!
+  filter: UserBenefitDeleteFilter!
 }
 
 input DeleteManyUsersInput {
@@ -972,16 +991,6 @@ input DeleteOneDiscountSubscriptionFilterInput {
   filter: DiscountSubscriptionFilter!
 }
 
-input DeleteOneEventDiscountDtoInput {
-  """The id of the record to delete."""
-  id: ID!
-}
-
-input DeleteOneEventDiscountDtoSubscriptionFilterInput {
-  """Specify to filter the records returned."""
-  filter: EventDiscountDtoSubscriptionFilter!
-}
-
 input DeleteOneEventInput {
   """The id of the record to delete."""
   id: ID!
@@ -990,16 +999,6 @@ input DeleteOneEventInput {
 input DeleteOneEventSubscriptionFilterInput {
   """Specify to filter the records returned."""
   filter: EventSubscriptionFilter!
-}
-
-input DeleteOneEventTemplateInput {
-  """The id of the record to delete."""
-  id: ID!
-}
-
-input DeleteOneEventTemplateSubscriptionFilterInput {
-  """Specify to filter the records returned."""
-  filter: EventTemplateSubscriptionFilter!
 }
 
 input DeleteOneMembershipInput {
@@ -1072,6 +1071,26 @@ input DeleteOneSectionSubscriptionFilterInput {
   filter: SectionSubscriptionFilter!
 }
 
+input DeleteOneTemplateDiscountInput {
+  """The id of the record to delete."""
+  id: ID!
+}
+
+input DeleteOneTemplateDiscountSubscriptionFilterInput {
+  """Specify to filter the records returned."""
+  filter: TemplateDiscountSubscriptionFilter!
+}
+
+input DeleteOneTemplateInput {
+  """The id of the record to delete."""
+  id: ID!
+}
+
+input DeleteOneTemplateSubscriptionFilterInput {
+  """Specify to filter the records returned."""
+  filter: TemplateSubscriptionFilter!
+}
+
 input DeleteOneTicketInput {
   """The id of the record to delete."""
   id: ID!
@@ -1082,14 +1101,14 @@ input DeleteOneTicketSubscriptionFilterInput {
   filter: TicketSubscriptionFilter!
 }
 
-input DeleteOneUserBenefitDtoInput {
+input DeleteOneUserBenefitInput {
   """The id of the record to delete."""
   id: ID!
 }
 
-input DeleteOneUserBenefitDtoSubscriptionFilterInput {
+input DeleteOneUserBenefitSubscriptionFilterInput {
   """Specify to filter the records returned."""
-  filter: UserBenefitDtoSubscriptionFilter!
+  filter: UserBenefitSubscriptionFilter!
 }
 
 input DeleteOneUserInput {
@@ -1212,24 +1231,17 @@ input DiscountUpdateFilter {
 
 type Event {
   business: Business!
-  category: Category!
   created: DateTime!
   date: DateTime!
-  description: String!
   id: ID!
-  language: Language!
-  length: Float!
   name: String!
-  posterUrl: String
   seatMap: JSON
-  subtitles: Language
-  template: Boolean!
+  template: Template!
   updated: DateTime!
-  venue: Venue!
 }
 
 type EventCheckoutDto {
-  discounts: [Discount!]!
+  discounts: [Discount!]
   events: [Event!]!
   priceCategories: PriceCategoryAvailable
   tickets: [Ticket!]
@@ -1250,145 +1262,36 @@ type EventConnection {
 input EventDeleteFilter {
   and: [EventDeleteFilter!]
   businessId: StringFieldComparison
-  category: CategoryFilterComparison
   created: DateFieldComparison
   date: DateFieldComparison
   id: IDFilterComparison
-  language: LanguageFilterComparison
-  length: NumberFieldComparison
   name: StringFieldComparison
   or: [EventDeleteFilter!]
-  subtitles: LanguageFilterComparison
-  template: BooleanFieldComparison
+  templateId: StringFieldComparison
   updated: DateFieldComparison
 }
 
 type EventDeleteResponse {
-  category: Category
   created: DateTime
   date: DateTime
-  description: String
   id: ID
-  language: Language
-  length: Float
   name: String
-  posterUrl: String
   seatMap: JSON
-  subtitles: Language
-  template: Boolean
   updated: DateTime
-}
-
-type EventDiscountDto {
-  created: DateTime!
-  discount: Discount!
-  event: Event!
-}
-
-type EventDiscountDtoConnection {
-  """Array of nodes."""
-  nodes: [EventDiscountDto!]!
-
-  """Paging information"""
-  pageInfo: OffsetPageInfo!
-
-  """Fetch total count of records"""
-  totalCount: Int!
-}
-
-input EventDiscountDtoDeleteFilter {
-  and: [EventDiscountDtoDeleteFilter!]
-  created: DateFieldComparison
-  discountId: StringFieldComparison
-  eventId: StringFieldComparison
-  or: [EventDiscountDtoDeleteFilter!]
-}
-
-type EventDiscountDtoDeleteResponse {
-  created: DateTime
-}
-
-input EventDiscountDtoFilter {
-  and: [EventDiscountDtoFilter!]
-  created: DateFieldComparison
-  discount: EventDiscountDtoFilterDiscountFilter
-  discountId: StringFieldComparison
-  event: EventDiscountDtoFilterEventFilter
-  eventId: StringFieldComparison
-  or: [EventDiscountDtoFilter!]
-}
-
-input EventDiscountDtoFilterDiscountFilter {
-  and: [EventDiscountDtoFilterDiscountFilter!]
-  businessId: StringFieldComparison
-  created: DateFieldComparison
-  id: IDFilterComparison
-  name: StringFieldComparison
-  or: [EventDiscountDtoFilterDiscountFilter!]
-  percentage: NumberFieldComparison
-  updated: DateFieldComparison
-}
-
-input EventDiscountDtoFilterEventFilter {
-  and: [EventDiscountDtoFilterEventFilter!]
-  businessId: StringFieldComparison
-  category: CategoryFilterComparison
-  created: DateFieldComparison
-  date: DateFieldComparison
-  id: IDFilterComparison
-  language: LanguageFilterComparison
-  length: NumberFieldComparison
-  name: StringFieldComparison
-  or: [EventDiscountDtoFilterEventFilter!]
-  subtitles: LanguageFilterComparison
-  template: BooleanFieldComparison
-  updated: DateFieldComparison
-}
-
-input EventDiscountDtoSort {
-  direction: SortDirection!
-  field: EventDiscountDtoSortFields!
-  nulls: SortNulls
-}
-
-enum EventDiscountDtoSortFields {
-  created
-  discountId
-  eventId
-}
-
-input EventDiscountDtoSubscriptionFilter {
-  and: [EventDiscountDtoSubscriptionFilter!]
-  created: DateFieldComparison
-  discountId: StringFieldComparison
-  eventId: StringFieldComparison
-  or: [EventDiscountDtoSubscriptionFilter!]
-}
-
-input EventDiscountDtoUpdateFilter {
-  and: [EventDiscountDtoUpdateFilter!]
-  created: DateFieldComparison
-  discountId: StringFieldComparison
-  eventId: StringFieldComparison
-  or: [EventDiscountDtoUpdateFilter!]
 }
 
 input EventFilter {
   and: [EventFilter!]
   business: EventFilterBusinessFilter
   businessId: StringFieldComparison
-  category: CategoryFilterComparison
   created: DateFieldComparison
   date: DateFieldComparison
   id: IDFilterComparison
-  language: LanguageFilterComparison
-  length: NumberFieldComparison
   name: StringFieldComparison
   or: [EventFilter!]
-  subtitles: LanguageFilterComparison
-  template: BooleanFieldComparison
+  template: EventFilterTemplateFilter
+  templateId: StringFieldComparison
   updated: DateFieldComparison
-  venue: EventFilterVenueFilter
 }
 
 input EventFilterBusinessFilter {
@@ -1401,18 +1304,20 @@ input EventFilterBusinessFilter {
   updated: DateFieldComparison
 }
 
-input EventFilterVenueFilter {
-  and: [EventFilterVenueFilter!]
-  buildingNumber: StringFieldComparison
-  capacity: NumberFieldComparison
-  city: StringFieldComparison
+input EventFilterTemplateFilter {
+  and: [EventFilterTemplateFilter!]
+  category: CategoryFilterComparison
   created: DateFieldComparison
-  hasSeats: BooleanFieldComparison
+  description: StringFieldComparison
   id: IDFilterComparison
+  language: LanguageFilterComparison
+  length: NumberFieldComparison
   name: StringFieldComparison
-  or: [EventFilterVenueFilter!]
-  street: StringFieldComparison
+  or: [EventFilterTemplateFilter!]
+  subtitles: LanguageFilterComparison
+  type: TypeFilterComparison
   updated: DateFieldComparison
+  venueId: StringFieldComparison
 }
 
 input EventSort {
@@ -1423,188 +1328,35 @@ input EventSort {
 
 enum EventSortFields {
   businessId
-  category
   created
   date
   id
-  language
-  length
   name
-  subtitles
-  template
+  templateId
   updated
 }
 
 input EventSubscriptionFilter {
   and: [EventSubscriptionFilter!]
   businessId: StringFieldComparison
-  category: CategoryFilterComparison
   created: DateFieldComparison
   date: DateFieldComparison
   id: IDFilterComparison
-  language: LanguageFilterComparison
-  length: NumberFieldComparison
   name: StringFieldComparison
   or: [EventSubscriptionFilter!]
-  subtitles: LanguageFilterComparison
-  template: BooleanFieldComparison
-  updated: DateFieldComparison
-}
-
-type EventTemplate {
-  business: Business!
-  category: Category!
-  created: DateTime!
-  description: String
-  id: ID!
-  language: Language
-  length: Float
-  name: String!
-  posterUrl: String
-  subtitles: Language
-  type: TemplateType!
-  updated: DateTime!
-  venue: Venue!
-}
-
-type EventTemplateConnection {
-  """Array of nodes."""
-  nodes: [EventTemplate!]!
-
-  """Paging information"""
-  pageInfo: OffsetPageInfo!
-
-  """Fetch total count of records"""
-  totalCount: Int!
-}
-
-input EventTemplateDeleteFilter {
-  and: [EventTemplateDeleteFilter!]
-  category: CategoryFilterComparison
-  created: DateFieldComparison
-  id: IDFilterComparison
-  language: LanguageFilterComparison
-  length: NumberFieldComparison
-  name: StringFieldComparison
-  or: [EventTemplateDeleteFilter!]
-  subtitles: LanguageFilterComparison
-  type: TemplateTypeFilterComparison
-  updated: DateFieldComparison
-}
-
-type EventTemplateDeleteResponse {
-  category: Category
-  created: DateTime
-  description: String
-  id: ID
-  language: Language
-  length: Float
-  name: String
-  posterUrl: String
-  subtitles: Language
-  type: TemplateType
-  updated: DateTime
-}
-
-input EventTemplateFilter {
-  and: [EventTemplateFilter!]
-  business: EventTemplateFilterBusinessFilter
-  category: CategoryFilterComparison
-  created: DateFieldComparison
-  id: IDFilterComparison
-  language: LanguageFilterComparison
-  length: NumberFieldComparison
-  name: StringFieldComparison
-  or: [EventTemplateFilter!]
-  subtitles: LanguageFilterComparison
-  type: TemplateTypeFilterComparison
-  updated: DateFieldComparison
-  venue: EventTemplateFilterVenueFilter
-}
-
-input EventTemplateFilterBusinessFilter {
-  and: [EventTemplateFilterBusinessFilter!]
-  created: DateFieldComparison
-  currency: CurrencyFilterComparison
-  id: IDFilterComparison
-  name: StringFieldComparison
-  or: [EventTemplateFilterBusinessFilter!]
-  updated: DateFieldComparison
-}
-
-input EventTemplateFilterVenueFilter {
-  and: [EventTemplateFilterVenueFilter!]
-  buildingNumber: StringFieldComparison
-  capacity: NumberFieldComparison
-  city: StringFieldComparison
-  created: DateFieldComparison
-  hasSeats: BooleanFieldComparison
-  id: IDFilterComparison
-  name: StringFieldComparison
-  or: [EventTemplateFilterVenueFilter!]
-  street: StringFieldComparison
-  updated: DateFieldComparison
-}
-
-input EventTemplateSort {
-  direction: SortDirection!
-  field: EventTemplateSortFields!
-  nulls: SortNulls
-}
-
-enum EventTemplateSortFields {
-  category
-  created
-  id
-  language
-  length
-  name
-  subtitles
-  type
-  updated
-}
-
-input EventTemplateSubscriptionFilter {
-  and: [EventTemplateSubscriptionFilter!]
-  category: CategoryFilterComparison
-  created: DateFieldComparison
-  id: IDFilterComparison
-  language: LanguageFilterComparison
-  length: NumberFieldComparison
-  name: StringFieldComparison
-  or: [EventTemplateSubscriptionFilter!]
-  subtitles: LanguageFilterComparison
-  type: TemplateTypeFilterComparison
-  updated: DateFieldComparison
-}
-
-input EventTemplateUpdateFilter {
-  and: [EventTemplateUpdateFilter!]
-  category: CategoryFilterComparison
-  created: DateFieldComparison
-  id: IDFilterComparison
-  language: LanguageFilterComparison
-  length: NumberFieldComparison
-  name: StringFieldComparison
-  or: [EventTemplateUpdateFilter!]
-  subtitles: LanguageFilterComparison
-  type: TemplateTypeFilterComparison
+  templateId: StringFieldComparison
   updated: DateFieldComparison
 }
 
 input EventUpdateFilter {
   and: [EventUpdateFilter!]
   businessId: StringFieldComparison
-  category: CategoryFilterComparison
   created: DateFieldComparison
   date: DateFieldComparison
   id: IDFilterComparison
-  language: LanguageFilterComparison
-  length: NumberFieldComparison
   name: StringFieldComparison
   or: [EventUpdateFilter!]
-  subtitles: LanguageFilterComparison
-  template: BooleanFieldComparison
+  templateId: StringFieldComparison
   updated: DateFieldComparison
 }
 
@@ -1739,6 +1491,7 @@ input MembershipFilterBusinessFilter {
 input MembershipFilterMembershipTypeFilter {
   and: [MembershipFilterMembershipTypeFilter!]
   created: DateFieldComparison
+  description: StringFieldComparison
   id: IDFilterComparison
   name: StringFieldComparison
   or: [MembershipFilterMembershipTypeFilter!]
@@ -1792,6 +1545,7 @@ input MembershipSubscriptionFilter {
 type MembershipType {
   business: Business!
   created: DateTime!
+  description: String
   id: ID!
   name: String!
   updated: DateTime!
@@ -1811,6 +1565,7 @@ type MembershipTypeConnection {
 input MembershipTypeDeleteFilter {
   and: [MembershipTypeDeleteFilter!]
   created: DateFieldComparison
+  description: StringFieldComparison
   id: IDFilterComparison
   name: StringFieldComparison
   or: [MembershipTypeDeleteFilter!]
@@ -1819,6 +1574,7 @@ input MembershipTypeDeleteFilter {
 
 type MembershipTypeDeleteResponse {
   created: DateTime
+  description: String
   id: ID
   name: String
   updated: DateTime
@@ -1828,6 +1584,7 @@ input MembershipTypeFilter {
   and: [MembershipTypeFilter!]
   business: MembershipTypeFilterBusinessFilter
   created: DateFieldComparison
+  description: StringFieldComparison
   id: IDFilterComparison
   name: StringFieldComparison
   or: [MembershipTypeFilter!]
@@ -1852,6 +1609,7 @@ input MembershipTypeSort {
 
 enum MembershipTypeSortFields {
   created
+  description
   id
   name
   updated
@@ -1860,6 +1618,7 @@ enum MembershipTypeSortFields {
 input MembershipTypeSubscriptionFilter {
   and: [MembershipTypeSubscriptionFilter!]
   created: DateFieldComparison
+  description: StringFieldComparison
   id: IDFilterComparison
   name: StringFieldComparison
   or: [MembershipTypeSubscriptionFilter!]
@@ -1869,6 +1628,7 @@ input MembershipTypeSubscriptionFilter {
 input MembershipTypeUpdateFilter {
   and: [MembershipTypeUpdateFilter!]
   created: DateFieldComparison
+  description: StringFieldComparison
   id: IDFilterComparison
   name: StringFieldComparison
   or: [MembershipTypeUpdateFilter!]
@@ -1895,8 +1655,6 @@ type Mutation {
   createManyBusinessUsers(input: CreateManyBusinessUsersInput!): [BusinessUser!]!
   createManyBusinesses(input: CreateManyBusinessesInput!): [Business!]!
   createManyDiscounts(input: CreateManyDiscountsInput!): [Discount!]!
-  createManyEventDiscountDtos(input: CreateManyEventDiscountDtosInput!): [EventDiscountDto!]!
-  createManyEventTemplates(input: CreateManyEventTemplatesInput!): [EventTemplate!]!
   createManyEvents(input: CreateManyEventsInput!): [Event!]!
   createManyMembershipTypes(input: CreateManyMembershipTypesInput!): [MembershipType!]!
   createManyMemberships(input: CreateManyMembershipsInput!): [Membership!]!
@@ -1905,8 +1663,10 @@ type Mutation {
   createManyRows(input: CreateManyRowsInput!): [Row!]!
   createManySeats(input: CreateManySeatsInput!): [Seat!]!
   createManySections(input: CreateManySectionsInput!): [Section!]!
+  createManyTemplateDiscounts(input: CreateManyTemplateDiscountsInput!): [TemplateDiscount!]!
+  createManyTemplates(input: CreateManyTemplatesInput!): [Template!]!
   createManyTickets(input: CreateManyTicketsInput!): [Ticket!]!
-  createManyUserBenefitDtos(input: CreateManyUserBenefitDtosInput!): [UserBenefitDto!]!
+  createManyUserBenefits(input: CreateManyUserBenefitsInput!): [UserBenefit!]!
   createManyUsers(input: CreateManyUsersInput!): [User!]!
   createManyVenues(input: CreateManyVenuesInput!): [Venue!]!
   createOneBenefit(input: CreateOneBenefitInput!): Benefit!
@@ -1914,8 +1674,6 @@ type Mutation {
   createOneBusinessUser(input: CreateOneBusinessUserInput!): BusinessUser!
   createOneDiscount(input: CreateOneDiscountInput!): Discount!
   createOneEvent(input: CreateOneEventInput!): Event!
-  createOneEventDiscountDto(input: CreateOneEventDiscountDtoInput!): EventDiscountDto!
-  createOneEventTemplate(input: CreateOneEventTemplateInput!): EventTemplate!
   createOneMembership(input: CreateOneMembershipInput!): Membership!
   createOneMembershipType(input: CreateOneMembershipTypeInput!): MembershipType!
   createOneOrder(input: CreateOneOrderInput!): Order!
@@ -1923,18 +1681,19 @@ type Mutation {
   createOneRow(input: CreateOneRowInput!): Row!
   createOneSeat(input: CreateOneSeatInput!): Seat!
   createOneSection(input: CreateOneSectionInput!): Section!
+  createOneTemplate(input: CreateOneTemplateInput!): Template!
+  createOneTemplateDiscount(input: CreateOneTemplateDiscountInput!): TemplateDiscount!
   createOneTicket(input: CreateOneTicketInput!): Ticket!
   createOneUser(input: CreateOneUserInput!): User!
-  createOneUserBenefitDto(input: CreateOneUserBenefitDtoInput!): UserBenefitDto!
+  createOneUserBenefit(input: CreateOneUserBenefitInput!): UserBenefit!
   createOneVenue(input: CreateOneVenueInput!): Venue!
+  createTemplate(input: CreateTemplate!): Template!
   createTickets(input: CreateTicketOrder!): Event!
   createVenue(input: CreateVenue!): Venue!
   deleteManyBenefits(input: DeleteManyBenefitsInput!): DeleteManyResponse!
   deleteManyBusinessUsers(input: DeleteManyBusinessUsersInput!): DeleteManyResponse!
   deleteManyBusinesses(input: DeleteManyBusinessesInput!): DeleteManyResponse!
   deleteManyDiscounts(input: DeleteManyDiscountsInput!): DeleteManyResponse!
-  deleteManyEventDiscountDtos(input: DeleteManyEventDiscountDtosInput!): DeleteManyResponse!
-  deleteManyEventTemplates(input: DeleteManyEventTemplatesInput!): DeleteManyResponse!
   deleteManyEvents(input: DeleteManyEventsInput!): DeleteManyResponse!
   deleteManyMembershipTypes(input: DeleteManyMembershipTypesInput!): DeleteManyResponse!
   deleteManyMemberships(input: DeleteManyMembershipsInput!): DeleteManyResponse!
@@ -1943,8 +1702,10 @@ type Mutation {
   deleteManyRows(input: DeleteManyRowsInput!): DeleteManyResponse!
   deleteManySeats(input: DeleteManySeatsInput!): DeleteManyResponse!
   deleteManySections(input: DeleteManySectionsInput!): DeleteManyResponse!
+  deleteManyTemplateDiscounts(input: DeleteManyTemplateDiscountsInput!): DeleteManyResponse!
+  deleteManyTemplates(input: DeleteManyTemplatesInput!): DeleteManyResponse!
   deleteManyTickets(input: DeleteManyTicketsInput!): DeleteManyResponse!
-  deleteManyUserBenefitDtos(input: DeleteManyUserBenefitDtosInput!): DeleteManyResponse!
+  deleteManyUserBenefits(input: DeleteManyUserBenefitsInput!): DeleteManyResponse!
   deleteManyUsers(input: DeleteManyUsersInput!): DeleteManyResponse!
   deleteManyVenues(input: DeleteManyVenuesInput!): DeleteManyResponse!
   deleteOneBenefit(input: DeleteOneBenefitInput!): BenefitDeleteResponse!
@@ -1952,8 +1713,6 @@ type Mutation {
   deleteOneBusinessUser(input: DeleteOneBusinessUserInput!): BusinessUserDeleteResponse!
   deleteOneDiscount(input: DeleteOneDiscountInput!): DiscountDeleteResponse!
   deleteOneEvent(input: DeleteOneEventInput!): EventDeleteResponse!
-  deleteOneEventDiscountDto(input: DeleteOneEventDiscountDtoInput!): EventDiscountDtoDeleteResponse!
-  deleteOneEventTemplate(input: DeleteOneEventTemplateInput!): EventTemplateDeleteResponse!
   deleteOneMembership(input: DeleteOneMembershipInput!): MembershipDeleteResponse!
   deleteOneMembershipType(input: DeleteOneMembershipTypeInput!): MembershipTypeDeleteResponse!
   deleteOneOrder(input: DeleteOneOrderInput!): OrderDeleteResponse!
@@ -1961,17 +1720,18 @@ type Mutation {
   deleteOneRow(input: DeleteOneRowInput!): RowDeleteResponse!
   deleteOneSeat(input: DeleteOneSeatInput!): SeatDeleteResponse!
   deleteOneSection(input: DeleteOneSectionInput!): SectionDeleteResponse!
+  deleteOneTemplate(input: DeleteOneTemplateInput!): TemplateDeleteResponse!
+  deleteOneTemplateDiscount(input: DeleteOneTemplateDiscountInput!): TemplateDiscountDeleteResponse!
   deleteOneTicket(input: DeleteOneTicketInput!): TicketDeleteResponse!
   deleteOneUser(input: DeleteOneUserInput!): UserDeleteResponse!
-  deleteOneUserBenefitDto(input: DeleteOneUserBenefitDtoInput!): UserBenefitDtoDeleteResponse!
+  deleteOneUserBenefit(input: DeleteOneUserBenefitInput!): UserBenefitDeleteResponse!
   deleteOneVenue(input: DeleteOneVenueInput!): VenueDeleteResponse!
+  sendEmail(input: BatchUserEmail!): Boolean!
   updateEvent(input: UpdateEvent!): Event!
   updateManyBenefits(input: UpdateManyBenefitsInput!): UpdateManyResponse!
   updateManyBusinessUsers(input: UpdateManyBusinessUsersInput!): UpdateManyResponse!
   updateManyBusinesses(input: UpdateManyBusinessesInput!): UpdateManyResponse!
   updateManyDiscounts(input: UpdateManyDiscountsInput!): UpdateManyResponse!
-  updateManyEventDiscountDtos(input: UpdateManyEventDiscountDtosInput!): UpdateManyResponse!
-  updateManyEventTemplates(input: UpdateManyEventTemplatesInput!): UpdateManyResponse!
   updateManyEvents(input: UpdateManyEventsInput!): UpdateManyResponse!
   updateManyMembershipTypes(input: UpdateManyMembershipTypesInput!): UpdateManyResponse!
   updateManyMemberships(input: UpdateManyMembershipsInput!): UpdateManyResponse!
@@ -1980,8 +1740,10 @@ type Mutation {
   updateManyRows(input: UpdateManyRowsInput!): UpdateManyResponse!
   updateManySeats(input: UpdateManySeatsInput!): UpdateManyResponse!
   updateManySections(input: UpdateManySectionsInput!): UpdateManyResponse!
+  updateManyTemplateDiscounts(input: UpdateManyTemplateDiscountsInput!): UpdateManyResponse!
+  updateManyTemplates(input: UpdateManyTemplatesInput!): UpdateManyResponse!
   updateManyTickets(input: UpdateManyTicketsInput!): UpdateManyResponse!
-  updateManyUserBenefitDtos(input: UpdateManyUserBenefitDtosInput!): UpdateManyResponse!
+  updateManyUserBenefits(input: UpdateManyUserBenefitsInput!): UpdateManyResponse!
   updateManyUsers(input: UpdateManyUsersInput!): UpdateManyResponse!
   updateManyVenues(input: UpdateManyVenuesInput!): UpdateManyResponse!
   updateOneBenefit(input: UpdateOneBenefitInput!): Benefit!
@@ -1989,8 +1751,6 @@ type Mutation {
   updateOneBusinessUser(input: UpdateOneBusinessUserInput!): BusinessUser!
   updateOneDiscount(input: UpdateOneDiscountInput!): Discount!
   updateOneEvent(input: UpdateOneEventInput!): Event!
-  updateOneEventDiscountDto(input: UpdateOneEventDiscountDtoInput!): EventDiscountDto!
-  updateOneEventTemplate(input: UpdateOneEventTemplateInput!): EventTemplate!
   updateOneMembership(input: UpdateOneMembershipInput!): Membership!
   updateOneMembershipType(input: UpdateOneMembershipTypeInput!): MembershipType!
   updateOneOrder(input: UpdateOneOrderInput!): Order!
@@ -1998,11 +1758,15 @@ type Mutation {
   updateOneRow(input: UpdateOneRowInput!): Row!
   updateOneSeat(input: UpdateOneSeatInput!): Seat!
   updateOneSection(input: UpdateOneSectionInput!): Section!
+  updateOneTemplate(input: UpdateOneTemplateInput!): Template!
+  updateOneTemplateDiscount(input: UpdateOneTemplateDiscountInput!): TemplateDiscount!
   updateOneTicket(input: UpdateOneTicketInput!): Ticket!
   updateOneUser(input: UpdateOneUserInput!): User!
-  updateOneUserBenefitDto(input: UpdateOneUserBenefitDtoInput!): UserBenefitDto!
+  updateOneUserBenefit(input: UpdateOneUserBenefitInput!): UserBenefit!
   updateOneVenue(input: UpdateOneVenueInput!): Venue!
   updatePassword(input: UpdatePassword!): String!
+  updateTemplate(input: UpdateTemplate!): Template!
+  updateVenue(input: UpdateVenue!): Venue!
 }
 
 input NumberFieldComparison {
@@ -2118,6 +1882,11 @@ input OrderFilterUserFilter {
   updated: DateFieldComparison
 }
 
+type OrderGraph {
+  date: String!
+  total: Float!
+}
+
 input OrderSort {
   direction: SortDirection!
   field: OrderSortFields!
@@ -2163,6 +1932,7 @@ type PriceCategory {
   price: Float!
   section: Section!
   startDate: DateTime
+  template: Template!
   updated: DateTime!
 }
 
@@ -2192,6 +1962,7 @@ input PriceCategoryDeleteFilter {
   price: NumberFieldComparison
   sectionId: StringFieldComparison
   startDate: DateFieldComparison
+  templateId: StringFieldComparison
   updated: DateFieldComparison
 }
 
@@ -2216,6 +1987,8 @@ input PriceCategoryFilter {
   section: PriceCategoryFilterSectionFilter
   sectionId: StringFieldComparison
   startDate: DateFieldComparison
+  template: PriceCategoryFilterTemplateFilter
+  templateId: StringFieldComparison
   updated: DateFieldComparison
 }
 
@@ -2226,6 +1999,22 @@ input PriceCategoryFilterSectionFilter {
   id: IDFilterComparison
   name: StringFieldComparison
   or: [PriceCategoryFilterSectionFilter!]
+  updated: DateFieldComparison
+  venueId: StringFieldComparison
+}
+
+input PriceCategoryFilterTemplateFilter {
+  and: [PriceCategoryFilterTemplateFilter!]
+  category: CategoryFilterComparison
+  created: DateFieldComparison
+  description: StringFieldComparison
+  id: IDFilterComparison
+  language: LanguageFilterComparison
+  length: NumberFieldComparison
+  name: StringFieldComparison
+  or: [PriceCategoryFilterTemplateFilter!]
+  subtitles: LanguageFilterComparison
+  type: TypeFilterComparison
   updated: DateFieldComparison
   venueId: StringFieldComparison
 }
@@ -2244,6 +2033,7 @@ enum PriceCategorySortFields {
   price
   sectionId
   startDate
+  templateId
   updated
 }
 
@@ -2257,6 +2047,7 @@ input PriceCategorySubscriptionFilter {
   price: NumberFieldComparison
   sectionId: StringFieldComparison
   startDate: DateFieldComparison
+  templateId: StringFieldComparison
   updated: DateFieldComparison
 }
 
@@ -2270,6 +2061,7 @@ input PriceCategoryUpdateFilter {
   price: NumberFieldComparison
   sectionId: StringFieldComparison
   startDate: DateFieldComparison
+  templateId: StringFieldComparison
   updated: DateFieldComparison
 }
 
@@ -2334,34 +2126,6 @@ type Query {
     """The id of the record to find."""
     id: ID!
   ): Event!
-  eventDiscountDto(
-    """The id of the record to find."""
-    id: ID!
-  ): EventDiscountDto!
-  eventDiscountDtos(
-    """Specify to filter the records returned."""
-    filter: EventDiscountDtoFilter! = {}
-
-    """Limit or page results."""
-    paging: OffsetPaging! = {limit: 10}
-
-    """Specify to sort results."""
-    sorting: [EventDiscountDtoSort!]! = []
-  ): EventDiscountDtoConnection!
-  eventTemplate(
-    """The id of the record to find."""
-    id: ID!
-  ): EventTemplate!
-  eventTemplates(
-    """Specify to filter the records returned."""
-    filter: EventTemplateFilter! = {}
-
-    """Limit or page results."""
-    paging: OffsetPaging! = {limit: 10}
-
-    """Specify to sort results."""
-    sorting: [EventTemplateSort!]! = []
-  ): EventTemplateConnection!
   events(
     """Specify to filter the records returned."""
     filter: EventFilter! = {}
@@ -2385,6 +2149,7 @@ type Query {
     """Specify to sort results."""
     sorting: [PriceCategorySort!]! = []
   ): PriceCategoryAvailable!
+  getOrderTotals(meta: String!): [OrderGraph!]!
   getUserBenefits(
     """Specify to filter the records returned."""
     filter: BenefitFilter! = {}
@@ -2526,6 +2291,34 @@ type Query {
     """Specify to sort results."""
     sorting: [SectionSort!]! = []
   ): SectionConnection!
+  template(
+    """The id of the record to find."""
+    id: ID!
+  ): Template!
+  templateDiscount(
+    """The id of the record to find."""
+    id: ID!
+  ): TemplateDiscount!
+  templateDiscounts(
+    """Specify to filter the records returned."""
+    filter: TemplateDiscountFilter! = {}
+
+    """Limit or page results."""
+    paging: OffsetPaging! = {limit: 10}
+
+    """Specify to sort results."""
+    sorting: [TemplateDiscountSort!]! = []
+  ): TemplateDiscountConnection!
+  templates(
+    """Specify to filter the records returned."""
+    filter: TemplateFilter! = {}
+
+    """Limit or page results."""
+    paging: OffsetPaging! = {limit: 10}
+
+    """Specify to sort results."""
+    sorting: [TemplateSort!]! = []
+  ): TemplateConnection!
   ticket(
     """The id of the record to find."""
     id: ID!
@@ -2548,20 +2341,20 @@ type Query {
     """The id of the record to find."""
     id: ID!
   ): User!
-  userBenefitDto(
+  userBenefit(
     """The id of the record to find."""
     id: ID!
-  ): UserBenefitDto!
-  userBenefitDtos(
+  ): UserBenefit!
+  userBenefits(
     """Specify to filter the records returned."""
-    filter: UserBenefitDtoFilter! = {}
+    filter: UserBenefitFilter! = {}
 
     """Limit or page results."""
     paging: OffsetPaging! = {limit: 10}
 
     """Specify to sort results."""
-    sorting: [UserBenefitDtoSort!]! = []
-  ): UserBenefitDtoConnection!
+    sorting: [UserBenefitSort!]! = []
+  ): UserBenefitConnection!
   users(
     """Specify to filter the records returned."""
     filter: UserFilter! = {}
@@ -2931,8 +2724,6 @@ type Subscription {
   createdBusinessUser(input: CreateBusinessUserSubscriptionFilterInput): BusinessUser!
   createdDiscount(input: CreateDiscountSubscriptionFilterInput): Discount!
   createdEvent(input: CreateEventSubscriptionFilterInput): Event!
-  createdEventDiscountDto(input: CreateEventDiscountDtoSubscriptionFilterInput): EventDiscountDto!
-  createdEventTemplate(input: CreateEventTemplateSubscriptionFilterInput): EventTemplate!
   createdMembership(input: CreateMembershipSubscriptionFilterInput): Membership!
   createdMembershipType(input: CreateMembershipTypeSubscriptionFilterInput): MembershipType!
   createdOrder(input: CreateOrderSubscriptionFilterInput): Order!
@@ -2940,16 +2731,16 @@ type Subscription {
   createdRow(input: CreateRowSubscriptionFilterInput): Row!
   createdSeat(input: CreateSeatSubscriptionFilterInput): Seat!
   createdSection(input: CreateSectionSubscriptionFilterInput): Section!
+  createdTemplate(input: CreateTemplateSubscriptionFilterInput): Template!
+  createdTemplateDiscount(input: CreateTemplateDiscountSubscriptionFilterInput): TemplateDiscount!
   createdTicket(input: CreateTicketSubscriptionFilterInput): Ticket!
   createdUser(input: CreateUserSubscriptionFilterInput): User!
-  createdUserBenefitDto(input: CreateUserBenefitDtoSubscriptionFilterInput): UserBenefitDto!
+  createdUserBenefit(input: CreateUserBenefitSubscriptionFilterInput): UserBenefit!
   createdVenue(input: CreateVenueSubscriptionFilterInput): Venue!
   deletedManyBenefits: DeleteManyResponse!
   deletedManyBusinessUsers: DeleteManyResponse!
   deletedManyBusinesses: DeleteManyResponse!
   deletedManyDiscounts: DeleteManyResponse!
-  deletedManyEventDiscountDtos: DeleteManyResponse!
-  deletedManyEventTemplates: DeleteManyResponse!
   deletedManyEvents: DeleteManyResponse!
   deletedManyMembershipTypes: DeleteManyResponse!
   deletedManyMemberships: DeleteManyResponse!
@@ -2958,8 +2749,10 @@ type Subscription {
   deletedManyRows: DeleteManyResponse!
   deletedManySeats: DeleteManyResponse!
   deletedManySections: DeleteManyResponse!
+  deletedManyTemplateDiscounts: DeleteManyResponse!
+  deletedManyTemplates: DeleteManyResponse!
   deletedManyTickets: DeleteManyResponse!
-  deletedManyUserBenefitDtos: DeleteManyResponse!
+  deletedManyUserBenefits: DeleteManyResponse!
   deletedManyUsers: DeleteManyResponse!
   deletedManyVenues: DeleteManyResponse!
   deletedOneBenefit(input: DeleteOneBenefitSubscriptionFilterInput): BenefitDeleteResponse!
@@ -2967,8 +2760,6 @@ type Subscription {
   deletedOneBusinessUser(input: DeleteOneBusinessUserSubscriptionFilterInput): BusinessUserDeleteResponse!
   deletedOneDiscount(input: DeleteOneDiscountSubscriptionFilterInput): DiscountDeleteResponse!
   deletedOneEvent(input: DeleteOneEventSubscriptionFilterInput): EventDeleteResponse!
-  deletedOneEventDiscountDto(input: DeleteOneEventDiscountDtoSubscriptionFilterInput): EventDiscountDtoDeleteResponse!
-  deletedOneEventTemplate(input: DeleteOneEventTemplateSubscriptionFilterInput): EventTemplateDeleteResponse!
   deletedOneMembership(input: DeleteOneMembershipSubscriptionFilterInput): MembershipDeleteResponse!
   deletedOneMembershipType(input: DeleteOneMembershipTypeSubscriptionFilterInput): MembershipTypeDeleteResponse!
   deletedOneOrder(input: DeleteOneOrderSubscriptionFilterInput): OrderDeleteResponse!
@@ -2976,16 +2767,16 @@ type Subscription {
   deletedOneRow(input: DeleteOneRowSubscriptionFilterInput): RowDeleteResponse!
   deletedOneSeat(input: DeleteOneSeatSubscriptionFilterInput): SeatDeleteResponse!
   deletedOneSection(input: DeleteOneSectionSubscriptionFilterInput): SectionDeleteResponse!
+  deletedOneTemplate(input: DeleteOneTemplateSubscriptionFilterInput): TemplateDeleteResponse!
+  deletedOneTemplateDiscount(input: DeleteOneTemplateDiscountSubscriptionFilterInput): TemplateDiscountDeleteResponse!
   deletedOneTicket(input: DeleteOneTicketSubscriptionFilterInput): TicketDeleteResponse!
   deletedOneUser(input: DeleteOneUserSubscriptionFilterInput): UserDeleteResponse!
-  deletedOneUserBenefitDto(input: DeleteOneUserBenefitDtoSubscriptionFilterInput): UserBenefitDtoDeleteResponse!
+  deletedOneUserBenefit(input: DeleteOneUserBenefitSubscriptionFilterInput): UserBenefitDeleteResponse!
   deletedOneVenue(input: DeleteOneVenueSubscriptionFilterInput): VenueDeleteResponse!
   updatedManyBenefits: UpdateManyResponse!
   updatedManyBusinessUsers: UpdateManyResponse!
   updatedManyBusinesses: UpdateManyResponse!
   updatedManyDiscounts: UpdateManyResponse!
-  updatedManyEventDiscountDtos: UpdateManyResponse!
-  updatedManyEventTemplates: UpdateManyResponse!
   updatedManyEvents: UpdateManyResponse!
   updatedManyMembershipTypes: UpdateManyResponse!
   updatedManyMemberships: UpdateManyResponse!
@@ -2994,8 +2785,10 @@ type Subscription {
   updatedManyRows: UpdateManyResponse!
   updatedManySeats: UpdateManyResponse!
   updatedManySections: UpdateManyResponse!
+  updatedManyTemplateDiscounts: UpdateManyResponse!
+  updatedManyTemplates: UpdateManyResponse!
   updatedManyTickets: UpdateManyResponse!
-  updatedManyUserBenefitDtos: UpdateManyResponse!
+  updatedManyUserBenefits: UpdateManyResponse!
   updatedManyUsers: UpdateManyResponse!
   updatedManyVenues: UpdateManyResponse!
   updatedOneBenefit(input: UpdateOneBenefitSubscriptionFilterInput): Benefit!
@@ -3003,8 +2796,6 @@ type Subscription {
   updatedOneBusinessUser(input: UpdateOneBusinessUserSubscriptionFilterInput): BusinessUser!
   updatedOneDiscount(input: UpdateOneDiscountSubscriptionFilterInput): Discount!
   updatedOneEvent(input: UpdateOneEventSubscriptionFilterInput): Event!
-  updatedOneEventDiscountDto(input: UpdateOneEventDiscountDtoSubscriptionFilterInput): EventDiscountDto!
-  updatedOneEventTemplate(input: UpdateOneEventTemplateSubscriptionFilterInput): EventTemplate!
   updatedOneMembership(input: UpdateOneMembershipSubscriptionFilterInput): Membership!
   updatedOneMembershipType(input: UpdateOneMembershipTypeSubscriptionFilterInput): MembershipType!
   updatedOneOrder(input: UpdateOneOrderSubscriptionFilterInput): Order!
@@ -3012,32 +2803,257 @@ type Subscription {
   updatedOneRow(input: UpdateOneRowSubscriptionFilterInput): Row!
   updatedOneSeat(input: UpdateOneSeatSubscriptionFilterInput): Seat!
   updatedOneSection(input: UpdateOneSectionSubscriptionFilterInput): Section!
+  updatedOneTemplate(input: UpdateOneTemplateSubscriptionFilterInput): Template!
+  updatedOneTemplateDiscount(input: UpdateOneTemplateDiscountSubscriptionFilterInput): TemplateDiscount!
   updatedOneTicket(input: UpdateOneTicketSubscriptionFilterInput): Ticket!
   updatedOneUser(input: UpdateOneUserSubscriptionFilterInput): User!
-  updatedOneUserBenefitDto(input: UpdateOneUserBenefitDtoSubscriptionFilterInput): UserBenefitDto!
+  updatedOneUserBenefit(input: UpdateOneUserBenefitSubscriptionFilterInput): UserBenefit!
   updatedOneVenue(input: UpdateOneVenueSubscriptionFilterInput): Venue!
 }
 
-enum TemplateType {
-  Child
-  Parent
+type Template {
+  business: Business!
+  category: Category!
+  created: DateTime!
+  description: String
+  id: ID!
+  language: Language
+  length: Float
+  name: String!
+  posterUrl: String
+  subtitles: Language
+  type: Type!
+  updated: DateTime!
+  venue: Venue!
 }
 
-input TemplateTypeFilterComparison {
-  eq: TemplateType
-  gt: TemplateType
-  gte: TemplateType
-  iLike: TemplateType
-  in: [TemplateType!]
-  is: Boolean
-  isNot: Boolean
-  like: TemplateType
-  lt: TemplateType
-  lte: TemplateType
-  neq: TemplateType
-  notILike: TemplateType
-  notIn: [TemplateType!]
-  notLike: TemplateType
+type TemplateConnection {
+  """Array of nodes."""
+  nodes: [Template!]!
+
+  """Paging information"""
+  pageInfo: OffsetPageInfo!
+
+  """Fetch total count of records"""
+  totalCount: Int!
+}
+
+input TemplateDeleteFilter {
+  and: [TemplateDeleteFilter!]
+  category: CategoryFilterComparison
+  created: DateFieldComparison
+  description: StringFieldComparison
+  id: IDFilterComparison
+  language: LanguageFilterComparison
+  length: NumberFieldComparison
+  name: StringFieldComparison
+  or: [TemplateDeleteFilter!]
+  subtitles: LanguageFilterComparison
+  type: TypeFilterComparison
+  updated: DateFieldComparison
+  venueId: StringFieldComparison
+}
+
+type TemplateDeleteResponse {
+  category: Category
+  created: DateTime
+  description: String
+  id: ID
+  language: Language
+  length: Float
+  name: String
+  posterUrl: String
+  subtitles: Language
+  type: Type
+  updated: DateTime
+}
+
+type TemplateDiscount {
+  created: DateTime!
+  discount: Discount!
+  template: Template!
+}
+
+type TemplateDiscountConnection {
+  """Array of nodes."""
+  nodes: [TemplateDiscount!]!
+
+  """Paging information"""
+  pageInfo: OffsetPageInfo!
+
+  """Fetch total count of records"""
+  totalCount: Int!
+}
+
+input TemplateDiscountDeleteFilter {
+  and: [TemplateDiscountDeleteFilter!]
+  created: DateFieldComparison
+  discountId: StringFieldComparison
+  or: [TemplateDiscountDeleteFilter!]
+  templateId: StringFieldComparison
+}
+
+type TemplateDiscountDeleteResponse {
+  created: DateTime
+}
+
+input TemplateDiscountFilter {
+  and: [TemplateDiscountFilter!]
+  created: DateFieldComparison
+  discount: TemplateDiscountFilterDiscountFilter
+  discountId: StringFieldComparison
+  or: [TemplateDiscountFilter!]
+  template: TemplateDiscountFilterTemplateFilter
+  templateId: StringFieldComparison
+}
+
+input TemplateDiscountFilterDiscountFilter {
+  and: [TemplateDiscountFilterDiscountFilter!]
+  businessId: StringFieldComparison
+  created: DateFieldComparison
+  id: IDFilterComparison
+  name: StringFieldComparison
+  or: [TemplateDiscountFilterDiscountFilter!]
+  percentage: NumberFieldComparison
+  updated: DateFieldComparison
+}
+
+input TemplateDiscountFilterTemplateFilter {
+  and: [TemplateDiscountFilterTemplateFilter!]
+  category: CategoryFilterComparison
+  created: DateFieldComparison
+  description: StringFieldComparison
+  id: IDFilterComparison
+  language: LanguageFilterComparison
+  length: NumberFieldComparison
+  name: StringFieldComparison
+  or: [TemplateDiscountFilterTemplateFilter!]
+  subtitles: LanguageFilterComparison
+  type: TypeFilterComparison
+  updated: DateFieldComparison
+  venueId: StringFieldComparison
+}
+
+input TemplateDiscountSort {
+  direction: SortDirection!
+  field: TemplateDiscountSortFields!
+  nulls: SortNulls
+}
+
+enum TemplateDiscountSortFields {
+  created
+  discountId
+  templateId
+}
+
+input TemplateDiscountSubscriptionFilter {
+  and: [TemplateDiscountSubscriptionFilter!]
+  created: DateFieldComparison
+  discountId: StringFieldComparison
+  or: [TemplateDiscountSubscriptionFilter!]
+  templateId: StringFieldComparison
+}
+
+input TemplateDiscountUpdateFilter {
+  and: [TemplateDiscountUpdateFilter!]
+  created: DateFieldComparison
+  discountId: StringFieldComparison
+  or: [TemplateDiscountUpdateFilter!]
+  templateId: StringFieldComparison
+}
+
+input TemplateFilter {
+  and: [TemplateFilter!]
+  business: TemplateFilterBusinessFilter
+  category: CategoryFilterComparison
+  created: DateFieldComparison
+  description: StringFieldComparison
+  id: IDFilterComparison
+  language: LanguageFilterComparison
+  length: NumberFieldComparison
+  name: StringFieldComparison
+  or: [TemplateFilter!]
+  subtitles: LanguageFilterComparison
+  type: TypeFilterComparison
+  updated: DateFieldComparison
+  venue: TemplateFilterVenueFilter
+  venueId: StringFieldComparison
+}
+
+input TemplateFilterBusinessFilter {
+  and: [TemplateFilterBusinessFilter!]
+  created: DateFieldComparison
+  currency: CurrencyFilterComparison
+  id: IDFilterComparison
+  name: StringFieldComparison
+  or: [TemplateFilterBusinessFilter!]
+  updated: DateFieldComparison
+}
+
+input TemplateFilterVenueFilter {
+  and: [TemplateFilterVenueFilter!]
+  buildingNumber: StringFieldComparison
+  capacity: NumberFieldComparison
+  city: StringFieldComparison
+  created: DateFieldComparison
+  hasSeats: BooleanFieldComparison
+  id: IDFilterComparison
+  name: StringFieldComparison
+  or: [TemplateFilterVenueFilter!]
+  street: StringFieldComparison
+  updated: DateFieldComparison
+}
+
+input TemplateSort {
+  direction: SortDirection!
+  field: TemplateSortFields!
+  nulls: SortNulls
+}
+
+enum TemplateSortFields {
+  category
+  created
+  description
+  id
+  language
+  length
+  name
+  subtitles
+  type
+  updated
+  venueId
+}
+
+input TemplateSubscriptionFilter {
+  and: [TemplateSubscriptionFilter!]
+  category: CategoryFilterComparison
+  created: DateFieldComparison
+  description: StringFieldComparison
+  id: IDFilterComparison
+  language: LanguageFilterComparison
+  length: NumberFieldComparison
+  name: StringFieldComparison
+  or: [TemplateSubscriptionFilter!]
+  subtitles: LanguageFilterComparison
+  type: TypeFilterComparison
+  updated: DateFieldComparison
+  venueId: StringFieldComparison
+}
+
+input TemplateUpdateFilter {
+  and: [TemplateUpdateFilter!]
+  category: CategoryFilterComparison
+  created: DateFieldComparison
+  description: StringFieldComparison
+  id: IDFilterComparison
+  language: LanguageFilterComparison
+  length: NumberFieldComparison
+  name: StringFieldComparison
+  or: [TemplateUpdateFilter!]
+  subtitles: LanguageFilterComparison
+  type: TypeFilterComparison
+  updated: DateFieldComparison
+  venueId: StringFieldComparison
 }
 
 type Ticket {
@@ -3104,16 +3120,12 @@ input TicketAggregateFilterDiscountAggregateFilter {
 input TicketAggregateFilterEventAggregateFilter {
   and: [TicketAggregateFilterEventAggregateFilter!]
   businessId: StringFieldComparison
-  category: CategoryFilterComparison
   created: DateFieldComparison
   date: DateFieldComparison
   id: IDFilterComparison
-  language: LanguageFilterComparison
-  length: NumberFieldComparison
   name: StringFieldComparison
   or: [TicketAggregateFilterEventAggregateFilter!]
-  subtitles: LanguageFilterComparison
-  template: BooleanFieldComparison
+  templateId: StringFieldComparison
   updated: DateFieldComparison
 }
 
@@ -3299,16 +3311,12 @@ input TicketFilterDiscountFilter {
 input TicketFilterEventFilter {
   and: [TicketFilterEventFilter!]
   businessId: StringFieldComparison
-  category: CategoryFilterComparison
   created: DateFieldComparison
   date: DateFieldComparison
   id: IDFilterComparison
-  language: LanguageFilterComparison
-  length: NumberFieldComparison
   name: StringFieldComparison
   or: [TicketFilterEventFilter!]
-  subtitles: LanguageFilterComparison
-  template: BooleanFieldComparison
+  templateId: StringFieldComparison
   updated: DateFieldComparison
 }
 
@@ -3459,6 +3467,28 @@ input TicketUpdateFilter {
   validated: DateFieldComparison
 }
 
+enum Type {
+  Leaf
+  Root
+}
+
+input TypeFilterComparison {
+  eq: Type
+  gt: Type
+  gte: Type
+  iLike: Type
+  in: [Type!]
+  is: Boolean
+  isNot: Boolean
+  like: Type
+  lt: Type
+  lte: Type
+  neq: Type
+  notILike: Type
+  notIn: [Type!]
+  notLike: Type
+}
+
 input UpdateBenefit {
   description: String
   expiryDate: DateTime
@@ -3492,44 +3522,10 @@ input UpdateDiscount {
 }
 
 input UpdateEvent {
-  category: Category
   date: DateTime
-  description: String
   id: ID!
-  language: Language
-  length: Float
   name: String
-  posterUrl: String
-  subtitles: Language
-  venueData: JSON
-}
-
-input UpdateEventDiscountDto {
-  created: DateTime
-}
-
-input UpdateEventPrice {
-  endDate: DateTime
-  eventTemplateId: ID!
-  id: ID
-  name: String
-  price: Float
-  sectionId: ID
-  startDate: DateTime
-}
-
-input UpdateEventTemplate {
-  category: Category
-  description: String
-  eventPriceCategory: [UpdateEventPrice!]
-  id: ID!
-  language: Language
-  length: Float
-  name: String
-  posterUrl: String
-  subtitles: Language
-  type: TemplateType
-  venueId: ID
+  seatMap: JSON
 }
 
 input UpdateManyBenefitsInput {
@@ -3562,22 +3558,6 @@ input UpdateManyDiscountsInput {
 
   """The update to apply to all records found using the filter"""
   update: UpdateDiscount!
-}
-
-input UpdateManyEventDiscountDtosInput {
-  """Filter used to find fields to update"""
-  filter: EventDiscountDtoUpdateFilter!
-
-  """The update to apply to all records found using the filter"""
-  update: UpdateEventDiscountDto!
-}
-
-input UpdateManyEventTemplatesInput {
-  """Filter used to find fields to update"""
-  filter: EventTemplateUpdateFilter!
-
-  """The update to apply to all records found using the filter"""
-  update: UpdateEventTemplate!
 }
 
 input UpdateManyEventsInput {
@@ -3649,6 +3629,22 @@ input UpdateManySectionsInput {
   update: UpdateSection!
 }
 
+input UpdateManyTemplateDiscountsInput {
+  """Filter used to find fields to update"""
+  filter: TemplateDiscountUpdateFilter!
+
+  """The update to apply to all records found using the filter"""
+  update: UpdateTemplateDiscount!
+}
+
+input UpdateManyTemplatesInput {
+  """Filter used to find fields to update"""
+  filter: TemplateUpdateFilter!
+
+  """The update to apply to all records found using the filter"""
+  update: UpdateTemplate!
+}
+
 input UpdateManyTicketsInput {
   """Filter used to find fields to update"""
   filter: TicketUpdateFilter!
@@ -3657,12 +3653,12 @@ input UpdateManyTicketsInput {
   update: UpdateTicket!
 }
 
-input UpdateManyUserBenefitDtosInput {
+input UpdateManyUserBenefitsInput {
   """Filter used to find fields to update"""
-  filter: UserBenefitDtoUpdateFilter!
+  filter: UserBenefitUpdateFilter!
 
   """The update to apply to all records found using the filter"""
-  update: UpdateUserBenefitDto!
+  update: UpdateUserBenefit!
 }
 
 input UpdateManyUsersInput {
@@ -3682,15 +3678,15 @@ input UpdateManyVenuesInput {
 }
 
 input UpdateMembership {
-  created: DateTime
-  expiryDate: DateTime = "2025-10-11T15:56:33.208Z"
-  id: ID
-  points: Float = 0
-  updated: DateTime
+  expiryDate: DateTime
+  membershipTypeId: ID
+  points: Float
+  userId: ID
 }
 
 input UpdateMembershipType {
   created: DateTime
+  description: String
   id: ID
   name: String
   updated: DateTime
@@ -3748,19 +3744,6 @@ input UpdateOneDiscountSubscriptionFilterInput {
   filter: DiscountSubscriptionFilter!
 }
 
-input UpdateOneEventDiscountDtoInput {
-  """The id of the record to update"""
-  id: ID!
-
-  """The update to apply."""
-  update: UpdateEventDiscountDto!
-}
-
-input UpdateOneEventDiscountDtoSubscriptionFilterInput {
-  """Specify to filter the records returned."""
-  filter: EventDiscountDtoSubscriptionFilter!
-}
-
 input UpdateOneEventInput {
   """The id of the record to update"""
   id: ID!
@@ -3772,19 +3755,6 @@ input UpdateOneEventInput {
 input UpdateOneEventSubscriptionFilterInput {
   """Specify to filter the records returned."""
   filter: EventSubscriptionFilter!
-}
-
-input UpdateOneEventTemplateInput {
-  """The id of the record to update"""
-  id: ID!
-
-  """The update to apply."""
-  update: UpdateEventTemplate!
-}
-
-input UpdateOneEventTemplateSubscriptionFilterInput {
-  """Specify to filter the records returned."""
-  filter: EventTemplateSubscriptionFilter!
 }
 
 input UpdateOneMembershipInput {
@@ -3878,6 +3848,32 @@ input UpdateOneSectionSubscriptionFilterInput {
   filter: SectionSubscriptionFilter!
 }
 
+input UpdateOneTemplateDiscountInput {
+  """The id of the record to update"""
+  id: ID!
+
+  """The update to apply."""
+  update: UpdateTemplateDiscount!
+}
+
+input UpdateOneTemplateDiscountSubscriptionFilterInput {
+  """Specify to filter the records returned."""
+  filter: TemplateDiscountSubscriptionFilter!
+}
+
+input UpdateOneTemplateInput {
+  """The id of the record to update"""
+  id: ID!
+
+  """The update to apply."""
+  update: UpdateTemplate!
+}
+
+input UpdateOneTemplateSubscriptionFilterInput {
+  """Specify to filter the records returned."""
+  filter: TemplateSubscriptionFilter!
+}
+
 input UpdateOneTicketInput {
   """The id of the record to update"""
   id: ID!
@@ -3891,17 +3887,17 @@ input UpdateOneTicketSubscriptionFilterInput {
   filter: TicketSubscriptionFilter!
 }
 
-input UpdateOneUserBenefitDtoInput {
+input UpdateOneUserBenefitInput {
   """The id of the record to update"""
   id: ID!
 
   """The update to apply."""
-  update: UpdateUserBenefitDto!
+  update: UpdateUserBenefit!
 }
 
-input UpdateOneUserBenefitDtoSubscriptionFilterInput {
+input UpdateOneUserBenefitSubscriptionFilterInput {
   """Specify to filter the records returned."""
-  filter: UserBenefitDtoSubscriptionFilter!
+  filter: UserBenefitSubscriptionFilter!
 }
 
 input UpdateOneUserInput {
@@ -3931,10 +3927,8 @@ input UpdateOneVenueSubscriptionFilterInput {
 }
 
 input UpdateOrder {
-  created: DateTime
-  id: ID
   total: Float
-  updated: DateTime
+  userId: ID
 }
 
 input UpdatePassword {
@@ -3949,6 +3943,7 @@ input UpdatePriceCategory {
   price: Float
   sectionId: ID
   startDate: DateTime
+  templateId: ID!
 }
 
 input UpdateRow {
@@ -3973,6 +3968,25 @@ input UpdateSection {
   updated: DateTime
 }
 
+input UpdateTemplate {
+  category: Category
+  description: String
+  discount: [String!]
+  id: ID!
+  language: Language
+  length: Float
+  name: String
+  posterUrl: String
+  priceCategory: [UpdatePriceCategory!]
+  subtitles: Language
+  type: Type
+  venueId: ID
+}
+
+input UpdateTemplateDiscount {
+  created: DateTime
+}
+
 input UpdateTicket {
   discountId: ID
   eventId: ID
@@ -3986,6 +4000,7 @@ input UpdateTicket {
 
 input UpdateUser {
   avatarUrl: String
+  birthDate: DateTime
   defaultBusinessId: ID
   deleted: DateTime
   email: String
@@ -3994,7 +4009,7 @@ input UpdateUser {
   placeOfResidence: String
 }
 
-input UpdateUserBenefitDto {
+input UpdateUserBenefit {
   created: DateTime
 }
 
@@ -4002,13 +4017,17 @@ input UpdateVenue {
   buildingNumber: String
   capacity: Float
   city: String
-  created: DateTime
-  data: JSON
-  hasSeats: Boolean
-  id: ID
+  id: ID!
   name: String
+  sections: [UpdateVenueSection!]
   street: String
-  updated: DateTime
+}
+
+input UpdateVenueSection {
+  capacity: Float!
+  id: ID
+  name: String!
+  venueId: ID!
 }
 
 type User {
@@ -4025,16 +4044,16 @@ type User {
   updated: DateTime!
 }
 
-type UserBenefitDto {
+type UserBenefit {
   benefit: Benefit!
   business: Business!
   created: DateTime!
   user: User!
 }
 
-type UserBenefitDtoConnection {
+type UserBenefitConnection {
   """Array of nodes."""
-  nodes: [UserBenefitDto!]!
+  nodes: [UserBenefit!]!
 
   """Paging information"""
   pageInfo: OffsetPageInfo!
@@ -4043,56 +4062,56 @@ type UserBenefitDtoConnection {
   totalCount: Int!
 }
 
-input UserBenefitDtoDeleteFilter {
-  and: [UserBenefitDtoDeleteFilter!]
+input UserBenefitDeleteFilter {
+  and: [UserBenefitDeleteFilter!]
   benefitId: StringFieldComparison
   businessId: StringFieldComparison
   created: DateFieldComparison
-  or: [UserBenefitDtoDeleteFilter!]
+  or: [UserBenefitDeleteFilter!]
   userId: StringFieldComparison
 }
 
-type UserBenefitDtoDeleteResponse {
+type UserBenefitDeleteResponse {
   created: DateTime
 }
 
-input UserBenefitDtoFilter {
-  and: [UserBenefitDtoFilter!]
-  benefit: UserBenefitDtoFilterBenefitFilter
+input UserBenefitFilter {
+  and: [UserBenefitFilter!]
+  benefit: UserBenefitFilterBenefitFilter
   benefitId: StringFieldComparison
-  business: UserBenefitDtoFilterBusinessFilter
+  business: UserBenefitFilterBusinessFilter
   businessId: StringFieldComparison
   created: DateFieldComparison
-  or: [UserBenefitDtoFilter!]
-  user: UserBenefitDtoFilterUserFilter
+  or: [UserBenefitFilter!]
+  user: UserBenefitFilterUserFilter
   userId: StringFieldComparison
 }
 
-input UserBenefitDtoFilterBenefitFilter {
-  and: [UserBenefitDtoFilterBenefitFilter!]
+input UserBenefitFilterBenefitFilter {
+  and: [UserBenefitFilterBenefitFilter!]
   businessId: StringFieldComparison
   created: DateFieldComparison
   expiryDate: DateFieldComparison
   id: IDFilterComparison
   membershipTypeId: StringFieldComparison
   name: StringFieldComparison
-  or: [UserBenefitDtoFilterBenefitFilter!]
+  or: [UserBenefitFilterBenefitFilter!]
   points: NumberFieldComparison
   updated: DateFieldComparison
 }
 
-input UserBenefitDtoFilterBusinessFilter {
-  and: [UserBenefitDtoFilterBusinessFilter!]
+input UserBenefitFilterBusinessFilter {
+  and: [UserBenefitFilterBusinessFilter!]
   created: DateFieldComparison
   currency: CurrencyFilterComparison
   id: IDFilterComparison
   name: StringFieldComparison
-  or: [UserBenefitDtoFilterBusinessFilter!]
+  or: [UserBenefitFilterBusinessFilter!]
   updated: DateFieldComparison
 }
 
-input UserBenefitDtoFilterUserFilter {
-  and: [UserBenefitDtoFilterUserFilter!]
+input UserBenefitFilterUserFilter {
+  and: [UserBenefitFilterUserFilter!]
   avatarUrl: StringFieldComparison
   birthDate: DateFieldComparison
   created: DateFieldComparison
@@ -4102,39 +4121,39 @@ input UserBenefitDtoFilterUserFilter {
   firstName: StringFieldComparison
   id: IDFilterComparison
   lastName: StringFieldComparison
-  or: [UserBenefitDtoFilterUserFilter!]
+  or: [UserBenefitFilterUserFilter!]
   placeOfResidence: StringFieldComparison
   updated: DateFieldComparison
 }
 
-input UserBenefitDtoSort {
+input UserBenefitSort {
   direction: SortDirection!
-  field: UserBenefitDtoSortFields!
+  field: UserBenefitSortFields!
   nulls: SortNulls
 }
 
-enum UserBenefitDtoSortFields {
+enum UserBenefitSortFields {
   benefitId
   businessId
   created
   userId
 }
 
-input UserBenefitDtoSubscriptionFilter {
-  and: [UserBenefitDtoSubscriptionFilter!]
+input UserBenefitSubscriptionFilter {
+  and: [UserBenefitSubscriptionFilter!]
   benefitId: StringFieldComparison
   businessId: StringFieldComparison
   created: DateFieldComparison
-  or: [UserBenefitDtoSubscriptionFilter!]
+  or: [UserBenefitSubscriptionFilter!]
   userId: StringFieldComparison
 }
 
-input UserBenefitDtoUpdateFilter {
-  and: [UserBenefitDtoUpdateFilter!]
+input UserBenefitUpdateFilter {
+  and: [UserBenefitUpdateFilter!]
   benefitId: StringFieldComparison
   businessId: StringFieldComparison
   created: DateFieldComparison
-  or: [UserBenefitDtoUpdateFilter!]
+  or: [UserBenefitUpdateFilter!]
   userId: StringFieldComparison
 }
 
@@ -4289,10 +4308,10 @@ type Venue {
   capacity: Float!
   city: String!
   created: DateTime!
-  data: JSON
   hasSeats: Boolean!
   id: ID!
   name: String!
+  seatMap: JSON
   street: String!
   updated: DateTime!
 }
@@ -4327,10 +4346,10 @@ type VenueDeleteResponse {
   capacity: Float
   city: String
   created: DateTime
-  data: JSON
   hasSeats: Boolean
   id: ID
   name: String
+  seatMap: JSON
   street: String
   updated: DateTime
 }

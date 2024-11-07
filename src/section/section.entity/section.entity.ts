@@ -4,6 +4,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -21,6 +22,7 @@ export class Section {
   @Column({ nullable: true })
   capacity?: number;
 
+  @Index()
   @Column({ name: 'venue_id' })
   venueId!: string;
 

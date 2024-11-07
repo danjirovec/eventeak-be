@@ -56,7 +56,7 @@ export class VenueDto {
 
   @IsOptional()
   @Field(() => JSON, { nullable: true })
-  data?: any;
+  seatMap?: any;
 
   @IsNotEmpty()
   @IsDate()

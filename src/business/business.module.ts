@@ -3,7 +3,7 @@ import {
   PagingStrategies,
 } from '@ptc-org/nestjs-query-graphql';
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { CreateBusinessDto } from './business.dto/business.create.dto';
 import { BusinessDto } from './business.dto/business.dto';
 import { Business } from './business.entity/business.entity';
@@ -17,6 +17,7 @@ import { UserModule } from 'src/user/user.module';
 import { MailModule } from 'src/mail/mail.module';
 import { BusinessController } from './business.controller';
 import { BusinessService } from './business.service';
+import { TicketModule } from 'src/ticket/ticket.module';
 
 @Module({
   controllers: [BusinessController],
@@ -27,10 +28,11 @@ import { BusinessService } from './business.service';
         NestjsQueryTypeOrmModule.forFeature([Business]),
         JwtModule,
         BusinessUserModule,
-        EventModule,
+        forwardRef(() => EventModule),
         MembershipModule,
         UserModule,
         MailModule,
+        TicketModule,
       ],
       resolvers: [
         {

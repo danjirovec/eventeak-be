@@ -37,7 +37,7 @@ export class BusinessService {
     try {
       const business = await this.businessService.getById(businessId);
       const token = this.jwtService.sign(
-        { user: user[0].id, businessId },
+        { user: user[0].id, business: businessId },
         {
           secret: this.configService.get<string>('JWT_SECRET'),
           expiresIn: '365d',
@@ -61,7 +61,22 @@ export class BusinessService {
       const decoded = await this.jwtService.verify(token, {
         secret: this.configService.get<string>('JWT_SECRET'),
       });
-      this.businessUserService.createOne({
+
+      const businessUser = await this.businessUserService.query({
+        filter: {
+          and: [
+            { userId: { eq: decoded.user } },
+            { businessId: { eq: decoded.business } },
+            { role: { eq: Role.Admin } },
+          ],
+        },
+      });
+
+      if (businessUser) {
+        return;
+      }
+
+      await this.businessUserService.createOne({
         businessId: decoded.business,
         userId: decoded.user,
         role: Role.Admin,

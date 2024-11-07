@@ -1,4 +1,11 @@
-import { IsDateString, IsEmail, IsOptional, IsString } from 'class-validator';
+import {
+  IsDate,
+  isDate,
+  IsDateString,
+  IsEmail,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 import { InputType, Field, ID } from '@nestjs/graphql';
 
 @InputType('UpdateUser')
@@ -17,6 +24,11 @@ export class UpdateUserDto {
   @IsString()
   @Field({ nullable: true })
   lastName?: string;
+
+  @IsOptional()
+  @IsDate()
+  @Field({ nullable: true })
+  birthDate?: Date;
 
   @IsOptional()
   @IsString()

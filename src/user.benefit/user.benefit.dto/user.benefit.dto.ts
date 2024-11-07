@@ -9,7 +9,7 @@ import { BenefitDto } from 'src/benefit/benefit.dto/benefit.dto';
 import { BusinessDto } from 'src/business/business.dto/business.dto';
 import { UserDto } from 'src/user/user.dto/user.dto';
 
-@ObjectType()
+@ObjectType('UserBenefit')
 @FilterableRelation('user', () => UserDto)
 @FilterableRelation('benefit', () => BenefitDto)
 @FilterableRelation('business', () => BusinessDto)

@@ -17,4 +17,9 @@ export class BusinessMetricsDto {
   @IsArray()
   @Field(() => [Number])
   events!: number[];
+
+  @IsNotEmpty()
+  @IsArray()
+  @Field(() => [Number])
+  tickets!: number[];
 }

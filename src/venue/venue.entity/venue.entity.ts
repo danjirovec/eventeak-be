@@ -1,13 +1,11 @@
 import { Business } from 'src/business/business.entity/business.entity';
-import { Seat } from 'src/seat/seat.entity/seat.entity';
-import { User } from 'src/user/user.entity/user.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -36,8 +34,9 @@ export class Venue {
   hasSeats!: boolean;
 
   @Column({ type: 'json', nullable: true })
-  data: any;
+  seatMap?: any;
 
+  @Index()
   @Column({ name: 'business_id' })
   businessId!: string;
 

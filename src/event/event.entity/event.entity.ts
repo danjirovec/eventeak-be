@@ -1,19 +1,18 @@
 import { Business } from 'src/business/business.entity/business.entity';
-import { Category, Language } from 'src/enum/enum';
-import { EventTemplate } from 'src/event.template/event.template.entity/event.template.entity';
-import { Venue } from 'src/venue/venue.entity/venue.entity';
+import { Template } from 'src/template/template.entity/template.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
-  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
 @Entity()
+@Index(['businessId', 'templateId'])
 export class Event {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
@@ -22,43 +21,20 @@ export class Event {
   name!: string;
 
   @Column()
-  description!: string;
-
-  @Column()
   date!: Date;
 
-  @Column()
-  length!: number;
-
-  @Column({ type: 'enum', enum: Category })
-  category!: Category;
-
-  @Column({ type: 'enum', enum: Language })
-  language!: Language;
-
-  @Column({ type: 'enum', enum: Language, nullable: true })
-  subtitles?: Language;
-
-  @Column({ nullable: true })
-  posterUrl?: string;
-
   @Column({ type: 'json', nullable: true })
-  venueData: any;
+  seatMap?: any;
 
-  @Column({ name: 'event_template_id' })
-  eventTemplateId!: string;
+  @Index()
+  @Column({ name: 'template_id' })
+  templateId!: string;
 
-  @ManyToOne((type) => EventTemplate)
-  @JoinColumn({ name: 'event_template_id' })
-  eventTemplate!: EventTemplate;
+  @ManyToOne((type) => Template)
+  @JoinColumn({ name: 'template_id' })
+  template!: Template;
 
-  @Column({ name: 'venue_id' })
-  venueId!: string;
-
-  @ManyToOne((type) => Venue)
-  @JoinColumn({ name: 'venue_id' })
-  venue!: Venue;
-
+  @Index()
   @Column({ name: 'business_id' })
   businessId!: string;
 

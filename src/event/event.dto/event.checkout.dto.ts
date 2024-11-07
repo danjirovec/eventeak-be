@@ -1,19 +1,19 @@
 import { ObjectType } from '@nestjs/graphql';
-import { FilterableField, IDField } from '@ptc-org/nestjs-query-graphql';
-import { IsNotEmpty } from 'class-validator';
+import { FilterableField } from '@ptc-org/nestjs-query-graphql';
+import { IsNotEmpty, IsOptional } from 'class-validator';
 import { TicketDto } from 'src/ticket/ticket.dto/ticket.dto';
 import { EventDto } from './event.dto';
 import { UserDto } from 'src/user/user.dto/user.dto';
 import { DiscountDto } from 'src/discount/discount.dto/discount.dto';
-import { EventPriceCategoryAvailableDto } from 'src/event.price.category/event.price.category.dto/event.price.category.available';
+import { PriceCategoryAvailableDto } from 'src/price.category/price.category.dto/price.category.available';
 
 @ObjectType('EventCheckoutDto')
 export class EventCheckoutDto {
-  @IsNotEmpty()
-  @FilterableField(() => EventPriceCategoryAvailableDto, { nullable: true })
-  eventPriceCategories?: EventPriceCategoryAvailableDto;
+  @IsOptional()
+  @FilterableField(() => PriceCategoryAvailableDto, { nullable: true })
+  priceCategories?: PriceCategoryAvailableDto;
 
-  @IsNotEmpty()
+  @IsOptional()
   @FilterableField(() => [TicketDto], { nullable: true })
   tickets?: TicketDto[];
 
@@ -25,7 +25,7 @@ export class EventCheckoutDto {
   @FilterableField(() => [UserDto])
   users: UserDto[];
 
-  @IsNotEmpty()
-  @FilterableField(() => [DiscountDto])
-  discounts: DiscountDto[];
+  @IsOptional()
+  @FilterableField(() => [DiscountDto], { nullable: true })
+  discounts?: DiscountDto[];
 }

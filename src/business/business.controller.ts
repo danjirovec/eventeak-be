@@ -33,10 +33,7 @@ export class BusinessController {
   ) {
     await this.businessService.createBusinessUser(token);
     const env = this.configService.get<string>('ENVIRONMENT');
-    const redirectUrl =
-      env == 'dev'
-        ? this.configService.get<string>('LOCAL_CLIENT_URL')
-        : this.configService.get<string>('CLIENT_URL');
+    const redirectUrl = this.configService.get<string>('CLIENT_URL');
     return res.redirect(`${redirectUrl}/login`);
   }
 }

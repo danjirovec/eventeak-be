@@ -10,6 +10,7 @@ import { Membership } from './membership.entity/membership.entity';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { JwtModule } from '@nestjs/jwt';
 import { MembershipResolver } from './membership.resolver';
+import { UpdateMembershipDto } from './membership.dto/membership.update.dto';
 
 @Module({
   providers: [MembershipResolver],
@@ -22,6 +23,7 @@ import { MembershipResolver } from './membership.resolver';
           EntityClass: Membership,
           DTOClass: MembershipDto,
           CreateDTOClass: CreateMembershipDto,
+          UpdateDTOClass: UpdateMembershipDto,
           enableSubscriptions: true,
           guards: [AuthGuard],
           pagingStrategy: PagingStrategies.OFFSET,

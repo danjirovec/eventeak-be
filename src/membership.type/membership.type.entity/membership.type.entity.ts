@@ -1,9 +1,9 @@
 import { Business } from 'src/business/business.entity/business.entity';
-import { User } from 'src/user/user.entity/user.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -18,6 +18,10 @@ export class MembershipType {
   @Column()
   name!: string;
 
+  @Column({ nullable: true })
+  description!: string;
+
+  @Index()
   @Column({ name: 'business_id' })
   businessId!: string;
 

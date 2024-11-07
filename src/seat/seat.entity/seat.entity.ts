@@ -3,6 +3,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -17,6 +18,7 @@ export class Seat {
   @Column()
   name!: string;
 
+  @Index()
   @Column({ name: 'seat_id' })
   sectionId!: string;
 

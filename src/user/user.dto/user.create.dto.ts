@@ -1,4 +1,5 @@
 import {
+  IsDate,
   IsDateString,
   IsEmail,
   IsNotEmpty,
@@ -30,7 +31,7 @@ export class CreateUserDto {
   placeOfResidence?: string;
 
   @IsNotEmpty()
-  @IsDateString()
+  @IsDate()
   @Field()
   birthDate!: Date;
 }

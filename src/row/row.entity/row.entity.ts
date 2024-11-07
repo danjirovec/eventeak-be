@@ -3,6 +3,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -17,11 +18,12 @@ export class Row {
   @Column()
   name!: string;
 
-  @Column({ name: 'seat_id' })
+  @Index()
+  @Column({ name: 'section_id' })
   sectionId!: string;
 
   @ManyToOne((type) => Section, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'seat_id' })
+  @JoinColumn({ name: 'section_id' })
   section!: Section;
 
   @CreateDateColumn()

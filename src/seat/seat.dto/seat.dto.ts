@@ -4,13 +4,7 @@ import {
   FilterableRelation,
   IDField,
 } from '@ptc-org/nestjs-query-graphql';
-import {
-  IsDate,
-  IsNumber,
-  IsNotEmpty,
-  IsUUID,
-  IsString,
-} from 'class-validator';
+import { IsDate, IsNotEmpty, IsUUID, IsString } from 'class-validator';
 import { SectionDto } from 'src/section/section.dto/section.dto';
 
 @ObjectType('Seat')

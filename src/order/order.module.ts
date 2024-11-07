@@ -10,6 +10,7 @@ import { Order } from './order.entity/order.entity';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { JwtModule } from '@nestjs/jwt';
 import { OrderResolver } from './order.resolver';
+import { UpdateOrderDto } from './order.dto/order.update.dto';
 
 @Module({
   providers: [OrderResolver],
@@ -22,6 +23,7 @@ import { OrderResolver } from './order.resolver';
           EntityClass: Order,
           DTOClass: OrderDto,
           CreateDTOClass: CreateOrderDto,
+          UpdateDTOClass: UpdateOrderDto,
           enableSubscriptions: true,
           guards: [AuthGuard],
           pagingStrategy: PagingStrategies.OFFSET,

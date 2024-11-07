@@ -16,6 +16,7 @@ import { UserBenefitModule } from 'src/user.benefit/user.benefit.module';
 import { TicketModule } from 'src/ticket/ticket.module';
 import { OrderModule } from 'src/order/order.module';
 import { BusinessUserModule } from 'src/business.user/business.user.module';
+import { MailModule } from 'src/mail/mail.module';
 
 @Module({
   providers: [UserResolver],
@@ -29,6 +30,7 @@ import { BusinessUserModule } from 'src/business.user/business.user.module';
         TicketModule,
         OrderModule,
         BusinessUserModule,
+        MailModule,
       ],
       resolvers: [
         {
