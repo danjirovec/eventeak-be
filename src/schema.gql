@@ -91,6 +91,7 @@ input BenefitFilterMembershipTypeFilter {
   id: IDFilterComparison
   name: StringFieldComparison
   or: [BenefitFilterMembershipTypeFilter!]
+  pointsPerTicket: NumberFieldComparison
   price: NumberFieldComparison
   updated: DateFieldComparison
 }
@@ -539,6 +540,7 @@ input CreateMembershipType {
   businessId: ID!
   description: String
   name: String!
+  pointsPerTicket: Float
   price: Float
 }
 
@@ -1499,6 +1501,7 @@ input MembershipFilterMembershipTypeFilter {
   id: IDFilterComparison
   name: StringFieldComparison
   or: [MembershipFilterMembershipTypeFilter!]
+  pointsPerTicket: NumberFieldComparison
   price: NumberFieldComparison
   updated: DateFieldComparison
 }
@@ -1555,6 +1558,7 @@ type MembershipType {
   description: String
   id: ID!
   name: String!
+  pointsPerTicket: Float
   price: Float
   updated: DateTime!
 }
@@ -1577,6 +1581,7 @@ input MembershipTypeDeleteFilter {
   id: IDFilterComparison
   name: StringFieldComparison
   or: [MembershipTypeDeleteFilter!]
+  pointsPerTicket: NumberFieldComparison
   price: NumberFieldComparison
   updated: DateFieldComparison
 }
@@ -1586,6 +1591,7 @@ type MembershipTypeDeleteResponse {
   description: String
   id: ID
   name: String
+  pointsPerTicket: Float
   price: Float
   updated: DateTime
 }
@@ -1598,6 +1604,7 @@ input MembershipTypeFilter {
   id: IDFilterComparison
   name: StringFieldComparison
   or: [MembershipTypeFilter!]
+  pointsPerTicket: NumberFieldComparison
   price: NumberFieldComparison
   updated: DateFieldComparison
 }
@@ -1623,6 +1630,7 @@ enum MembershipTypeSortFields {
   description
   id
   name
+  pointsPerTicket
   price
   updated
 }
@@ -1634,6 +1642,7 @@ input MembershipTypeSubscriptionFilter {
   id: IDFilterComparison
   name: StringFieldComparison
   or: [MembershipTypeSubscriptionFilter!]
+  pointsPerTicket: NumberFieldComparison
   price: NumberFieldComparison
   updated: DateFieldComparison
 }
@@ -1645,6 +1654,7 @@ input MembershipTypeUpdateFilter {
   id: IDFilterComparison
   name: StringFieldComparison
   or: [MembershipTypeUpdateFilter!]
+  pointsPerTicket: NumberFieldComparison
   price: NumberFieldComparison
   updated: DateFieldComparison
 }
@@ -3702,6 +3712,7 @@ input UpdateMembership {
 input UpdateMembershipType {
   description: String
   name: String
+  pointsPerTicket: Float
   price: Float
 }
 

@@ -19,6 +19,9 @@ export class MembershipType {
   name!: string;
 
   @Column({ nullable: true })
+  pointsPerTicket: number;
+
+  @Column({ nullable: true })
   price!: number;
 
   @Column({ nullable: true })

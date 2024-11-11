@@ -30,6 +30,11 @@ export class MembershipTypeDto {
   @IsNotEmpty()
   @IsNumber()
   @FilterableField({ nullable: true })
+  pointsPerTicket!: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  @FilterableField({ nullable: true })
   price!: number;
 
   @IsOptional()

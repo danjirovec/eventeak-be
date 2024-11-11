@@ -25,6 +25,8 @@ import { PriceCategoryService } from 'src/price.category/price.category.service'
 import { TemplateDiscountModule } from 'src/template.discount/template.discount.module';
 import { MailModule } from 'src/mail/mail.module';
 import { BusinessModule } from 'src/business/business.module';
+import { MembershipModule } from 'src/membership/membership.module';
+import { MembershipTypeModule } from 'src/membership.type/membership.type.module';
 
 @Module({
   providers: [EventResolver, PriceCategoryService],
@@ -36,6 +38,8 @@ import { BusinessModule } from 'src/business/business.module';
         JwtModule,
         PriceCategoryModule,
         TemplateModule,
+        MembershipModule,
+        MembershipTypeModule,
         VenueModule,
         TicketModule,
         SeatModule,

@@ -11,6 +11,11 @@ export class UpdateMembershipTypeDto {
   @IsOptional()
   @IsNumber()
   @Field({ nullable: true })
+  pointsPerTicket?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Field({ nullable: true })
   price?: number;
 
   @IsOptional()

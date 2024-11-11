@@ -7,6 +7,6 @@ import { BusinessUserDto } from './business.user.dto/business.user.dto';
 export class BusinessUserResolver {
   constructor(
     @InjectQueryService(BusinessUser)
-    readonly seatsService: QueryService<BusinessUserDto>,
+    readonly businessUserService: QueryService<BusinessUserDto>,
   ) {}
 }

@@ -28,6 +28,10 @@ import { TemplateDiscountDto } from 'src/template.discount/template.discount.dto
 import { MailService } from 'src/mail/mail.service';
 import { Business } from 'src/business/business.entity/business.entity';
 import { BusinessDto } from 'src/business/business.dto/business.dto';
+import { Membership } from 'src/membership/membership.entity/membership.entity';
+import { MembershipDto } from 'src/membership/membership.dto/membership.dto';
+import { MembershipType } from 'src/membership.type/membership.type.entity/membership.type.entity';
+import { MembershipTypeDto } from 'src/membership.type/membership.type.dto/membership.type.dto';
 
 @Resolver(() => EventDto)
 export class EventResolver {
@@ -43,6 +47,10 @@ export class EventResolver {
     readonly userService: QueryService<UserDto>,
     @InjectQueryService(Business)
     readonly businessService: QueryService<BusinessDto>,
+    @InjectQueryService(Membership)
+    readonly membershipService: QueryService<MembershipDto>,
+    @InjectQueryService(MembershipType)
+    readonly membershipTypeService: QueryService<MembershipTypeDto>,
     @InjectQueryService(BusinessUser)
     readonly businessUserService: QueryService<BusinessUserDto>,
     @InjectQueryService(Discount)
@@ -209,6 +217,22 @@ export class EventResolver {
         });
       }
       if (input.order.userId) {
+        const membership = await this.membershipService.query({
+          filter: {
+            and: [
+              { userId: { eq: input.order.userId } },
+              { businessId: { eq: input.order.businessId } },
+            ],
+          },
+        });
+        if (membership.length > 0) {
+          const membershipType = await this.membershipTypeService.getById(
+            membership[0].membershipTypeId,
+          );
+          await this.membershipService.updateOne(membership[0].id, {
+            points: membershipType.pointsPerTicket * input.tickets.length,
+          });
+        }
         const user = await this.userService.getById(input.order.userId);
         const business = await this.businessService.getById(
           input.order.businessId,
