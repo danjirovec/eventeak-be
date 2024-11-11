@@ -99,7 +99,6 @@ export class UserResolver {
     @Args() query: UserQuery,
     @Args('meta') meta: string,
   ): Promise<UserProfileDto> {
-    let membershipType = null;
     const user = await this.userService.getById(query.filter.id.eq);
 
     const membership = await this.membershipService.query({
@@ -108,15 +107,6 @@ export class UserResolver {
       },
       paging: { limit: 1 },
     });
-
-    const membershipPoints = membership.length < 1 ? 0 : membership[0].points;
-    const membershipTypeId =
-      membership.length < 1 ? null : membership[0].membershipTypeId;
-
-    if (membershipTypeId) {
-      membershipType =
-        await this.membershipTypeService.getById(membershipTypeId);
-    }
 
     const eventsAttended = await this.ticketService.query({
       filter: {
@@ -136,8 +126,7 @@ export class UserResolver {
 
     return {
       ...user,
-      membershipType: membershipType,
-      membershipPoints: membershipPoints,
+      membership: membership.length > 0 ? membership[0] : null,
       benefitsUsed: benefitsUsed,
       eventsVisited: eventsAttendedCount,
     };

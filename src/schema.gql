@@ -4265,8 +4265,7 @@ type UserProfile {
   firstName: String!
   id: ID!
   lastName: String!
-  membershipPoints: Float!
-  membershipType: MembershipType
+  membership: Membership
   placeOfResidence: String
 }
 

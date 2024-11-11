@@ -10,6 +10,7 @@ import {
   IsUUID,
 } from 'class-validator';
 import { MembershipTypeDto } from 'src/membership.type/membership.type.dto/membership.type.dto';
+import { MembershipDto } from 'src/membership/membership.dto/membership.dto';
 
 @ObjectType('UserProfile')
 export class UserProfileDto {
@@ -48,14 +49,9 @@ export class UserProfileDto {
   @FilterableField()
   birthDate!: Date;
 
-  @IsNotEmpty()
-  @IsString()
-  @FilterableField()
-  membershipPoints!: number;
-
   @IsOptional()
   @FilterableField({ nullable: true })
-  membershipType?: MembershipTypeDto;
+  membership?: MembershipDto;
 
   @IsNotEmpty()
   @IsNumber()
