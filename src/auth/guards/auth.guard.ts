@@ -36,6 +36,7 @@ export class AuthGuard implements CanActivate {
   }
 
   protected getToken(request: { headers: Record<string, string> }): string {
+    console.log('HEADERS', request.headers);
     const token = request.headers['authorization'];
     console.log('TOKEN BEFORE SPLIT', token);
     const [_, _token] = token.split(' ');
