@@ -7,6 +7,7 @@ import {
 import {
   IsDate,
   IsNotEmpty,
+  IsNumber,
   IsOptional,
   IsString,
   IsUUID,
@@ -25,6 +26,11 @@ export class MembershipTypeDto {
   @IsString()
   @FilterableField()
   name!: string;
+
+  @IsNotEmpty()
+  @IsNumber()
+  @FilterableField({ nullable: true })
+  price!: number;
 
   @IsOptional()
   @IsString()

@@ -18,9 +18,7 @@ import { getOneYearExpiryDate } from 'src/utils/membershipExpiryDate';
 
 @ObjectType('Membership')
 @FilterableRelation('user', () => UserDto)
-@FilterableRelation('membershipType', () => MembershipTypeDto, {
-  nullable: true,
-})
+@FilterableRelation('membershipType', () => MembershipTypeDto)
 @FilterableRelation('business', () => BusinessDto)
 export class MembershipDto {
   @IsNotEmpty()
@@ -45,6 +43,10 @@ export class MembershipDto {
   @IsString()
   @FilterableField({ filterOnly: true })
   userId?: string;
+
+  @IsString()
+  @FilterableField({ filterOnly: true })
+  membershipTypeId?: string;
 
   @IsNotEmpty()
   @IsDate()

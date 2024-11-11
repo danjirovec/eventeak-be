@@ -91,6 +91,7 @@ input BenefitFilterMembershipTypeFilter {
   id: IDFilterComparison
   name: StringFieldComparison
   or: [BenefitFilterMembershipTypeFilter!]
+  price: NumberFieldComparison
   updated: DateFieldComparison
 }
 
@@ -524,7 +525,7 @@ input CreateManyVenuesInput {
 input CreateMembership {
   businessId: ID!
   expiryDate: DateTime
-  membershipTypeId: ID
+  membershipTypeId: ID!
   points: Float
   userId: ID!
 }
@@ -538,6 +539,7 @@ input CreateMembershipType {
   businessId: ID!
   description: String
   name: String!
+  price: Float
 }
 
 input CreateMembershipTypeSubscriptionFilterInput {
@@ -1426,7 +1428,7 @@ type Membership {
   created: DateTime!
   expiryDate: DateTime!
   id: ID!
-  membershipType: MembershipType
+  membershipType: MembershipType!
   points: Float!
   updated: DateTime!
   user: User!
@@ -1449,6 +1451,7 @@ input MembershipDeleteFilter {
   created: DateFieldComparison
   expiryDate: DateFieldComparison
   id: IDFilterComparison
+  membershipTypeId: StringFieldComparison
   or: [MembershipDeleteFilter!]
   points: NumberFieldComparison
   updated: DateFieldComparison
@@ -1471,6 +1474,7 @@ input MembershipFilter {
   expiryDate: DateFieldComparison
   id: IDFilterComparison
   membershipType: MembershipFilterMembershipTypeFilter
+  membershipTypeId: StringFieldComparison
   or: [MembershipFilter!]
   points: NumberFieldComparison
   updated: DateFieldComparison
@@ -1495,6 +1499,7 @@ input MembershipFilterMembershipTypeFilter {
   id: IDFilterComparison
   name: StringFieldComparison
   or: [MembershipFilterMembershipTypeFilter!]
+  price: NumberFieldComparison
   updated: DateFieldComparison
 }
 
@@ -1525,6 +1530,7 @@ enum MembershipSortFields {
   created
   expiryDate
   id
+  membershipTypeId
   points
   updated
   userId
@@ -1536,6 +1542,7 @@ input MembershipSubscriptionFilter {
   created: DateFieldComparison
   expiryDate: DateFieldComparison
   id: IDFilterComparison
+  membershipTypeId: StringFieldComparison
   or: [MembershipSubscriptionFilter!]
   points: NumberFieldComparison
   updated: DateFieldComparison
@@ -1548,6 +1555,7 @@ type MembershipType {
   description: String
   id: ID!
   name: String!
+  price: Float
   updated: DateTime!
 }
 
@@ -1569,6 +1577,7 @@ input MembershipTypeDeleteFilter {
   id: IDFilterComparison
   name: StringFieldComparison
   or: [MembershipTypeDeleteFilter!]
+  price: NumberFieldComparison
   updated: DateFieldComparison
 }
 
@@ -1577,6 +1586,7 @@ type MembershipTypeDeleteResponse {
   description: String
   id: ID
   name: String
+  price: Float
   updated: DateTime
 }
 
@@ -1588,6 +1598,7 @@ input MembershipTypeFilter {
   id: IDFilterComparison
   name: StringFieldComparison
   or: [MembershipTypeFilter!]
+  price: NumberFieldComparison
   updated: DateFieldComparison
 }
 
@@ -1612,6 +1623,7 @@ enum MembershipTypeSortFields {
   description
   id
   name
+  price
   updated
 }
 
@@ -1622,6 +1634,7 @@ input MembershipTypeSubscriptionFilter {
   id: IDFilterComparison
   name: StringFieldComparison
   or: [MembershipTypeSubscriptionFilter!]
+  price: NumberFieldComparison
   updated: DateFieldComparison
 }
 
@@ -1632,6 +1645,7 @@ input MembershipTypeUpdateFilter {
   id: IDFilterComparison
   name: StringFieldComparison
   or: [MembershipTypeUpdateFilter!]
+  price: NumberFieldComparison
   updated: DateFieldComparison
 }
 
@@ -1641,6 +1655,7 @@ input MembershipUpdateFilter {
   created: DateFieldComparison
   expiryDate: DateFieldComparison
   id: IDFilterComparison
+  membershipTypeId: StringFieldComparison
   or: [MembershipUpdateFilter!]
   points: NumberFieldComparison
   updated: DateFieldComparison
@@ -3685,11 +3700,9 @@ input UpdateMembership {
 }
 
 input UpdateMembershipType {
-  created: DateTime
   description: String
-  id: ID
   name: String
-  updated: DateTime
+  price: Float
 }
 
 input UpdateOneBenefitInput {
@@ -4159,6 +4172,7 @@ input UserBenefitUpdateFilter {
 
 type UserBenefits {
   available: [Benefit!]!
+  membership: Boolean!
   membershipPoints: Float!
   unavailable: [Benefit!]!
   used: [Benefit!]!
@@ -4235,13 +4249,13 @@ type UserProfile {
   avatarUrl: String
   benefitsUsed: Float!
   birthDate: DateTime!
-  created: DateTime!
   email: String!
   eventsVisited: Float!
   firstName: String!
   id: ID!
   lastName: String!
   membershipPoints: Float!
+  membershipType: MembershipType
   placeOfResidence: String
 }
 

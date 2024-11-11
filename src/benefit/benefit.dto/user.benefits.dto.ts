@@ -6,6 +6,10 @@ import { BenefitDto } from './benefit.dto';
 @ObjectType('UserBenefits')
 export class UserBenefitsDto {
   @IsNotEmpty()
+  @FilterableField(() => Boolean)
+  membership: boolean;
+
+  @IsNotEmpty()
   @FilterableField(() => [BenefitDto])
   available: BenefitDto[];
 

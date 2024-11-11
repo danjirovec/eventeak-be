@@ -35,6 +35,16 @@ export class BenefitResolver {
       paging: { limit: 1 },
     });
 
+    if (membership.length < 1) {
+      return {
+        membership: false,
+        available: [],
+        unavailable: [],
+        used: [],
+        membershipPoints: 0,
+      };
+    }
+
     const membershipPoints = membership[0].points;
 
     const benefits = await this.benefitService.query({
@@ -83,6 +93,7 @@ export class BenefitResolver {
     );
 
     return {
+      membership: true,
       available: available,
       unavailable: unavailable,
       used: used,

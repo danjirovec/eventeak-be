@@ -17,6 +17,7 @@ import { TicketModule } from 'src/ticket/ticket.module';
 import { OrderModule } from 'src/order/order.module';
 import { BusinessUserModule } from 'src/business.user/business.user.module';
 import { MailModule } from 'src/mail/mail.module';
+import { MembershipTypeModule } from 'src/membership.type/membership.type.module';
 
 @Module({
   providers: [UserResolver],
@@ -26,6 +27,7 @@ import { MailModule } from 'src/mail/mail.module';
         NestjsQueryTypeOrmModule.forFeature([User]),
         JwtModule,
         MembershipModule,
+        MembershipTypeModule,
         UserBenefitModule,
         TicketModule,
         OrderModule,

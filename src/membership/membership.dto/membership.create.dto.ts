@@ -24,9 +24,9 @@ export class CreateMembershipDto {
   @Field(() => ID)
   userId!: string;
 
-  @IsOptional()
+  @IsNotEmpty()
   @IsString()
-  @Field(() => ID, { nullable: true })
+  @Field(() => ID)
   membershipTypeId?: string;
 
   @IsNotEmpty()

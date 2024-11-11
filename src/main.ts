@@ -12,6 +12,7 @@ async function bootstrap() {
     origin: [
       process.env.CLIENT_URL,
       'https://applausio-fe-staging.onrender.com',
+      'http://192.168.1.113',
     ],
     methods: ['GET', 'POST', 'DELETE', 'OPTIONS', 'PUT', 'PATCH'],
     credentials: true,

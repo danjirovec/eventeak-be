@@ -19,11 +19,11 @@ export class Seat {
   name!: string;
 
   @Index()
-  @Column({ name: 'seat_id' })
+  @Column({ name: 'section_id' })
   sectionId!: string;
 
   @ManyToOne((type) => Section, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'seat_id' })
+  @JoinColumn({ name: 'section_id' })
   section!: Section;
 
   @CreateDateColumn()

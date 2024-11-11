@@ -115,7 +115,7 @@ export class CreateTicketExtraDto {
   @IsNotEmpty()
   @IsString()
   @Field()
-  section?: string;
+  section!: string;
 
   @IsNotEmpty()
   @IsString()

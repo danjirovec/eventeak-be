@@ -1,25 +1,20 @@
 import { Field, ID, InputType } from '@nestjs/graphql';
 import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
-@InputType('CreateMembershipType')
-export class CreateMembershipTypeDto {
-  @IsNotEmpty()
+@InputType('UpdateMembershipType')
+export class UpdateMembershipTypeDto {
+  @IsOptional()
   @IsString()
-  @Field()
-  name!: string;
+  @Field({ nullable: true })
+  name?: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsNumber()
   @Field({ nullable: true })
-  price!: number;
+  price?: number;
 
   @IsOptional()
   @IsString()
   @Field({ nullable: true })
   description?: string;
-
-  @IsNotEmpty()
-  @IsString()
-  @Field(() => ID)
-  businessId!: string;
 }

@@ -24,6 +24,8 @@ import { groupBy } from 'src/utils/groupBy';
 import { BatchUserEmailDto } from './user.dto/user.batch.email.dto';
 import { UserEmailDto } from './user.dto/user.email.dto';
 import { MailService } from 'src/mail/mail.service';
+import { MembershipType } from 'src/membership.type/membership.type.entity/membership.type.entity';
+import { MembershipTypeDto } from 'src/membership.type/membership.type.dto/membership.type.dto';
 
 @Resolver(() => UserDto)
 export class UserResolver {
@@ -36,6 +38,8 @@ export class UserResolver {
     readonly businessUserService: QueryService<BusinessUserDto>,
     @InjectQueryService(Membership)
     readonly membershipService: QueryService<MembershipDto>,
+    @InjectQueryService(MembershipType)
+    readonly membershipTypeService: QueryService<MembershipTypeDto>,
     @InjectQueryService(Ticket)
     readonly ticketService: QueryService<TicketDto>,
     @InjectQueryService(Order)
@@ -95,6 +99,7 @@ export class UserResolver {
     @Args() query: UserQuery,
     @Args('meta') meta: string,
   ): Promise<UserProfileDto> {
+    let membershipType = null;
     const user = await this.userService.getById(query.filter.id.eq);
 
     const membership = await this.membershipService.query({
@@ -104,14 +109,21 @@ export class UserResolver {
       paging: { limit: 1 },
     });
 
-    const membershipPoints = membership[0].points;
+    const membershipPoints = membership.length < 1 ? 0 : membership[0].points;
+    const membershipTypeId =
+      membership.length < 1 ? null : membership[0].membershipTypeId;
+
+    if (membershipTypeId) {
+      membershipType =
+        await this.membershipTypeService.getById(membershipTypeId);
+    }
 
     const eventsAttended = await this.ticketService.query({
       filter: {
         and: [
           { userId: { eq: user.id } },
           { businessId: { eq: meta } },
-          { validated: { is: true } },
+          { validated: { isNot: null } },
         ],
       },
     });
@@ -124,6 +136,7 @@ export class UserResolver {
 
     return {
       ...user,
+      membershipType: membershipType,
       membershipPoints: membershipPoints,
       benefitsUsed: benefitsUsed,
       eventsVisited: eventsAttendedCount,

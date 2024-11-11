@@ -4,10 +4,12 @@ import {
   IsDate,
   IsDateString,
   IsNotEmpty,
+  IsNumber,
   IsOptional,
   IsString,
   IsUUID,
 } from 'class-validator';
+import { MembershipTypeDto } from 'src/membership.type/membership.type.dto/membership.type.dto';
 
 @ObjectType('UserProfile')
 export class UserProfileDto {
@@ -47,22 +49,21 @@ export class UserProfileDto {
   birthDate!: Date;
 
   @IsNotEmpty()
-  @IsDate()
-  @FilterableField(() => GraphQLISODateTime)
-  created!: Date;
-
-  @IsNotEmpty()
   @IsString()
   @FilterableField()
   membershipPoints!: number;
 
+  @IsOptional()
+  @FilterableField({ nullable: true })
+  membershipType?: MembershipTypeDto;
+
   @IsNotEmpty()
-  @IsString()
+  @IsNumber()
   @FilterableField()
   eventsVisited!: number;
 
   @IsNotEmpty()
-  @IsString()
+  @IsNumber()
   @FilterableField()
   benefitsUsed!: number;
 }

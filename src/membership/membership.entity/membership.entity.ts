@@ -34,10 +34,10 @@ export class Membership {
   @JoinColumn({ name: 'user_id' })
   user!: User;
 
-  @Column({ name: 'membership_type_id', nullable: true })
+  @Column({ name: 'membership_type_id' })
   membershipTypeId!: string;
 
-  @ManyToOne((type) => MembershipType, { nullable: true })
+  @ManyToOne((type) => MembershipType)
   @JoinColumn({ name: 'membership_type_id' })
   membershipType!: MembershipType;
 
