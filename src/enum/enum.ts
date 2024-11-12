@@ -62,3 +62,12 @@ export enum Currency {
 registerEnumType(Currency, {
   name: 'Currency',
 });
+
+export enum MembershipState {
+  Active = 'Active',
+  Renewal = 'Renewal',
+}
+
+registerEnumType(MembershipState, {
+  name: 'MembershipState',
+});

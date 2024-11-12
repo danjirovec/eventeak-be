@@ -528,6 +528,7 @@ input CreateMembership {
   expiryDate: DateTime
   membershipTypeId: ID!
   points: Float
+  state: MembershipState! = Active
   userId: ID!
 }
 
@@ -1432,6 +1433,7 @@ type Membership {
   id: ID!
   membershipType: MembershipType!
   points: Float!
+  state: MembershipState
   updated: DateTime!
   user: User!
 }
@@ -1456,6 +1458,7 @@ input MembershipDeleteFilter {
   membershipTypeId: StringFieldComparison
   or: [MembershipDeleteFilter!]
   points: NumberFieldComparison
+  state: MembershipStateFilterComparison
   updated: DateFieldComparison
   userId: StringFieldComparison
 }
@@ -1465,6 +1468,7 @@ type MembershipDeleteResponse {
   expiryDate: DateTime
   id: ID
   points: Float
+  state: MembershipState
   updated: DateTime
 }
 
@@ -1479,6 +1483,7 @@ input MembershipFilter {
   membershipTypeId: StringFieldComparison
   or: [MembershipFilter!]
   points: NumberFieldComparison
+  state: MembershipStateFilterComparison
   updated: DateFieldComparison
   user: MembershipFilterUserFilter
   userId: StringFieldComparison
@@ -1535,8 +1540,31 @@ enum MembershipSortFields {
   id
   membershipTypeId
   points
+  state
   updated
   userId
+}
+
+enum MembershipState {
+  Active
+  Renewal
+}
+
+input MembershipStateFilterComparison {
+  eq: MembershipState
+  gt: MembershipState
+  gte: MembershipState
+  iLike: MembershipState
+  in: [MembershipState!]
+  is: Boolean
+  isNot: Boolean
+  like: MembershipState
+  lt: MembershipState
+  lte: MembershipState
+  neq: MembershipState
+  notILike: MembershipState
+  notIn: [MembershipState!]
+  notLike: MembershipState
 }
 
 input MembershipSubscriptionFilter {
@@ -1548,6 +1576,7 @@ input MembershipSubscriptionFilter {
   membershipTypeId: StringFieldComparison
   or: [MembershipSubscriptionFilter!]
   points: NumberFieldComparison
+  state: MembershipStateFilterComparison
   updated: DateFieldComparison
   userId: StringFieldComparison
 }
@@ -1668,6 +1697,7 @@ input MembershipUpdateFilter {
   membershipTypeId: StringFieldComparison
   or: [MembershipUpdateFilter!]
   points: NumberFieldComparison
+  state: MembershipStateFilterComparison
   updated: DateFieldComparison
   userId: StringFieldComparison
 }
@@ -3706,6 +3736,7 @@ input UpdateMembership {
   expiryDate: DateTime
   membershipTypeId: ID
   points: Float
+  state: MembershipState = Active
   userId: ID
 }
 

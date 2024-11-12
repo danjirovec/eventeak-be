@@ -1,52 +1,74 @@
 import { InjectQueryService, QueryService } from '@ptc-org/nestjs-query-core';
-import { Args, Query, Resolver } from '@nestjs/graphql';
+import { Resolver } from '@nestjs/graphql';
 import { Membership } from 'src/membership/membership.entity/membership.entity';
 import { MembershipDto } from 'src/membership/membership.dto/membership.dto';
-import { UserMembershipConnection, UserMembershipQuery } from './types';
-import { AuthGuard } from 'src/auth/guards/auth.guard';
-import { UseGuards } from '@nestjs/common';
-import { ConnectionType } from '@ptc-org/nestjs-query-graphql';
-import { UserMembershipDto } from './membership.dto/user.membership.dto';
-import { User } from 'src/user/user.entity/user.entity';
-import { UserDto } from 'src/user/user.dto/user.dto';
-import { BusinessUser } from 'src/business.user/business.user.entity/business.user.entity';
-import { BusinessUserDto } from 'src/business.user/business.user.dto/business.user.dto';
+import { Cron, CronExpression } from '@nestjs/schedule';
+import { MembershipState } from 'src/enum/enum';
 
 @Resolver(() => MembershipDto)
 export class MembershipResolver {
   constructor(
     @InjectQueryService(Membership)
     readonly membershipService: QueryService<MembershipDto>,
-    // @InjectQueryService(BusinessUser)
-    // readonly businessUserService: QueryService<BusinessUserDto>,
   ) {}
 
-  // @Query(() => UserMembershipConnection)
-  // @UseGuards(AuthGuard)
-  // async getBusinessUsers(
-  //   @Args() query: UserMembershipQuery,
-  //   @Args('meta') meta: string,
-  // ): Promise<ConnectionType<UserMembershipDto>> {
-  //   const metaParsed = JSON.parse(meta);
-  //   const businessUsers = await this.businessUserService.query({
-  //     filter: {
-  //       and: [{ businessId: { eq: metaParsed.user } }],
-  //     },
-  //   });
-  //   const userIds = businessUsers.map((item) => item.userId);
+  @Cron(CronExpression.EVERY_DAY_AT_NOON, {
+    name: 'deleteMembership',
+    timeZone: 'Europe/Prague',
+  })
+  async deleteMembership() {
+    const startOfToday = new Date();
+    startOfToday.setHours(0, 0, 0, 0);
+    const endOfToday = new Date();
+    endOfToday.setHours(23, 59, 59, 999);
 
-  //   if (userIds.length === 0) {
-  //     return new UserMembershipConnection();
-  //   }
+    const memberships = await this.membershipService.query({
+      filter: {
+        and: [
+          {
+            expiryDate: {
+              gte: startOfToday,
+            },
+          },
+          { expiryDate: { lte: endOfToday } },
+        ],
+      },
+    });
 
-  //   return UserMembershipConnection.createFromPromise(
-  //     (q) =>
-  //       this.membershipService.query({
-  //         filter: { and: [{ id: { in: businessIds } }, query.filter] },
-  //         sorting: query.sorting,
-  //         paging: query.paging,
-  //       }),
-  //     query,
-  //   );
-  // }
+    const membershipIds = memberships.map((item) => item.id);
+    if (membershipIds.length > 0) {
+      await this.membershipService.deleteMany({ id: { in: membershipIds } });
+    }
+  }
+
+  @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT, {
+    name: 'membershipRenewal',
+    timeZone: 'Europe/Prague',
+  })
+  async membershipRenewal() {
+    const today = new Date();
+    const oneMonthFromNow = new Date(today.setMonth(today.getMonth() + 1));
+
+    const memberships = await this.membershipService.query({
+      filter: {
+        and: [
+          {
+            expiryDate: {
+              lt: oneMonthFromNow,
+            },
+          },
+          { state: { eq: MembershipState.Active } },
+        ],
+      },
+    });
+
+    const membershipIds = memberships.map((item) => item.id);
+
+    if (membershipIds.length > 0) {
+      await this.membershipService.updateMany(
+        { state: MembershipState.Renewal },
+        { id: { in: membershipIds } },
+      );
+    }
+  }
 }

@@ -1,5 +1,12 @@
 import { Field, ID, InputType } from '@nestjs/graphql';
-import { IsNumber, IsDate, IsOptional, IsString } from 'class-validator';
+import {
+  IsNumber,
+  IsDate,
+  IsOptional,
+  IsString,
+  IsEnum,
+} from 'class-validator';
+import { MembershipState } from 'src/enum/enum';
 
 @InputType('UpdateMembership')
 export class UpdateMembershipDto {
@@ -12,6 +19,14 @@ export class UpdateMembershipDto {
   @IsDate()
   @Field({ nullable: true })
   expiryDate?: Date;
+
+  @IsOptional()
+  @IsEnum(MembershipState, { each: true })
+  @Field(() => MembershipState, {
+    defaultValue: MembershipState.Active,
+    nullable: true,
+  })
+  state!: MembershipState;
 
   @IsOptional()
   @IsString()

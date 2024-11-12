@@ -1,4 +1,5 @@
 import { Business } from 'src/business/business.entity/business.entity';
+import { MembershipState } from 'src/enum/enum';
 import { MembershipType } from 'src/membership.type/membership.type.entity/membership.type.entity';
 import { User } from 'src/user/user.entity/user.entity';
 import { getOneYearExpiryDate } from 'src/utils/membershipExpiryDate';
@@ -26,6 +27,14 @@ export class Membership {
 
   @Column({ default: getOneYearExpiryDate() })
   expiryDate!: Date;
+
+  @Column({
+    type: 'enum',
+    enum: MembershipState,
+    default: MembershipState.Active,
+    nullable: true,
+  })
+  state!: MembershipState;
 
   @Column({ name: 'user_id' })
   userId!: string;

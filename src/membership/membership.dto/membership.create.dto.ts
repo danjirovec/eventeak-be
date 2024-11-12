@@ -5,7 +5,10 @@ import {
   IsDate,
   IsOptional,
   IsString,
+  IsDefined,
+  IsEnum,
 } from 'class-validator';
+import { MembershipState } from 'src/enum/enum';
 
 @InputType('CreateMembership')
 export class CreateMembershipDto {
@@ -18,6 +21,11 @@ export class CreateMembershipDto {
   @IsDate()
   @Field({ nullable: true })
   expiryDate?: Date;
+
+  @IsDefined()
+  @IsEnum(MembershipState, { each: true })
+  @Field(() => MembershipState, { defaultValue: MembershipState.Active })
+  state!: MembershipState;
 
   @IsNotEmpty()
   @IsString()

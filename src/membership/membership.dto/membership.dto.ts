@@ -6,12 +6,15 @@ import {
 } from '@ptc-org/nestjs-query-graphql';
 import {
   IsDate,
+  IsDefined,
+  IsEnum,
   IsNotEmpty,
   IsNumber,
   IsString,
   IsUUID,
 } from 'class-validator';
 import { BusinessDto } from 'src/business/business.dto/business.dto';
+import { MembershipState } from 'src/enum/enum';
 import { MembershipTypeDto } from 'src/membership.type/membership.type.dto/membership.type.dto';
 import { UserDto } from 'src/user/user.dto/user.dto';
 import { getOneYearExpiryDate } from 'src/utils/membershipExpiryDate';
@@ -35,6 +38,14 @@ export class MembershipDto {
   @IsDate()
   @FilterableField({ defaultValue: getOneYearExpiryDate() })
   expiryDate!: Date;
+
+  @IsDefined()
+  @IsEnum(MembershipState, { each: true })
+  @FilterableField(() => MembershipState, {
+    defaultValue: MembershipState.Active,
+    nullable: true,
+  })
+  state!: MembershipState;
 
   @IsString()
   @FilterableField({ filterOnly: true })
