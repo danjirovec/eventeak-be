@@ -86,6 +86,7 @@ input BenefitFilterBusinessFilter {
 
 input BenefitFilterMembershipTypeFilter {
   and: [BenefitFilterMembershipTypeFilter!]
+  businessId: StringFieldComparison
   created: DateFieldComparison
   description: StringFieldComparison
   id: IDFilterComparison
@@ -1501,6 +1502,7 @@ input MembershipFilterBusinessFilter {
 
 input MembershipFilterMembershipTypeFilter {
   and: [MembershipFilterMembershipTypeFilter!]
+  businessId: StringFieldComparison
   created: DateFieldComparison
   description: StringFieldComparison
   id: IDFilterComparison
@@ -1605,6 +1607,7 @@ type MembershipTypeConnection {
 
 input MembershipTypeDeleteFilter {
   and: [MembershipTypeDeleteFilter!]
+  businessId: StringFieldComparison
   created: DateFieldComparison
   description: StringFieldComparison
   id: IDFilterComparison
@@ -1628,6 +1631,7 @@ type MembershipTypeDeleteResponse {
 input MembershipTypeFilter {
   and: [MembershipTypeFilter!]
   business: MembershipTypeFilterBusinessFilter
+  businessId: StringFieldComparison
   created: DateFieldComparison
   description: StringFieldComparison
   id: IDFilterComparison
@@ -1655,6 +1659,7 @@ input MembershipTypeSort {
 }
 
 enum MembershipTypeSortFields {
+  businessId
   created
   description
   id
@@ -1666,6 +1671,7 @@ enum MembershipTypeSortFields {
 
 input MembershipTypeSubscriptionFilter {
   and: [MembershipTypeSubscriptionFilter!]
+  businessId: StringFieldComparison
   created: DateFieldComparison
   description: StringFieldComparison
   id: IDFilterComparison
@@ -1678,6 +1684,7 @@ input MembershipTypeSubscriptionFilter {
 
 input MembershipTypeUpdateFilter {
   and: [MembershipTypeUpdateFilter!]
+  businessId: StringFieldComparison
   created: DateFieldComparison
   description: StringFieldComparison
   id: IDFilterComparison

@@ -42,6 +42,10 @@ export class MembershipTypeDto {
   @FilterableField({ nullable: true })
   description?: string;
 
+  @IsString()
+  @FilterableField({ filterOnly: true })
+  businessId?: string;
+
   @IsNotEmpty()
   @IsDate()
   @FilterableField(() => GraphQLISODateTime)
