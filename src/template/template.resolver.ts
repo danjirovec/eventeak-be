@@ -60,7 +60,6 @@ export class TemplateResolver {
   @UseGuards(AuthGuard)
   async updateTemplate(@Args('input') input: UpdateTemplateDto) {
     let updatedTemplate = null;
-    console.log(input);
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();

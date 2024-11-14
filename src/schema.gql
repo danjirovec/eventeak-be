@@ -652,6 +652,11 @@ input CreateOrderSubscriptionFilterInput {
   filter: OrderSubscriptionFilter!
 }
 
+input CreatePayment {
+  amount: Float!
+  currency: Currency! = CZK
+}
+
 input CreatePriceCategory {
   endDate: DateTime
   name: String!
@@ -1788,6 +1793,8 @@ type Mutation {
   deleteOneUser(input: DeleteOneUserInput!): UserDeleteResponse!
   deleteOneUserBenefit(input: DeleteOneUserBenefitInput!): UserBenefitDeleteResponse!
   deleteOneVenue(input: DeleteOneVenueInput!): VenueDeleteResponse!
+  getPublishableKey: PublishableKey!
+  payment(input: CreatePayment!): Payment!
   sendEmail(input: BatchUserEmail!): Boolean!
   updateEvent(input: UpdateEvent!): Event!
   updateManyBenefits(input: UpdateManyBenefitsInput!): UpdateManyResponse!
@@ -1986,6 +1993,11 @@ input OrderUpdateFilter {
   userId: StringFieldComparison
 }
 
+type Payment {
+  paymentIntent: String!
+  publishableKey: String!
+}
+
 type PriceCategory {
   created: DateTime!
   endDate: DateTime
@@ -2125,6 +2137,10 @@ input PriceCategoryUpdateFilter {
   startDate: DateFieldComparison
   templateId: StringFieldComparison
   updated: DateFieldComparison
+}
+
+type PublishableKey {
+  publishableKey: String!
 }
 
 type Query {
