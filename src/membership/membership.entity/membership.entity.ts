@@ -32,7 +32,6 @@ export class Membership {
     type: 'enum',
     enum: MembershipState,
     default: MembershipState.Active,
-    nullable: true,
   })
   state!: MembershipState;
 

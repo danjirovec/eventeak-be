@@ -24,7 +24,6 @@ export class UpdateMembershipDto {
   @IsEnum(MembershipState, { each: true })
   @Field(() => MembershipState, {
     defaultValue: MembershipState.Active,
-    nullable: true,
   })
   state!: MembershipState;
 

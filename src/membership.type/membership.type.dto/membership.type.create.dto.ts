@@ -10,12 +10,12 @@ export class CreateMembershipTypeDto {
 
   @IsNotEmpty()
   @IsNumber()
-  @Field({ nullable: true })
+  @Field()
   pointsPerTicket!: number;
 
   @IsNotEmpty()
   @IsNumber()
-  @Field({ nullable: true })
+  @Field()
   price!: number;
 
   @IsOptional()

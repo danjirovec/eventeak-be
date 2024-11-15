@@ -23,7 +23,7 @@ export class UserBenefit {
   @PrimaryColumn('uuid', { name: 'benefit_id' })
   benefitId!: string;
 
-  @ManyToOne((type) => Benefit)
+  @ManyToOne((type) => Benefit, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'benefit_id' })
   benefit!: Benefit;
 

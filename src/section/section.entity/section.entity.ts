@@ -26,7 +26,7 @@ export class Section {
   @Column({ name: 'venue_id' })
   venueId!: string;
 
-  @ManyToOne((type) => Venue)
+  @ManyToOne((type) => Venue, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'venue_id' })
   venue!: Venue;
 

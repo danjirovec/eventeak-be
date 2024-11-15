@@ -43,7 +43,6 @@ export class MembershipDto {
   @IsEnum(MembershipState, { each: true })
   @FilterableField(() => MembershipState, {
     defaultValue: MembershipState.Active,
-    nullable: true,
   })
   state!: MembershipState;
 

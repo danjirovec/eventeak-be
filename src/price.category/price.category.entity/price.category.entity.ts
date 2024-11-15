@@ -41,7 +41,7 @@ export class PriceCategory {
   @Column({ name: 'template_id' })
   templateId!: string;
 
-  @ManyToOne((type) => Template)
+  @ManyToOne((type) => Template, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'template_id' })
   template!: Template;
 

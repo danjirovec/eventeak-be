@@ -541,8 +541,8 @@ input CreateMembershipType {
   businessId: ID!
   description: String
   name: String!
-  pointsPerTicket: Float
-  price: Float
+  pointsPerTicket: Float!
+  price: Float!
 }
 
 input CreateMembershipTypeSubscriptionFilterInput {
@@ -1442,7 +1442,7 @@ type Membership {
   id: ID!
   membershipType: MembershipType!
   points: Float!
-  state: MembershipState
+  state: MembershipState!
   updated: DateTime!
   user: User!
 }
@@ -1597,8 +1597,8 @@ type MembershipType {
   description: String
   id: ID!
   name: String!
-  pointsPerTicket: Float
-  price: Float
+  pointsPerTicket: Float!
+  price: Float!
   updated: DateTime!
 }
 
@@ -3803,7 +3803,7 @@ input UpdateMembership {
   expiryDate: DateTime
   membershipTypeId: ID
   points: Float
-  state: MembershipState = Active
+  state: MembershipState! = Active
   userId: ID
 }
 
