@@ -22,7 +22,6 @@ import { BusinessUserDto } from 'src/business.user/business.user.dto/business.us
 import { anonymize } from 'src/utils/anonymize';
 import { groupBy } from 'src/utils/groupBy';
 import { BatchUserEmailDto } from './user.dto/user.batch.email.dto';
-import { UserEmailDto } from './user.dto/user.email.dto';
 import { MailService } from 'src/mail/mail.service';
 import { MembershipType } from 'src/membership.type/membership.type.entity/membership.type.entity';
 import { MembershipTypeDto } from 'src/membership.type/membership.type.dto/membership.type.dto';
@@ -63,6 +62,7 @@ export class UserResolver {
         throw new BadRequestException(error);
       }
     } catch (error) {
+      console.log(error);
       throw new BadRequestException(error);
     }
     return userId;
