@@ -25,11 +25,6 @@ export class BusinessDto {
 
   @IsNotEmpty()
   @IsString()
-  @Field()
-  apiKey!: string;
-
-  @IsNotEmpty()
-  @IsString()
   @Field({ nullable: true })
   logoUrl?: string;
 

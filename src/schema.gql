@@ -146,7 +146,6 @@ input BooleanFieldComparison {
 }
 
 type Business {
-  apiKey: String!
   created: DateTime!
   currency: Currency!
   id: ID!
@@ -177,7 +176,6 @@ input BusinessDeleteFilter {
 }
 
 type BusinessDeleteResponse {
-  apiKey: String
   created: DateTime
   currency: Currency
   id: ID
@@ -528,6 +526,7 @@ input CreateMembership {
   businessId: ID!
   expiryDate: DateTime
   membershipTypeId: ID!
+  order: CreateOrder!
   points: Float
   state: MembershipState! = Active
   userId: ID!
@@ -643,6 +642,8 @@ input CreateOneVenueInput {
 
 input CreateOrder {
   businessId: ID!
+  paymentId: String
+  paymentType: PaymentType! = Ticket
   total: Float!
   userId: ID
 }
@@ -655,6 +656,8 @@ input CreateOrderSubscriptionFilterInput {
 input CreatePayment {
   amount: Float!
   currency: Currency! = CZK
+  email: String!
+  paymentType: PaymentType! = Ticket
 }
 
 input CreatePriceCategory {
@@ -1736,6 +1739,7 @@ type Mutation {
   createManyUserBenefits(input: CreateManyUserBenefitsInput!): [UserBenefit!]!
   createManyUsers(input: CreateManyUsersInput!): [User!]!
   createManyVenues(input: CreateManyVenuesInput!): [Venue!]!
+  createMembership(input: CreateMembership!): Membership!
   createOneBenefit(input: CreateOneBenefitInput!): Benefit!
   createOneBusiness(input: CreateOneBusinessInput!): Business!
   createOneBusinessUser(input: CreateOneBusinessUserInput!): BusinessUser!
@@ -1793,7 +1797,6 @@ type Mutation {
   deleteOneUser(input: DeleteOneUserInput!): UserDeleteResponse!
   deleteOneUserBenefit(input: DeleteOneUserBenefitInput!): UserBenefitDeleteResponse!
   deleteOneVenue(input: DeleteOneVenueInput!): VenueDeleteResponse!
-  getPublishableKey: PublishableKey!
   payment(input: CreatePayment!): Payment!
   sendEmail(input: BatchUserEmail!): Boolean!
   updateEvent(input: UpdateEvent!): Event!
@@ -1878,6 +1881,8 @@ type Order {
   business: Business!
   created: DateTime!
   id: ID!
+  paymentId: String
+  paymentType: PaymentType!
   total: Float!
   updated: DateTime!
   user: User
@@ -1900,6 +1905,8 @@ input OrderDeleteFilter {
   created: DateFieldComparison
   id: IDFilterComparison
   or: [OrderDeleteFilter!]
+  paymentId: StringFieldComparison
+  paymentType: PaymentTypeFilterComparison
   total: NumberFieldComparison
   updated: DateFieldComparison
   userId: StringFieldComparison
@@ -1908,6 +1915,8 @@ input OrderDeleteFilter {
 type OrderDeleteResponse {
   created: DateTime
   id: ID
+  paymentId: String
+  paymentType: PaymentType
   total: Float
   updated: DateTime
 }
@@ -1919,6 +1928,8 @@ input OrderFilter {
   created: DateFieldComparison
   id: IDFilterComparison
   or: [OrderFilter!]
+  paymentId: StringFieldComparison
+  paymentType: PaymentTypeFilterComparison
   total: NumberFieldComparison
   updated: DateFieldComparison
   user: OrderFilterUserFilter
@@ -1966,6 +1977,8 @@ enum OrderSortFields {
   businessId
   created
   id
+  paymentId
+  paymentType
   total
   updated
   userId
@@ -1977,6 +1990,8 @@ input OrderSubscriptionFilter {
   created: DateFieldComparison
   id: IDFilterComparison
   or: [OrderSubscriptionFilter!]
+  paymentId: StringFieldComparison
+  paymentType: PaymentTypeFilterComparison
   total: NumberFieldComparison
   updated: DateFieldComparison
   userId: StringFieldComparison
@@ -1988,14 +2003,39 @@ input OrderUpdateFilter {
   created: DateFieldComparison
   id: IDFilterComparison
   or: [OrderUpdateFilter!]
+  paymentId: StringFieldComparison
+  paymentType: PaymentTypeFilterComparison
   total: NumberFieldComparison
   updated: DateFieldComparison
   userId: StringFieldComparison
 }
 
 type Payment {
-  paymentIntent: String!
+  clientSecret: String!
+  paymentId: String!
   publishableKey: String!
+}
+
+enum PaymentType {
+  Membership
+  Ticket
+}
+
+input PaymentTypeFilterComparison {
+  eq: PaymentType
+  gt: PaymentType
+  gte: PaymentType
+  iLike: PaymentType
+  in: [PaymentType!]
+  is: Boolean
+  isNot: Boolean
+  like: PaymentType
+  lt: PaymentType
+  lte: PaymentType
+  neq: PaymentType
+  notILike: PaymentType
+  notIn: [PaymentType!]
+  notLike: PaymentType
 }
 
 type PriceCategory {
@@ -2228,6 +2268,7 @@ type Query {
     sorting: [PriceCategorySort!]! = []
   ): PriceCategoryAvailable!
   getOrderTotals(meta: String!): [OrderGraph!]!
+  getPublishableKey: PublishableKey!
   getUserBenefits(
     """Specify to filter the records returned."""
     filter: BenefitFilter! = {}
@@ -3213,6 +3254,8 @@ input TicketAggregateFilterOrderAggregateFilter {
   created: DateFieldComparison
   id: IDFilterComparison
   or: [TicketAggregateFilterOrderAggregateFilter!]
+  paymentId: StringFieldComparison
+  paymentType: PaymentTypeFilterComparison
   total: NumberFieldComparison
   updated: DateFieldComparison
   userId: StringFieldComparison
@@ -3404,6 +3447,8 @@ input TicketFilterOrderFilter {
   created: DateFieldComparison
   id: IDFilterComparison
   or: [TicketFilterOrderFilter!]
+  paymentId: StringFieldComparison
+  paymentType: PaymentTypeFilterComparison
   total: NumberFieldComparison
   updated: DateFieldComparison
   userId: StringFieldComparison
@@ -3576,7 +3621,6 @@ input UpdateBenefit {
 }
 
 input UpdateBusiness {
-  apiKey: String
   created: DateTime
   currency: Currency
   id: ID
@@ -4005,6 +4049,7 @@ input UpdateOneVenueSubscriptionFilterInput {
 }
 
 input UpdateOrder {
+  paymentId: String
   total: Float
   userId: ID
 }

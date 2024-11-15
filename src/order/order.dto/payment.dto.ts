@@ -6,7 +6,12 @@ export class PaymentDto {
   @IsNotEmpty()
   @IsString()
   @Field()
-  paymentIntent!: string;
+  paymentId!: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @Field()
+  clientSecret!: string;
 
   @IsNotEmpty()
   @IsString()

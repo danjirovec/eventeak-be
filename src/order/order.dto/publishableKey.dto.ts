@@ -6,5 +6,5 @@ export class PublishableKeyDto {
   @IsNotEmpty()
   @IsString()
   @Field()
-  publishableKey?: string;
+  publishableKey!: string;
 }

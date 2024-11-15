@@ -142,6 +142,7 @@ export class UserResolver {
         input.message,
       );
     } catch (error) {
+      console.log(error);
       throw new BadRequestException(error);
     }
     return true;

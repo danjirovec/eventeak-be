@@ -9,6 +9,7 @@ import {
   IsEnum,
 } from 'class-validator';
 import { MembershipState } from 'src/enum/enum';
+import { CreateOrderDto } from 'src/order/order.dto/order.create.dto';
 
 @InputType('CreateMembership')
 export class CreateMembershipDto {
@@ -41,4 +42,8 @@ export class CreateMembershipDto {
   @IsString()
   @Field(() => ID)
   businessId!: string;
+
+  @IsNotEmpty()
+  @Field(() => CreateOrderDto)
+  order!: CreateOrderDto;
 }

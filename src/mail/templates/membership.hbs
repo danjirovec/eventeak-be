@@ -1,0 +1,14 @@
+<p>Hello <strong>{{name}}</strong>,</p>
+<p>You've purchased <strong>{{business.name}}</strong> membership.</p>
+
+<div
+  style='border: 1px solid #ddd; padding: 8px; margin-bottom: 16px; border-radius: 5px;'
+>
+  <p><strong>Membership Type:</strong> {{membershipType.name}}</p>
+  <p><strong>Expiry Date:</strong> {{expiryDate}}</p>
+  <p><strong>Points / ticket:</strong>
+    {{membershipType.pointsPerTicket}}</p>
+  <p><strong>Price:</strong> {{membershipType.price}} {{business.currency}}</p>
+</div>
+
+<p>We hope you enjoy the benefits!</p>

@@ -46,9 +46,20 @@ export class BenefitResolver {
     }
 
     const membershipPoints = membership[0].points;
+    const membershipTypeId = membership[0].membershipTypeId;
 
     const benefits = await this.benefitService.query({
-      filter: query.filter,
+      filter: {
+        and: [
+          query.filter,
+          {
+            or: [
+              { membershipTypeId: { eq: membershipTypeId } },
+              { membershipTypeId: { is: null } },
+            ],
+          },
+        ],
+      },
     });
 
     const usedRaw = await this.userBenefitSevice.query({

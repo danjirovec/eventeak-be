@@ -12,4 +12,9 @@ export class UpdateOrderDto {
   @IsString()
   @Field(() => ID, { nullable: true })
   userId?: string;
+
+  @IsOptional()
+  @IsString()
+  @Field({ nullable: true })
+  paymentId?: string;
 }

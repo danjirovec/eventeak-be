@@ -58,29 +58,31 @@ export class OrderResolver {
     return monthlyTotals.reverse();
   }
 
-  @Mutation(() => PublishableKeyDto)
+  @Query(() => PublishableKeyDto)
   @UseGuards(AuthGuard)
-  async getPublishableKey() {
+  async getPublishableKey(): Promise<PublishableKeyDto> {
+    const key = this.configService.get<string>('PK_KEY');
     return {
-      publishableKEy: this.configService.get<string>('PK_KEY'),
+      publishableKey: key,
     };
   }
 
   @Mutation(() => PaymentDto)
   @UseGuards(AuthGuard)
   async payment(@Args('input') input: CreatePaymentDto) {
-    const stripeee = new stripe.Stripe(
-      this.configService.get<string>('SK_KEY'),
-    );
-    const paymentIntent = await stripeee.paymentIntents.create({
-      amount: input.amount,
+    const client = new stripe.Stripe(this.configService.get<string>('SK_KEY'));
+    const paymentIntent = await client.paymentIntents.create({
+      amount: input.amount * 100,
       currency: input.currency,
       automatic_payment_methods: {
         enabled: true,
       },
+      receipt_email: input.email,
+      description: input.paymentType,
     });
     return {
-      paymentIntent: paymentIntent.client_secret,
+      paymentId: paymentIntent.id,
+      clientSecret: paymentIntent.client_secret,
       publishableKey: this.configService.get<string>('PK_KEY'),
     };
   }

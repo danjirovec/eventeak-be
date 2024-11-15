@@ -6,8 +6,10 @@ import * as path from 'path';
 import { ConfigService } from '@nestjs/config';
 import { UserDto } from 'src/user/user.dto/user.dto';
 import { BusinessDto } from 'src/business/business.dto/business.dto';
+import { MembershipDto } from 'src/membership/membership.dto/membership.dto';
+import { MembershipTypeDto } from 'src/membership.type/membership.type.dto/membership.type.dto';
 
-const formatDate = (date) => {
+const formatEventDate = (date) => {
   return new Intl.DateTimeFormat('en-GB', {
     day: '2-digit',
     month: '2-digit',
@@ -20,12 +22,22 @@ const formatDate = (date) => {
     .replace(',', ' -');
 };
 
+const formatExpiryDate = (date) => {
+  return new Intl.DateTimeFormat('en-GB', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour12: false,
+  }).format(date);
+};
+
 @Injectable()
 export class MailService {
   private transporter: nodemailer.Transporter;
   private inviteTemplate: handlebars.TemplateDelegate;
   private userTemplate: handlebars.TemplateDelegate;
   private ticketsTemplate: handlebars.TemplateDelegate;
+  private membershipTemplate: handlebars.TemplateDelegate;
   constructor(private readonly configService: ConfigService) {
     this.transporter = nodemailer.createTransport(
       {
@@ -47,6 +59,7 @@ export class MailService {
     this.inviteTemplate = this.loadTemplate('invite.hbs');
     this.userTemplate = this.loadTemplate('user.hbs');
     this.ticketsTemplate = this.loadTemplate('tickets.hbs');
+    this.membershipTemplate = this.loadTemplate('membership.hbs');
   }
 
   private loadTemplate(templateName: string): handlebars.TemplateDelegate {
@@ -102,12 +115,31 @@ export class MailService {
       name: `${user.firstName} ${user.lastName}`,
       tickets,
       business,
-      event: { name: event.name, date: formatDate(event.date) },
+      event: { name: event.name, date: formatEventDate(event.date) },
     });
 
     await this.transporter.sendMail({
       to: user.email,
       subject: `Your ${business.name} tickets`,
+      html: html,
+    });
+  }
+
+  async sendMembership(
+    user: UserDto,
+    business: BusinessDto,
+    membership: MembershipDto,
+    membershipType: MembershipTypeDto,
+  ) {
+    const html = this.membershipTemplate({
+      name: `${user.firstName} ${user.lastName}`,
+      expiryDate: formatExpiryDate(membership.expiryDate),
+      membershipType: membershipType,
+      business,
+    });
+    await this.transporter.sendMail({
+      to: user.email,
+      subject: `Your ${business.name} membership`,
       html: html,
     });
   }

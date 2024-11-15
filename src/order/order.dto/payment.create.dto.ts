@@ -1,6 +1,12 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { IsDefined, IsEnum, IsNotEmpty, IsNumber } from 'class-validator';
-import { Currency } from 'src/enum/enum';
+import {
+  IsDefined,
+  IsEnum,
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+} from 'class-validator';
+import { Currency, PaymentType } from 'src/enum/enum';
 
 @InputType('CreatePayment')
 export class CreatePaymentDto {
@@ -13,4 +19,14 @@ export class CreatePaymentDto {
   @IsEnum(Currency, { each: true })
   @Field(() => Currency, { defaultValue: Currency.CZK })
   currency!: Currency;
+
+  @IsNotEmpty()
+  @IsString()
+  @Field()
+  email!: string;
+
+  @IsDefined()
+  @IsEnum(PaymentType, { each: true })
+  @Field(() => PaymentType, { defaultValue: PaymentType.Ticket })
+  paymentType!: PaymentType;
 }

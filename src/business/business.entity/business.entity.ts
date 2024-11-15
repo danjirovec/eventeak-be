@@ -15,9 +15,6 @@ export class Business {
   @Column()
   name!: string;
 
-  @Column({ unique: true })
-  apiKey!: string;
-
   @Column({ nullable: true })
   logoUrl?: string;
 

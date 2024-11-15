@@ -1,13 +1,12 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { BadRequestException, UseGuards } from '@nestjs/common';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
-import { DataSource, Filter } from 'typeorm';
+import { DataSource } from 'typeorm';
 import { BusinessDto } from './business.dto/business.dto';
 import { CreateBusinessDto } from './business.dto/business.create.dto';
 import { Business } from './business.entity/business.entity';
 import { BusinessUser } from 'src/business.user/business.user.entity/business.user.entity';
 import { Role } from 'src/enum/enum';
-import { randomBytes } from 'crypto';
 import { InjectQueryService, QueryService } from '@ptc-org/nestjs-query-core';
 import { BusinessConnection, BusinessQuery } from './types';
 import { ConnectionType } from '@ptc-org/nestjs-query-graphql';
@@ -48,21 +47,22 @@ export class BusinessResolver {
     await queryRunner.connect();
     await queryRunner.startTransaction();
     try {
-      newBusiness = queryRunner.manager.create(Business, {
-        ...input,
-        apiKey: randomBytes(32).toString('hex'),
-      });
-      await queryRunner.manager.save(newBusiness);
-
-      const newBusinessUserAdmin = queryRunner.manager.create(BusinessUser, {
+      newBusiness = await this.businessService.createOne(input);
+      await this.businessUserService.createOne({
         businessId: newBusiness.id,
         userId: input.userId,
         role: Role.Admin,
       });
-      await queryRunner.manager.save(newBusinessUserAdmin);
+      const user = await this.userService.getById(input.userId);
+      if (!user.defaultBusinessId) {
+        await this.userService.updateOne(user.id, {
+          defaultBusinessId: newBusiness.id,
+        });
+      }
       await queryRunner.commitTransaction();
     } catch (err) {
       await queryRunner.rollbackTransaction();
+      console.log(err);
       throw new BadRequestException(err);
     } finally {
       await queryRunner.release();

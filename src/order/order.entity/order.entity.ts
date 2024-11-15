@@ -1,4 +1,5 @@
 import { Business } from 'src/business/business.entity/business.entity';
+import { PaymentType } from 'src/enum/enum';
 import { User } from 'src/user/user.entity/user.entity';
 import {
   Column,
@@ -18,6 +19,16 @@ export class Order {
 
   @Column()
   total!: number;
+
+  @Column({ nullable: true })
+  paymentId!: string;
+
+  @Column({
+    type: 'enum',
+    enum: PaymentType,
+    default: PaymentType.Ticket,
+  })
+  paymentType!: PaymentType;
 
   @Index()
   @Column({ name: 'user_id', nullable: true })

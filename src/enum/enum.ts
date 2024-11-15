@@ -71,3 +71,12 @@ export enum MembershipState {
 registerEnumType(MembershipState, {
   name: 'MembershipState',
 });
+
+export enum PaymentType {
+  Membership = 'Membership',
+  Ticket = 'Ticket',
+}
+
+registerEnumType(PaymentType, {
+  name: 'PaymentType',
+});

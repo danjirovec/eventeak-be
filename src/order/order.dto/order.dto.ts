@@ -6,12 +6,16 @@ import {
 } from '@ptc-org/nestjs-query-graphql';
 import {
   IsDate,
+  IsDefined,
+  IsEnum,
   IsNotEmpty,
   IsNumber,
+  IsOptional,
   IsString,
   IsUUID,
 } from 'class-validator';
 import { BusinessDto } from 'src/business/business.dto/business.dto';
+import { PaymentType } from 'src/enum/enum';
 import { UserDto } from 'src/user/user.dto/user.dto';
 
 @ObjectType('Order')
@@ -28,10 +32,24 @@ export class OrderDto {
   @FilterableField()
   total!: number;
 
+  @IsOptional()
+  @IsString()
+  @FilterableField({ nullable: true })
+  paymentId?: string;
+
+  @IsDefined()
+  @IsEnum(PaymentType, { each: true })
+  @FilterableField(() => PaymentType, {
+    defaultValue: PaymentType.Ticket,
+  })
+  paymentType!: PaymentType;
+
+  @IsNotEmpty()
   @IsString()
   @FilterableField({ filterOnly: true })
   businessId?: string;
 
+  @IsOptional()
   @IsString()
   @FilterableField({ filterOnly: true })
   userId?: string;

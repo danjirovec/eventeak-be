@@ -3,7 +3,7 @@ import {
   PagingStrategies,
 } from '@ptc-org/nestjs-query-graphql';
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { CreateUserDto } from './user.dto/user.create.dto';
 import { UserDto } from './user.dto/user.dto';
 import { User } from './user.entity/user.entity';
@@ -26,7 +26,7 @@ import { MembershipTypeModule } from 'src/membership.type/membership.type.module
       imports: [
         NestjsQueryTypeOrmModule.forFeature([User]),
         JwtModule,
-        MembershipModule,
+        forwardRef(() => MembershipModule),
         MembershipTypeModule,
         UserBenefitModule,
         TicketModule,

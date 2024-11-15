@@ -187,6 +187,8 @@ export class EventResolver {
         userId: input.order.userId,
         total: input.order.total,
         businessId: input.order.businessId,
+        paymentId: input.order.paymentId,
+        paymentType: input.order.paymentType,
       });
       const ticketsToCreate = input.tickets.map((ticket) => {
         const { seat, row, discount, section, ...rest } = ticket;
@@ -230,7 +232,9 @@ export class EventResolver {
             membership[0].membershipTypeId,
           );
           await this.membershipService.updateOne(membership[0].id, {
-            points: membershipType.pointsPerTicket * input.tickets.length,
+            points:
+              membership[0].points +
+              membershipType.pointsPerTicket * input.tickets.length,
           });
         }
         const user = await this.userService.getById(input.order.userId);
