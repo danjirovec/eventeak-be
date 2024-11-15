@@ -27,8 +27,8 @@ import { MembershipTypeModule } from 'src/membership.type/membership.type.module
         JwtModule,
         OrderModule,
         MembershipTypeModule,
-        forwardRef(() => UserModule),
-        forwardRef(() => BusinessModule),
+        // forwardRef(() => UserModule),
+        // forwardRef(() => BusinessModule),
         MailModule,
       ],
       resolvers: [

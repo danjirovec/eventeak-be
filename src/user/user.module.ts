@@ -26,7 +26,7 @@ import { MembershipTypeModule } from 'src/membership.type/membership.type.module
       imports: [
         NestjsQueryTypeOrmModule.forFeature([User]),
         JwtModule,
-        forwardRef(() => MembershipModule),
+        MembershipModule,
         MembershipTypeModule,
         UserBenefitModule,
         TicketModule,

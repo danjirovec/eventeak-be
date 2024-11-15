@@ -4,35 +4,26 @@ import { Membership } from 'src/membership/membership.entity/membership.entity';
 import { MembershipDto } from 'src/membership/membership.dto/membership.dto';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { MembershipState } from 'src/enum/enum';
-import { CreateMembershipDto } from './membership.dto/membership.create.dto';
-import { BadRequestException, UseGuards } from '@nestjs/common';
-import { AuthGuard } from 'src/auth/guards/auth.guard';
-import { DataSource } from 'typeorm';
-import { Order } from 'src/order/order.entity/order.entity';
-import { OrderDto } from 'src/order/order.dto/order.dto';
+// import { CreateMembershipDto } from './membership.dto/membership.create.dto';
+// import { BadRequestException, UseGuards } from '@nestjs/common';
+// import { AuthGuard } from 'src/auth/guards/auth.guard';
+// import { DataSource } from 'typeorm';
+// import { Order } from 'src/order/order.entity/order.entity';
+// import { OrderDto } from 'src/order/order.dto/order.dto';
 import { MailService } from 'src/mail/mail.service';
-import { User } from 'src/user/user.entity/user.entity';
-import { UserDto } from 'src/user/user.dto/user.dto';
-import { Business } from 'src/business/business.entity/business.entity';
-import { BusinessDto } from 'src/business/business.dto/business.dto';
-import { MembershipTypeDto } from 'src/membership.type/membership.type.dto/membership.type.dto';
-import { MembershipType } from 'src/membership.type/membership.type.entity/membership.type.entity';
+// import { User } from 'src/user/user.entity/user.entity';
+// import { UserDto } from 'src/user/user.dto/user.dto';
+// import { Business } from 'src/business/business.entity/business.entity';
+// import { BusinessDto } from 'src/business/business.dto/business.dto';
+// import { MembershipTypeDto } from 'src/membership.type/membership.type.dto/membership.type.dto';
+// import { MembershipType } from 'src/membership.type/membership.type.entity/membership.type.entity';
 
 @Resolver(() => MembershipDto)
 export class MembershipResolver {
   constructor(
     @InjectQueryService(Membership)
     readonly membershipService: QueryService<MembershipDto>,
-    @InjectQueryService(MembershipType)
-    readonly membershipTypeService: QueryService<MembershipTypeDto>,
-    @InjectQueryService(Order)
-    readonly orderService: QueryService<OrderDto>,
-    @InjectQueryService(User)
-    readonly userService: QueryService<UserDto>,
-    @InjectQueryService(Business)
-    readonly businessService: QueryService<BusinessDto>,
     readonly mailService: MailService,
-    private dataSource: DataSource,
   ) {}
 
   @Cron(CronExpression.EVERY_DAY_AT_NOON, {
@@ -95,48 +86,48 @@ export class MembershipResolver {
     }
   }
 
-  @Mutation(() => MembershipDto)
-  @UseGuards(AuthGuard)
-  async createMembership(@Args('input') input: CreateMembershipDto) {
-    let membership;
-    const queryRunner = this.dataSource.createQueryRunner();
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
-    try {
-      const { order, ...rest } = input;
-      await this.orderService.createOne({
-        userId: order.userId,
-        total: order.total,
-        businessId: order.businessId,
-        paymentId: order.paymentId,
-        paymentType: order.paymentType,
-      });
+  // @Mutation(() => MembershipDto)
+  // @UseGuards(AuthGuard)
+  // async createMembership(@Args('input') input: CreateMembershipDto) {
+  //   let membership;
+  //   const queryRunner = this.dataSource.createQueryRunner();
+  //   await queryRunner.connect();
+  //   await queryRunner.startTransaction();
+  //   try {
+  //     const { order, ...rest } = input;
+  //     await this.orderService.createOne({
+  //       userId: order.userId,
+  //       total: order.total,
+  //       businessId: order.businessId,
+  //       paymentId: order.paymentId,
+  //       paymentType: order.paymentType,
+  //     });
 
-      membership = await this.membershipService.createOne(rest);
+  //     membership = await this.membershipService.createOne(rest);
 
-      if (order.userId) {
-        const user = await this.userService.getById(input.order.userId);
-        const business = await this.businessService.getById(
-          input.order.businessId,
-        );
-        const membershipType = await this.membershipTypeService.getById(
-          membership.membershipTypeId,
-        );
-        await this.mailService.sendMembership(
-          user,
-          business,
-          membership,
-          membershipType,
-        );
-      }
-      await queryRunner.commitTransaction();
-    } catch (err) {
-      console.log(err);
-      await queryRunner.rollbackTransaction();
-      throw new BadRequestException(err);
-    } finally {
-      await queryRunner.release();
-    }
-    return membership;
-  }
+  //     if (order.userId) {
+  //       const user = await this.userService.getById(input.order.userId);
+  //       const business = await this.businessService.getById(
+  //         input.order.businessId,
+  //       );
+  //       const membershipType = await this.membershipTypeService.getById(
+  //         membership.membershipTypeId,
+  //       );
+  //       await this.mailService.sendMembership(
+  //         user,
+  //         business,
+  //         membership,
+  //         membershipType,
+  //       );
+  //     }
+  //     await queryRunner.commitTransaction();
+  //   } catch (err) {
+  //     console.log(err);
+  //     await queryRunner.rollbackTransaction();
+  //     throw new BadRequestException(err);
+  //   } finally {
+  //     await queryRunner.release();
+  //   }
+  //   return membership;
+  // }
 }

@@ -32,6 +32,7 @@ import { Membership } from 'src/membership/membership.entity/membership.entity';
 import { MembershipDto } from 'src/membership/membership.dto/membership.dto';
 import { MembershipType } from 'src/membership.type/membership.type.entity/membership.type.entity';
 import { MembershipTypeDto } from 'src/membership.type/membership.type.dto/membership.type.dto';
+import { CreateMembershipDto } from 'src/membership/membership.dto/membership.create.dto';
 
 @Resolver(() => EventDto)
 export class EventResolver {
@@ -171,6 +172,51 @@ export class EventResolver {
       events: events,
       users: users,
     };
+  }
+
+  @Mutation(() => MembershipDto)
+  @UseGuards(AuthGuard)
+  async createMembership(@Args('input') input: CreateMembershipDto) {
+    let membership;
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+    try {
+      const { order, ...rest } = input;
+      await this.orderService.createOne({
+        userId: order.userId,
+        total: order.total,
+        businessId: order.businessId,
+        paymentId: order.paymentId,
+        paymentType: order.paymentType,
+      });
+
+      membership = await this.membershipService.createOne(rest);
+
+      if (order.userId) {
+        const user = await this.userService.getById(input.order.userId);
+        const business = await this.businessService.getById(
+          input.order.businessId,
+        );
+        const membershipType = await this.membershipTypeService.getById(
+          membership.membershipTypeId,
+        );
+        await this.mailService.sendMembership(
+          user,
+          business,
+          membership,
+          membershipType,
+        );
+      }
+      await queryRunner.commitTransaction();
+    } catch (err) {
+      console.log(err);
+      await queryRunner.rollbackTransaction();
+      throw new BadRequestException(err);
+    } finally {
+      await queryRunner.release();
+    }
+    return membership;
   }
 
   @Mutation(() => EventDto)
