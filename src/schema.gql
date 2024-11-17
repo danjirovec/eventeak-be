@@ -3636,11 +3636,8 @@ input UpdateBusinessUser {
 }
 
 input UpdateDiscount {
-  created: DateTime
-  id: ID
-  name: String
-  percentage: Float
-  updated: DateTime
+  name: String!
+  percentage: Float!
 }
 
 input UpdateEvent {

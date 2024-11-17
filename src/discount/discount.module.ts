@@ -10,6 +10,7 @@ import { CreateDiscountDto } from './discount.dto/discount.create.dto';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { JwtModule } from '@nestjs/jwt';
 import { DiscountResolver } from './discount.resolver';
+import { UpdateDiscountDto } from './discount.dto/discount.update.dto';
 
 @Module({
   providers: [DiscountResolver],
@@ -22,6 +23,7 @@ import { DiscountResolver } from './discount.resolver';
           EntityClass: Discount,
           DTOClass: DiscountDto,
           CreateDTOClass: CreateDiscountDto,
+          UpdateDTOClass: UpdateDiscountDto,
           enableSubscriptions: true,
           guards: [AuthGuard],
           pagingStrategy: PagingStrategies.OFFSET,
