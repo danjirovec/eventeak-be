@@ -34,6 +34,22 @@ export class BusinessService {
     if (!user.length) {
       throw new BadRequestException('User with this email does not exist');
     }
+
+    const businessUser = await this.businessUserService.query({
+      filter: {
+        and: [
+          { businessId: { eq: businessId } },
+          { userId: { eq: user[0].id } },
+          { role: { eq: 'Admin' } },
+        ],
+      },
+    });
+
+    if (businessUser.length > 0) {
+      throw new BadRequestException(
+        'User with this email already manages your business',
+      );
+    }
     try {
       const business = await this.businessService.getById(businessId);
       const token = this.jwtService.sign(
@@ -67,12 +83,21 @@ export class BusinessService {
           and: [
             { userId: { eq: decoded.user } },
             { businessId: { eq: decoded.business } },
-            { role: { eq: Role.Admin } },
           ],
         },
       });
 
-      if (businessUser) {
+      if (businessUser.length > 0) {
+        await this.businessUserService.updateMany(
+          { role: Role.Admin },
+          {
+            and: [
+              { userId: { eq: decoded.user } },
+              { businessId: { eq: decoded.business } },
+              { role: { eq: 'Customer' } },
+            ],
+          },
+        );
         return;
       }
 

@@ -33,6 +33,8 @@ import { MembershipDto } from 'src/membership/membership.dto/membership.dto';
 import { MembershipType } from 'src/membership.type/membership.type.entity/membership.type.entity';
 import { MembershipTypeDto } from 'src/membership.type/membership.type.dto/membership.type.dto';
 import { CreateMembershipDto } from 'src/membership/membership.dto/membership.create.dto';
+import * as QRCode from 'qrcode';
+import { supabaseAdmin } from 'src/utils/supabaseAdmin';
 
 @Resolver(() => EventDto)
 export class EventResolver {
@@ -287,14 +289,29 @@ export class EventResolver {
         const business = await this.businessService.getById(
           input.order.businessId,
         );
-        const emailTickets = input.tickets.map((item, index) => ({
-          id: tickets[index].id.slice(0, 8),
-          price: item.price,
-          section: item.section,
-          discount: item.discount ? item.discount : null,
-          seat: item.seat ? item.seat : null,
-          row: item.row ? item.row : null,
-        }));
+
+        const emailTickets = await Promise.all(
+          input.tickets.map(async (item, index) => {
+            const qrBuffer = await QRCode.toBuffer(tickets[index].id);
+            const filePath = `tickets/${tickets[index].id}`;
+            const { error } = await supabaseAdmin.storage
+              .from('applausio')
+              .upload(filePath, qrBuffer, {
+                contentType: 'image/png',
+                cacheControl: '3600',
+                upsert: true,
+              });
+            return {
+              id: tickets[index].id.slice(0, 8),
+              qr: `https://ncdwlflcmlklzfsuijvj.supabase.co/storage/v1/object/public/applausio/tickets/${tickets[index].id}`,
+              price: item.price,
+              section: item.section,
+              discount: item.discount ? item.discount : null,
+              seat: item.seat ? item.seat : null,
+              row: item.row ? item.row : null,
+            };
+          }),
+        );
         await this.mailService.sendTickets(emailTickets, user, business, event);
       }
       await queryRunner.commitTransaction();

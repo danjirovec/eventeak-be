@@ -120,7 +120,7 @@ export class MailService {
 
     await this.transporter.sendMail({
       to: user.email,
-      subject: `Your ${business.name} tickets`,
+      subject: `Your ${business.name} ticket/s for ${event.name}`,
       html: html,
     });
   }

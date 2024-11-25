@@ -2,32 +2,40 @@
 <p>You've purchased
   <strong>{{business.name}}</strong>
   ticket/s for
-   <strong>{{event.name}}</strong>.</p>
+  <strong>{{event.name}}</strong>.</p>
 
 {{#each tickets}}
-  <div
-    style='border: 1px solid #ddd; padding: 8px; margin-bottom: 16px; border-radius: 5px;'
-  >
-    <p><strong>ID:</strong> {{this.id}}</p>
-    <p><strong>Event:</strong> {{../event.name}}</p>
-    <p><strong>Date & Time:</strong> {{../event.date}}</p>
+  <table
+    style="border: 1px solid #ddd; padding: 8px; margin-bottom: 16px; border-radius: 5px; width: 100%;">
+    <tr>
+      <td style="padding: 8px; width: 70%; vertical-align: top; padding-right: 10px;">
+        <p><strong>ID:</strong> {{this.id}}</p>
+        <p><strong>Event:</strong> {{../event.name}}</p>
+        <p><strong>Date & Time:</strong> {{../event.date}}</p>
+        <p><strong>Price:</strong> {{this.price}} {{../business.currency}}</p>
 
-    <p><strong>Price:</strong> {{this.price}} {{../business.currency}}</p>
+        {{#if this.discount}}
+          <p><strong>Discount:</strong> {{this.discount}}</p>
+        {{/if}}
 
-    {{#if this.discount}}
-      <p><strong>Discount:</strong> {{this.discount}}</p>
-    {{/if}}
+        <p><strong>Section:</strong> {{this.section}}</p>
 
-    <p><strong>Section:</strong> {{this.section}}</p>
+        {{#if this.row}}
+          <p><strong>Row:</strong> {{this.row}}</p>
+        {{/if}}
 
-    {{#if this.row}}
-      <p><strong>Row:</strong> {{this.row}}</p>
-    {{/if}}
-
-    {{#if this.seat}}
-      <p><strong>Seat:</strong> {{this.seat}}</p>
-    {{/if}}
-  </div>
+        {{#if this.seat}}
+          <p><strong>Seat:</strong> {{this.seat}}</p>
+        {{/if}}
+      </td>
+      <td style="padding: 8px; width: 30%; text-align: end; vertical-align: middle;">
+        <img
+          src="{{this.qr}}"
+          alt="QR code"
+          style="max-width: 200px; height: auto;"/>
+      </td>
+    </tr>
+  </table>
 {{/each}}
 
 <p>We hope you enjoy the event!</p>

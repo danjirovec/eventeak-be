@@ -3,7 +3,7 @@ import {
   PagingStrategies,
 } from '@ptc-org/nestjs-query-graphql';
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
-import { forwardRef, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { CreateMembershipDto } from './membership.dto/membership.create.dto';
 import { MembershipDto } from './membership.dto/membership.dto';
 import { Membership } from './membership.entity/membership.entity';
@@ -13,8 +13,6 @@ import { MembershipResolver } from './membership.resolver';
 import { UpdateMembershipDto } from './membership.dto/membership.update.dto';
 import { OrderModule } from 'src/order/order.module';
 import { MailModule } from 'src/mail/mail.module';
-import { UserModule } from 'src/user/user.module';
-import { BusinessModule } from 'src/business/business.module';
 import { MembershipTypeModule } from 'src/membership.type/membership.type.module';
 
 @Module({
@@ -27,8 +25,6 @@ import { MembershipTypeModule } from 'src/membership.type/membership.type.module
         JwtModule,
         OrderModule,
         MembershipTypeModule,
-        // forwardRef(() => UserModule),
-        // forwardRef(() => BusinessModule),
         MailModule,
       ],
       resolvers: [
