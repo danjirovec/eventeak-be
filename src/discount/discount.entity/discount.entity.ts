@@ -1,5 +1,4 @@
 import { Business } from 'src/business/business.entity/business.entity';
-import { User } from 'src/user/user.entity/user.entity';
 import {
   Column,
   CreateDateColumn,
