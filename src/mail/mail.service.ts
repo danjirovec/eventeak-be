@@ -108,18 +108,19 @@ export class MailService {
   async sendTickets(
     tickets: any,
     user: UserDto,
+    customEmail: string,
     business: BusinessDto,
     event: any,
   ) {
     const html = this.ticketsTemplate({
-      name: `${user.firstName} ${user.lastName}`,
+      name: user ? `${user.firstName} ${user.lastName}` : 'fellow human',
       tickets,
       business,
       event: { name: event.name, date: formatEventDate(event.date) },
     });
 
     await this.transporter.sendMail({
-      to: user.email,
+      to: user ? user.email : customEmail ? customEmail : null,
       subject: `Your ${business.name} ticket/s for ${event.name}`,
       html: html,
     });

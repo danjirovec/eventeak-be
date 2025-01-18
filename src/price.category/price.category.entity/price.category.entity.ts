@@ -20,7 +20,7 @@ export class PriceCategory {
   @Column()
   name!: string;
 
-  @Column()
+  @Column({ type: 'float', default: 0 })
   price!: number;
 
   @Column({ nullable: true })

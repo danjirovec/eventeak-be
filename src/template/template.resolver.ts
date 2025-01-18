@@ -33,21 +33,25 @@ export class TemplateResolver {
     await queryRunner.connect();
     await queryRunner.startTransaction();
     try {
-      newTemplate = await this.templateService.createOne({ ...input });
+      const createdTemplate = queryRunner.manager.create(Template, {
+        ...input,
+      });
+      newTemplate = await queryRunner.manager.save(createdTemplate);
       const priceCategories = input.priceCategory.map((pc) => ({
         ...pc,
         templateId: newTemplate.id,
       }));
-      await this.priceCategoryService.createMany(priceCategories);
+      await queryRunner.manager.save(PriceCategory, priceCategories);
       if (input.discount) {
         const discounts = input.discount.map((discount) => ({
           discountId: discount,
           templateId: newTemplate.id,
         }));
-        await this.templateDiscountService.createMany(discounts);
+        await queryRunner.manager.save(TemplateDiscount, discounts);
       }
       await queryRunner.commitTransaction();
     } catch (err) {
+      console.log(err);
       await queryRunner.rollbackTransaction();
       throw new BadRequestException(err);
     } finally {
@@ -65,8 +69,10 @@ export class TemplateResolver {
     await queryRunner.startTransaction();
     try {
       const { priceCategory, discount, id, ...rest } = input;
-      updatedTemplate = await this.templateService.updateOne(id, {
-        ...rest,
+
+      await queryRunner.manager.update(Template, id, { ...rest });
+      updatedTemplate = await queryRunner.manager.findOne(Template, {
+        where: { id },
       });
 
       const priceCategories = await this.priceCategoryService.query({
@@ -80,7 +86,6 @@ export class TemplateResolver {
       const priceCategoryToDelete = priceCategories
         .filter((pc) => !priceCategory.some((_pc) => _pc.id === pc.id))
         .map((pc) => pc.id);
-      console.log(priceCategoryToDelete);
 
       const templateDiscountToDelete = discounts
         .filter(

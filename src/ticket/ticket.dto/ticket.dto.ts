@@ -70,6 +70,11 @@ export class TicketDto {
   @FilterableField({ filterOnly: true })
   userId?: string;
 
+  @IsOptional()
+  @IsString()
+  @FilterableField({ nullable: true })
+  customEmail?: string;
+
   @IsNotEmpty()
   @IsDate()
   @FilterableField(() => GraphQLISODateTime)

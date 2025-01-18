@@ -27,7 +27,7 @@ export class Ticket {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
-  @Column()
+  @Column({ type: 'float', default: 0 })
   price!: number;
 
   @Column({ nullable: true })
@@ -63,6 +63,9 @@ export class Ticket {
   @ManyToOne((type) => User, { nullable: true })
   @JoinColumn({ name: 'user_id' })
   user!: User;
+
+  @Column({ nullable: true })
+  customEmail?: string;
 
   @Column({ name: 'seat_id', nullable: true })
   seatId!: string;

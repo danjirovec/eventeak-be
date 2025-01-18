@@ -35,6 +35,7 @@ import { MembershipTypeDto } from 'src/membership.type/membership.type.dto/membe
 import { CreateMembershipDto } from 'src/membership/membership.dto/membership.create.dto';
 import * as QRCode from 'qrcode';
 import { supabaseAdmin } from 'src/utils/supabaseAdmin';
+import { EventTicketSoldDto } from './event.dto/event.sold.dto';
 
 @Resolver(() => EventDto)
 export class EventResolver {
@@ -140,7 +141,12 @@ export class EventResolver {
     });
 
     const events = await this.eventService.query({
-      filter: { businessId: { eq: input.businessId } },
+      filter: {
+        and: [
+          { date: { gte: new Date() } },
+          { businessId: { eq: input.businessId } },
+        ],
+      },
     });
 
     if (input.eventId) {
@@ -243,8 +249,10 @@ export class EventResolver {
         return {
           ...rest,
           orderId: order.id,
+          customEmail: rest.customEmail,
         };
       });
+      const customEmail = ticketsToCreate[0].customEmail;
       const tickets = await this.ticketService.createMany(ticketsToCreate);
       event = await this.eventService.getById(tickets[0].eventId);
       if (event.seatMap) {
@@ -312,7 +320,46 @@ export class EventResolver {
             };
           }),
         );
-        await this.mailService.sendTickets(emailTickets, user, business, event);
+        await this.mailService.sendTickets(
+          emailTickets,
+          user,
+          customEmail,
+          business,
+          event,
+        );
+      } else if (customEmail) {
+        const emailTickets = await Promise.all(
+          input.tickets.map(async (item, index) => {
+            const qrBuffer = await QRCode.toBuffer(tickets[index].id);
+            const filePath = `tickets/${tickets[index].id}`;
+            const { error } = await supabaseAdmin.storage
+              .from('applausio')
+              .upload(filePath, qrBuffer, {
+                contentType: 'image/png',
+                cacheControl: '3600',
+                upsert: true,
+              });
+            return {
+              id: tickets[index].id.slice(0, 8),
+              qr: `https://ncdwlflcmlklzfsuijvj.supabase.co/storage/v1/object/public/applausio/tickets/${tickets[index].id}`,
+              price: item.price,
+              section: item.section,
+              discount: item.discount ? item.discount : null,
+              seat: item.seat ? item.seat : null,
+              row: item.row ? item.row : null,
+            };
+          }),
+        );
+        const business = await this.businessService.getById(
+          input.order.businessId,
+        );
+        await this.mailService.sendTickets(
+          emailTickets,
+          null,
+          customEmail,
+          business,
+          event,
+        );
       }
       await queryRunner.commitTransaction();
     } catch (err) {
@@ -323,5 +370,31 @@ export class EventResolver {
       await queryRunner.release();
     }
     return event;
+  }
+
+  @Query(() => [EventTicketSoldDto])
+  @UseGuards(AuthGuard)
+  async getTicketsSold(@Args('meta') meta: string) {
+    const metaParsed = JSON.parse(meta);
+    const events = await this.eventService.query({
+      filter: { businessId: { eq: metaParsed.meta } },
+    });
+    const results = await Promise.all(
+      events.map(async (event) => {
+        const template = await this.templateService.findById(event.templateId);
+        const venue = await this.venueService.findById(template.venueId);
+        const ticketCount = await this.ticketService.count({
+          eventId: { eq: event.id },
+        });
+
+        return {
+          eventId: event.id,
+          capacity: venue.capacity,
+          sold: ticketCount,
+        };
+      }),
+    );
+
+    return results;
   }
 }

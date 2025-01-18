@@ -74,6 +74,11 @@ export class CreateTicketExtraDto {
 
   @IsOptional()
   @IsString()
+  @Field({ nullable: true })
+  customEmail?: string;
+
+  @IsOptional()
+  @IsString()
   @Field(() => ID, { nullable: true })
   discountId?: string;
 

@@ -757,6 +757,7 @@ input CreateTicket {
 
 input CreateTicketExtra {
   businessId: ID!
+  customEmail: String
   discount: String
   discountId: ID
   eventId: ID!
@@ -1360,6 +1361,12 @@ input EventSubscriptionFilter {
   or: [EventSubscriptionFilter!]
   templateId: StringFieldComparison
   updated: DateFieldComparison
+}
+
+type EventTicketSold {
+  capacity: Float!
+  eventId: ID!
+  sold: Float!
 }
 
 input EventUpdateFilter {
@@ -2269,6 +2276,7 @@ type Query {
   ): PriceCategoryAvailable!
   getOrderTotals(meta: String!): [OrderGraph!]!
   getPublishableKey: PublishableKey!
+  getTicketsSold(meta: String!): [EventTicketSold!]!
   getUserBenefits(
     """Specify to filter the records returned."""
     filter: BenefitFilter! = {}
@@ -3178,6 +3186,7 @@ input TemplateUpdateFilter {
 type Ticket {
   business: Business!
   created: DateTime!
+  customEmail: String
   discount: Discount
   event: Event!
   id: ID!
@@ -3196,6 +3205,7 @@ input TicketAggregateFilter {
   business: TicketAggregateFilterBusinessAggregateFilter
   businessId: StringFieldComparison
   created: DateFieldComparison
+  customEmail: StringFieldComparison
   discount: TicketAggregateFilterDiscountAggregateFilter
   event: TicketAggregateFilterEventAggregateFilter
   eventId: StringFieldComparison
@@ -3311,6 +3321,7 @@ input TicketAggregateFilterUserAggregateFilter {
 type TicketAggregateGroupBy {
   businessId: String
   created(by: GroupBy! = DAY): DateTime
+  customEmail: String
   eventId: String
   id: ID
   price: Float
@@ -3349,6 +3360,7 @@ type TicketConnection {
 type TicketCountAggregate {
   businessId: Int
   created: Int
+  customEmail: Int
   eventId: Int
   id: Int
   price: Int
@@ -3364,6 +3376,7 @@ input TicketDeleteFilter {
   and: [TicketDeleteFilter!]
   businessId: StringFieldComparison
   created: DateFieldComparison
+  customEmail: StringFieldComparison
   eventId: StringFieldComparison
   id: IDFilterComparison
   or: [TicketDeleteFilter!]
@@ -3378,6 +3391,7 @@ input TicketDeleteFilter {
 
 type TicketDeleteResponse {
   created: DateTime
+  customEmail: String
   id: ID
   price: Float
   updated: DateTime
@@ -3389,6 +3403,7 @@ input TicketFilter {
   business: TicketFilterBusinessFilter
   businessId: StringFieldComparison
   created: DateFieldComparison
+  customEmail: StringFieldComparison
   discount: TicketFilterDiscountFilter
   event: TicketFilterEventFilter
   eventId: StringFieldComparison
@@ -3504,6 +3519,7 @@ input TicketFilterUserFilter {
 type TicketMaxAggregate {
   businessId: String
   created: DateTime
+  customEmail: String
   eventId: String
   id: ID
   price: Float
@@ -3518,6 +3534,7 @@ type TicketMaxAggregate {
 type TicketMinAggregate {
   businessId: String
   created: DateTime
+  customEmail: String
   eventId: String
   id: ID
   price: Float
@@ -3543,6 +3560,7 @@ input TicketSort {
 enum TicketSortFields {
   businessId
   created
+  customEmail
   eventId
   id
   price
@@ -3558,6 +3576,7 @@ input TicketSubscriptionFilter {
   and: [TicketSubscriptionFilter!]
   businessId: StringFieldComparison
   created: DateFieldComparison
+  customEmail: StringFieldComparison
   eventId: StringFieldComparison
   id: IDFilterComparison
   or: [TicketSubscriptionFilter!]
@@ -3578,6 +3597,7 @@ input TicketUpdateFilter {
   and: [TicketUpdateFilter!]
   businessId: StringFieldComparison
   created: DateFieldComparison
+  customEmail: StringFieldComparison
   eventId: StringFieldComparison
   id: IDFilterComparison
   or: [TicketUpdateFilter!]
@@ -4108,6 +4128,7 @@ input UpdateTemplateDiscount {
 }
 
 input UpdateTicket {
+  customEmail: String
   discountId: ID
   eventId: ID
   price: Float
